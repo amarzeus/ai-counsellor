@@ -45,6 +45,99 @@ def startup_event():
     seed_universities(db)
     db.close()
 
+# ============================================================
+# STAGE GUARDS - Enforce strict stage-based access control
+# ============================================================
+# Stage 1: ONBOARDING - User completing profile
+# Stage 2: DISCOVERY  - User exploring & shortlisting universities
+# Stage 3: LOCKED     - User has locked universities
+# Stage 4: APPLICATION - User working on applications
+# ============================================================
+
+def require_stage_minimum(user: User, required_stage: UserStage, action_description: str):
+    """
+    Guard: User must be at or past a certain stage.
+    Blocks ONBOARDING users from DISCOVERY features, etc.
+    """
+    stage_order = {
+        UserStage.ONBOARDING: 1,
+        UserStage.DISCOVERY: 2,
+        UserStage.LOCKED: 3,
+        UserStage.APPLICATION: 4
+    }
+    user_level = stage_order.get(user.current_stage, 1)
+    required_level = stage_order.get(required_stage, 1)
+    
+    if user_level < required_level:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "error": "STAGE_BLOCKED",
+                "message": f"Cannot {action_description}. You are in {user.current_stage.value} stage.",
+                "current_stage": user.current_stage.value,
+                "required_stage": required_stage.value,
+                "next_step": get_next_step_guidance(user.current_stage)
+            }
+        )
+
+def require_shortlist_exists(db: Session, user: User):
+    """
+    Guard: User must have at least one shortlisted university to lock.
+    """
+    count = db.query(ShortlistedUniversity).filter(
+        ShortlistedUniversity.user_id == user.id
+    ).count()
+    
+    if count == 0:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "error": "NO_SHORTLIST",
+                "message": "Cannot lock universities. You must shortlist at least one university first.",
+                "current_stage": user.current_stage.value,
+                "next_step": "Browse universities and add some to your shortlist before locking."
+            }
+        )
+
+def block_shortlist_modifications(user: User, action: str):
+    """
+    Guard: LOCKED and APPLICATION users cannot modify shortlist without warning.
+    """
+    if user.current_stage in [UserStage.LOCKED, UserStage.APPLICATION]:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "error": "STAGE_LOCKED",
+                "message": f"Cannot {action}. Your university list is locked for applications.",
+                "current_stage": user.current_stage.value,
+                "warning": "Modifying your shortlist at this stage may affect your application progress.",
+                "action_required": "To modify, use the unlock feature with confirmation."
+            }
+        )
+
+def warn_stage_regression(user: User, action: str):
+    """
+    Guard: APPLICATION users going back to earlier stages need explicit confirmation.
+    Returns warning info if user is in APPLICATION stage.
+    """
+    if user.current_stage == UserStage.APPLICATION:
+        return {
+            "warning": True,
+            "message": f"You are in APPLICATION stage. {action} will affect your application tasks.",
+            "impact": "Some generated tasks may become invalid if you change your locked universities."
+        }
+    return None
+
+def get_next_step_guidance(current_stage: UserStage) -> str:
+    """Provide guidance on what to do next based on current stage."""
+    guidance = {
+        UserStage.ONBOARDING: "Complete your profile with academic details, budget, and preferences.",
+        UserStage.DISCOVERY: "Explore universities and add at least one to your shortlist, then lock your choices.",
+        UserStage.LOCKED: "Review your locked universities and proceed to applications.",
+        UserStage.APPLICATION: "Complete your application tasks for each locked university."
+    }
+    return guidance.get(current_stage, "Continue with your study abroad journey.")
+
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy"}
@@ -217,8 +310,8 @@ def get_universities(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    if not current_user.onboarding_completed:
-        raise HTTPException(status_code=403, detail="Complete onboarding first")
+    # GUARD: Stage 1 users cannot access Discovery data
+    require_stage_minimum(current_user, UserStage.DISCOVERY, "browse universities")
     
     query = db.query(University)
     if country:
@@ -259,6 +352,9 @@ def get_shortlist(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # GUARD: Stage 1 users cannot access Discovery data
+    require_stage_minimum(current_user, UserStage.DISCOVERY, "view shortlist")
+    
     shortlisted = db.query(ShortlistedUniversity).filter(
         ShortlistedUniversity.user_id == current_user.id
     ).all()
@@ -282,11 +378,10 @@ def add_to_shortlist(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    if not current_user.onboarding_completed:
-        raise HTTPException(status_code=403, detail="Complete onboarding first")
-    
-    if current_user.current_stage == UserStage.ONBOARDING:
-        raise HTTPException(status_code=403, detail="Cannot shortlist during onboarding stage")
+    # GUARD: Stage 1 users cannot shortlist
+    require_stage_minimum(current_user, UserStage.DISCOVERY, "add to shortlist")
+    # GUARD: Stage 3/4 users cannot modify shortlist
+    block_shortlist_modifications(current_user, "add new universities to shortlist")
     
     existing = db.query(ShortlistedUniversity).filter(
         ShortlistedUniversity.user_id == current_user.id,
@@ -321,6 +416,11 @@ def lock_university(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # GUARD: Stage 1 users cannot lock
+    require_stage_minimum(current_user, UserStage.DISCOVERY, "lock universities")
+    # GUARD: Must have shortlist to lock
+    require_shortlist_exists(db, current_user)
+    
     shortlist = db.query(ShortlistedUniversity).filter(
         ShortlistedUniversity.id == shortlist_id,
         ShortlistedUniversity.user_id == current_user.id
@@ -328,9 +428,6 @@ def lock_university(
     
     if not shortlist:
         raise HTTPException(status_code=404, detail="Shortlist not found")
-    
-    if current_user.current_stage == UserStage.ONBOARDING:
-        raise HTTPException(status_code=403, detail="Cannot lock during onboarding")
     
     shortlist.is_locked = True
     shortlist.locked_at = datetime.utcnow()
@@ -360,9 +457,23 @@ def lock_university(
 @app.post("/api/shortlist/{shortlist_id}/unlock")
 def unlock_university(
     shortlist_id: int,
+    confirm: bool = False,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # GUARD: Stage 4 users need explicit confirmation to go back
+    regression_warning = warn_stage_regression(current_user, "Unlocking a university")
+    if regression_warning and not confirm:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "CONFIRMATION_REQUIRED",
+                "message": regression_warning["message"],
+                "impact": regression_warning["impact"],
+                "action_required": "Set confirm=true to proceed. This action cannot be undone."
+            }
+        )
+    
     shortlist = db.query(ShortlistedUniversity).filter(
         ShortlistedUniversity.id == shortlist_id,
         ShortlistedUniversity.user_id == current_user.id
@@ -389,7 +500,11 @@ def unlock_university(
     
     db.commit()
     
-    return {"message": "University unlocked. Warning: Application tasks have been removed.", "stage": current_user.current_stage.value}
+    return {
+        "message": "University unlocked. Warning: Application tasks have been removed.",
+        "stage": current_user.current_stage.value,
+        "tasks_deleted": True
+    }
 
 @app.delete("/api/shortlist/{shortlist_id}")
 def remove_from_shortlist(
@@ -397,6 +512,9 @@ def remove_from_shortlist(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # GUARD: Stage 3/4 users cannot modify shortlist
+    block_shortlist_modifications(current_user, "remove universities from shortlist")
+    
     shortlist = db.query(ShortlistedUniversity).filter(
         ShortlistedUniversity.id == shortlist_id,
         ShortlistedUniversity.user_id == current_user.id
@@ -427,8 +545,8 @@ def create_task(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    if current_user.current_stage != UserStage.APPLICATION:
-        raise HTTPException(status_code=403, detail="Tasks can only be created in APPLICATION stage")
+    # GUARD: Tasks can only be created in APPLICATION stage
+    require_stage_minimum(current_user, UserStage.APPLICATION, "create application tasks")
     
     task = Task(
         user_id=current_user.id,
