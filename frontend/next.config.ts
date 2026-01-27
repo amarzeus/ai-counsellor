@@ -9,7 +9,12 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  allowedDevOrigins: ['*'],
+  allowedDevOrigins: [
+    '*.replit.dev',
+    '*.worf.replit.dev',
+    '127.0.0.1:5000',
+    'localhost:5000',
+  ],
 };
 
 export default nextConfig;

@@ -26,7 +26,12 @@ app = FastAPI(title="AI Counsellor API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+        "https://*.replit.dev",
+        "https://*.worf.replit.dev",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -427,6 +432,9 @@ def create_task(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    if current_user.current_stage != UserStage.APPLICATION:
+        raise HTTPException(status_code=403, detail="Tasks can only be created in APPLICATION stage")
+    
     task = Task(
         user_id=current_user.id,
         title=task_data.title,
