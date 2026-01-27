@@ -146,6 +146,11 @@ def categorize_university(university: dict, user_profile: dict) -> tuple:
 def build_context(user_data: dict, profile: dict, universities: list, shortlisted: list, tasks: list) -> str:
     profile_strength = analyze_profile_strength(profile) if profile else {}
     
+    budget = profile.get('budget_per_year')
+    budget_str = f"${budget:,}/year" if budget else "Not specified"
+    countries = profile.get('preferred_countries', []) or []
+    countries_str = ', '.join(countries) if countries else 'Not specified'
+    
     context = f"""
 ## Current User Context
 
@@ -155,15 +160,15 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
 - Onboarding Completed: {user_data.get('onboarding_completed', False)}
 
 ### Profile
-- Education: {profile.get('current_education_level', 'Not provided')} in {profile.get('degree_major', 'Not provided')}
-- GPA: {profile.get('gpa', 'Not provided')}
-- Target Degree: {profile.get('intended_degree', 'Not provided')} in {profile.get('field_of_study', 'Not provided')}
-- Target Countries: {', '.join(profile.get('preferred_countries', []) or ['Not specified'])}
-- Budget: ${profile.get('budget_per_year', 'Not specified'):,}/year
-- Funding: {profile.get('funding_plan', 'Not specified')}
-- IELTS/TOEFL: {profile.get('ielts_toefl_status', 'NOT_STARTED')}
-- GRE/GMAT: {profile.get('gre_gmat_status', 'NOT_STARTED')}
-- SOP Status: {profile.get('sop_status', 'NOT_STARTED')}
+- Education: {profile.get('current_education_level') or 'Not provided'} in {profile.get('degree_major') or 'Not provided'}
+- GPA: {profile.get('gpa') or 'Not provided'}
+- Target Degree: {profile.get('intended_degree') or 'Not provided'} in {profile.get('field_of_study') or 'Not provided'}
+- Target Countries: {countries_str}
+- Budget: {budget_str}
+- Funding: {profile.get('funding_plan') or 'Not specified'}
+- IELTS/TOEFL: {profile.get('ielts_toefl_status') or 'NOT_STARTED'}
+- GRE/GMAT: {profile.get('gre_gmat_status') or 'NOT_STARTED'}
+- SOP Status: {profile.get('sop_status') or 'NOT_STARTED'}
 
 ### Profile Strength
 - Academics: {profile_strength.get('academics', 'Unknown')}
