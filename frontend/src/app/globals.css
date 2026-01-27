@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.stage-badge {
+  @apply px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.stage-onboarding {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.stage-discovery {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.stage-locked {
+  @apply bg-purple-100 text-purple-800;
+}
+
+.stage-application {
+  @apply bg-green-100 text-green-800;
+}
+
+.category-dream {
+  @apply bg-purple-100 text-purple-800 border-purple-300;
+}
+
+.category-target {
+  @apply bg-blue-100 text-blue-800 border-blue-300;
+}
+
+.category-safe {
+  @apply bg-green-100 text-green-800 border-green-300;
+}
