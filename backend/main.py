@@ -19,6 +19,7 @@ from schemas import (
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 from universities_data import UNIVERSITIES
 from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university
+from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 
 Base.metadata.create_all(bind=engine)
 
@@ -39,11 +40,64 @@ def seed_universities(db: Session):
             db.add(uni)
         db.commit()
 
+def seed_demo_users(db: Session):
+    """Create demo users with weak/average/strong profiles for demo purposes"""
+    created = []
+    for profile_type, data in DEMO_PROFILES.items():
+        existing = db.query(User).filter(User.email == data["email"]).first()
+        if existing:
+            created.append(f"{profile_type}: already exists")
+            continue
+        
+        user = User(
+            email=data["email"],
+            password_hash=get_password_hash(data["password"]),
+            full_name=data["full_name"],
+            current_stage=UserStage.DISCOVERY,
+            onboarding_completed=True
+        )
+        db.add(user)
+        db.flush()
+        
+        profile_data = data["profile"]
+        profile = UserProfile(
+            user_id=user.id,
+            current_education_level=profile_data["current_education_level"],
+            degree_major=profile_data["degree_major"],
+            graduation_year=profile_data["graduation_year"],
+            gpa=profile_data["gpa"],
+            intended_degree=profile_data["intended_degree"],
+            field_of_study=profile_data["field_of_study"],
+            target_intake_year=profile_data["target_intake_year"],
+            preferred_countries=profile_data["preferred_countries"],
+            budget_per_year=profile_data["budget_per_year"],
+            funding_plan=profile_data["funding_plan"],
+            ielts_toefl_status=profile_data["ielts_toefl_status"],
+            gre_gmat_status=profile_data["gre_gmat_status"],
+            sop_status=profile_data["sop_status"]
+        )
+        db.add(profile)
+        created.append(f"{profile_type}: {data['email']} created")
+    
+    db.commit()
+    return created
+
 @app.on_event("startup")
 def startup_event():
     db = next(get_db())
     seed_universities(db)
+    seed_demo_users(db)
     db.close()
+
+@app.post("/api/seed-demo")
+def seed_demo_endpoint(db: Session = Depends(get_db)):
+    """Manually seed demo users (useful for resetting demo data)"""
+    results = seed_demo_users(db)
+    return {
+        "message": "Demo users seeded",
+        "results": results,
+        "credentials": DEMO_CREDENTIALS
+    }
 
 # ============================================================
 # STAGE GUARDS - Enforce strict stage-based access control
