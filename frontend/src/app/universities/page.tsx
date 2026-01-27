@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
-  Building2, DollarSign, TrendingUp, Lock, Unlock, Plus, Check, X,
-  Star, Target, Shield, AlertTriangle
+  Building2, Lock, Unlock, X,
+  Star, Target, Shield
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Navbar from "@/components/Navbar";
+import UniversityCard from "@/components/UniversityCard";
+import LockConfirmModal from "@/components/LockConfirmModal";
 import { universityApi, shortlistApi, University, Shortlist } from "@/lib/api";
 import { useStore } from "@/lib/store";
 
@@ -19,6 +21,8 @@ export default function UniversitiesPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "shortlist">("all");
   const [countryFilter, setCountryFilter] = useState<string>("");
+  const [lockModalOpen, setLockModalOpen] = useState(false);
+  const [selectedForLock, setSelectedForLock] = useState<Shortlist | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -69,10 +73,15 @@ export default function UniversitiesPage() {
     }
   };
 
-  const handleLock = async (shortlistItem: Shortlist) => {
+  const openLockModal = (shortlistItem: Shortlist) => {
+    setSelectedForLock(shortlistItem);
+    setLockModalOpen(true);
+  };
+
+  const handleLock = async () => {
+    if (!selectedForLock) return;
     try {
-      await shortlistApi.lock(shortlistItem.id);
-      toast.success(`${shortlistItem.university.name} locked! You can now access application guidance.`);
+      await shortlistApi.lock(selectedForLock.id);
       fetchData();
       
       const userStr = localStorage.getItem("user");
@@ -84,6 +93,7 @@ export default function UniversitiesPage() {
       }
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to lock university");
+      throw error;
     }
   };
 
@@ -211,92 +221,14 @@ export default function UniversitiesPage() {
         )}
 
         {activeTab === "all" ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUniversities.map((uni) => (
-              <div
+              <UniversityCard
                 key={uni.id}
-                className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{uni.name}</h3>
-                    <p className="text-sm text-gray-500">{uni.country}</p>
-                  </div>
-                  {uni.category && (
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getCategoryColor(
-                        uni.category
-                      )}`}
-                    >
-                      {getCategoryIcon(uni.category)}
-                      {uni.category}
-                    </span>
-                  )}
-                </div>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <DollarSign className="w-4 h-4 text-gray-400" />
-                    <span>${uni.tuition_per_year?.toLocaleString()}/year</span>
-                    {uni.cost_level && (
-                      <span className="text-gray-400">({uni.cost_level})</span>
-                    )}
-                  </div>
-                  
-                  {uni.ranking && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <TrendingUp className="w-4 h-4 text-gray-400" />
-                      <span>Rank #{uni.ranking}</span>
-                    </div>
-                  )}
-                  
-                  {uni.acceptance_chance && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-gray-400" />
-                      <span>Acceptance: {uni.acceptance_chance}</span>
-                    </div>
-                  )}
-                </div>
-
-                {uni.fit_reason && (
-                  <div className="mb-3 p-3 bg-green-50 rounded-lg">
-                    <p className="text-xs text-green-700">
-                      <strong>Why it fits:</strong> {uni.fit_reason}
-                    </p>
-                  </div>
-                )}
-
-                {uni.risk_reason && (
-                  <div className="mb-3 p-3 bg-yellow-50 rounded-lg">
-                    <p className="text-xs text-yellow-700 flex items-start gap-1">
-                      <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                      <span><strong>Risk:</strong> {uni.risk_reason}</span>
-                    </p>
-                  </div>
-                )}
-
-                <button
-                  onClick={() => handleShortlist(uni)}
-                  disabled={isShortlisted(uni.id)}
-                  className={`w-full py-2 rounded-lg font-medium flex items-center justify-center gap-2 ${
-                    isShortlisted(uni.id)
-                      ? "bg-gray-100 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-600 text-white hover:bg-blue-700"
-                  }`}
-                >
-                  {isShortlisted(uni.id) ? (
-                    <>
-                      <Check className="w-4 h-4" />
-                      Shortlisted
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-4 h-4" />
-                      Add to Shortlist
-                    </>
-                  )}
-                </button>
-              </div>
+                university={uni}
+                isShortlisted={isShortlisted(uni.id)}
+                onShortlist={() => handleShortlist(uni)}
+              />
             ))}
           </div>
         ) : (
@@ -367,11 +299,11 @@ export default function UniversitiesPage() {
                       ) : (
                         <>
                           <button
-                            onClick={() => handleLock(item)}
-                            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
+                            onClick={() => openLockModal(item)}
+                            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 flex items-center gap-2 shadow-lg shadow-purple-500/30 font-semibold transition-all hover:scale-105"
                           >
                             <Lock className="w-4 h-4" />
-                            Lock
+                            Lock University
                           </button>
                           <button
                             onClick={() => handleRemove(item)}
@@ -397,6 +329,16 @@ export default function UniversitiesPage() {
           </div>
         )}
       </main>
+
+      <LockConfirmModal
+        universityName={selectedForLock?.university.name || ""}
+        isOpen={lockModalOpen}
+        onClose={() => {
+          setLockModalOpen(false);
+          setSelectedForLock(null);
+        }}
+        onConfirm={handleLock}
+      />
     </div>
   );
 }
