@@ -645,28 +645,195 @@ async def chat_with_counsellor(
         task_list
     )
     
+    # ============================================================
+    # EXECUTE AI TOOL CALLS → Backend Actions → DB Updates
+    # ============================================================
+    # Flow: Gemini JSON → Validate Stage → Execute → DB Update → Confirm
+    # ============================================================
     actions_taken = []
+    actions_blocked = []
+    
     for action in response.get('actions', []):
         action_type = action.get('type')
         params = action.get('params', {})
         
+        # ------------------------------------------------------------
+        # TOOL: shortlist_university
+        # JSON: {"type": "shortlist_university", "params": {"university_id": 1, "category": "TARGET"}}
+        # Requires: DISCOVERY stage, onboarding complete
+        # ------------------------------------------------------------
         if action_type == 'shortlist_university':
             uni_id = params.get('university_id')
             category = params.get('category', 'TARGET')
+            
+            # Stage check: Must be in DISCOVERY, not LOCKED/APPLICATION
+            if current_user.current_stage == UserStage.ONBOARDING:
+                actions_blocked.append({'type': action_type, 'reason': 'Complete onboarding first'})
+                continue
+            if current_user.current_stage in [UserStage.LOCKED, UserStage.APPLICATION]:
+                actions_blocked.append({'type': action_type, 'reason': 'Cannot modify shortlist after locking'})
+                continue
+            
             existing = db.query(ShortlistedUniversity).filter(
                 ShortlistedUniversity.user_id == current_user.id,
                 ShortlistedUniversity.university_id == uni_id
             ).first()
-            if not existing and current_user.onboarding_completed:
-                shortlist = ShortlistedUniversity(
-                    user_id=current_user.id,
-                    university_id=uni_id,
-                    category=category
-                )
-                db.add(shortlist)
-                actions_taken.append({'type': 'shortlist_university', 'university_id': uni_id})
+            
+            if existing:
+                actions_blocked.append({'type': action_type, 'reason': 'Already shortlisted'})
+                continue
+            
+            uni = db.query(University).filter(University.id == uni_id).first()
+            if not uni:
+                actions_blocked.append({'type': action_type, 'reason': 'University not found'})
+                continue
+            
+            shortlist = ShortlistedUniversity(
+                user_id=current_user.id,
+                university_id=uni_id,
+                category=category
+            )
+            db.add(shortlist)
+            db.flush()  # Get ID immediately
+            actions_taken.append({
+                'type': 'shortlist_university',
+                'university_id': uni_id,
+                'university_name': uni.name,
+                'category': category,
+                'shortlist_id': shortlist.id,
+                'confirmed': True
+            })
         
+        # ------------------------------------------------------------
+        # TOOL: lock_university
+        # JSON: {"type": "lock_university", "params": {"university_id": 1}}
+        # Requires: DISCOVERY stage, university in shortlist
+        # Result: Moves user to APPLICATION stage, creates tasks
+        # ------------------------------------------------------------
+        elif action_type == 'lock_university':
+            uni_id = params.get('university_id')
+            
+            # Stage check
+            if current_user.current_stage == UserStage.ONBOARDING:
+                actions_blocked.append({'type': action_type, 'reason': 'Complete onboarding first'})
+                continue
+            
+            # Find in shortlist
+            shortlist = db.query(ShortlistedUniversity).filter(
+                ShortlistedUniversity.user_id == current_user.id,
+                ShortlistedUniversity.university_id == uni_id
+            ).first()
+            
+            if not shortlist:
+                actions_blocked.append({'type': action_type, 'reason': 'University not in shortlist. Add to shortlist first.'})
+                continue
+            
+            if shortlist.is_locked:
+                actions_blocked.append({'type': action_type, 'reason': 'Already locked'})
+                continue
+            
+            # Execute lock
+            shortlist.is_locked = True
+            shortlist.locked_at = datetime.utcnow()
+            
+            # Stage transition: Move to APPLICATION
+            previous_stage = current_user.current_stage.value
+            current_user.current_stage = UserStage.APPLICATION
+            
+            # Auto-generate tasks
+            uni = db.query(University).filter(University.id == uni_id).first()
+            generated_tasks = []
+            task_templates = [
+                (f"Research {uni.name} admission requirements", 1),
+                (f"Prepare SOP for {uni.name}", 2),
+                (f"Gather documents for {uni.name}", 3),
+                (f"Check {uni.name} application deadline", 1),
+            ]
+            for title, priority in task_templates:
+                task = Task(
+                    user_id=current_user.id,
+                    shortlisted_university_id=shortlist.id,
+                    title=title,
+                    priority=priority
+                )
+                db.add(task)
+                generated_tasks.append(title)
+            
+            actions_taken.append({
+                'type': 'lock_university',
+                'university_id': uni_id,
+                'university_name': uni.name,
+                'stage_changed': True,
+                'previous_stage': previous_stage,
+                'new_stage': 'APPLICATION',
+                'tasks_created': len(generated_tasks),
+                'confirmed': True
+            })
+        
+        # ------------------------------------------------------------
+        # TOOL: unlock_university
+        # JSON: {"type": "unlock_university", "params": {"university_id": 1}}
+        # Warning: Deletes tasks, may regress stage
+        # ------------------------------------------------------------
+        elif action_type == 'unlock_university':
+            uni_id = params.get('university_id')
+            
+            shortlist = db.query(ShortlistedUniversity).filter(
+                ShortlistedUniversity.user_id == current_user.id,
+                ShortlistedUniversity.university_id == uni_id
+            ).first()
+            
+            if not shortlist:
+                actions_blocked.append({'type': action_type, 'reason': 'University not in shortlist'})
+                continue
+            
+            if not shortlist.is_locked:
+                actions_blocked.append({'type': action_type, 'reason': 'University is not locked'})
+                continue
+            
+            # Execute unlock
+            shortlist.is_locked = False
+            shortlist.locked_at = None
+            
+            # Delete associated tasks
+            deleted_tasks = db.query(Task).filter(
+                Task.shortlisted_university_id == shortlist.id
+            ).delete()
+            
+            # Check if any other locked universities remain
+            other_locked = db.query(ShortlistedUniversity).filter(
+                ShortlistedUniversity.user_id == current_user.id,
+                ShortlistedUniversity.is_locked == True,
+                ShortlistedUniversity.id != shortlist.id
+            ).count()
+            
+            stage_regressed = False
+            if other_locked == 0:
+                current_user.current_stage = UserStage.DISCOVERY
+                stage_regressed = True
+            
+            uni = db.query(University).filter(University.id == uni_id).first()
+            actions_taken.append({
+                'type': 'unlock_university',
+                'university_id': uni_id,
+                'university_name': uni.name if uni else 'Unknown',
+                'tasks_deleted': deleted_tasks,
+                'stage_regressed': stage_regressed,
+                'new_stage': current_user.current_stage.value,
+                'confirmed': True
+            })
+        
+        # ------------------------------------------------------------
+        # TOOL: create_task
+        # JSON: {"type": "create_task", "params": {"title": "...", "description": "...", "priority": 1}}
+        # Requires: APPLICATION stage
+        # ------------------------------------------------------------
         elif action_type == 'create_task':
+            # Stage check
+            if current_user.current_stage != UserStage.APPLICATION:
+                actions_blocked.append({'type': action_type, 'reason': 'Tasks can only be created in APPLICATION stage'})
+                continue
+            
             task = Task(
                 user_id=current_user.id,
                 title=params.get('title', 'New Task'),
@@ -674,15 +841,59 @@ async def chat_with_counsellor(
                 priority=params.get('priority', 1)
             )
             db.add(task)
-            actions_taken.append({'type': 'create_task', 'title': params.get('title')})
+            db.flush()
+            actions_taken.append({
+                'type': 'create_task',
+                'task_id': task.id,
+                'title': task.title,
+                'confirmed': True
+            })
+        
+        # ------------------------------------------------------------
+        # TOOL: update_task
+        # JSON: {"type": "update_task", "params": {"task_id": 1, "status": "COMPLETED"}}
+        # ------------------------------------------------------------
+        elif action_type == 'update_task':
+            task_id = params.get('task_id')
+            new_status = params.get('status', 'IN_PROGRESS')
+            
+            task = db.query(Task).filter(
+                Task.id == task_id,
+                Task.user_id == current_user.id
+            ).first()
+            
+            if not task:
+                actions_blocked.append({'type': action_type, 'reason': 'Task not found'})
+                continue
+            
+            try:
+                task.status = TaskStatus(new_status)
+                actions_taken.append({
+                    'type': 'update_task',
+                    'task_id': task_id,
+                    'new_status': new_status,
+                    'confirmed': True
+                })
+            except ValueError:
+                actions_blocked.append({'type': action_type, 'reason': f'Invalid status: {new_status}'})
     
     db.commit()
+    db.refresh(current_user)  # Refresh to get updated stage
+    
+    # Build comprehensive action summary for response
+    action_summary = None
+    if actions_taken or actions_blocked:
+        action_summary = {
+            'executed': actions_taken,
+            'blocked': actions_blocked,
+            'final_stage': current_user.current_stage.value
+        }
     
     ai_message = ChatMessage(
         user_id=current_user.id,
         role="assistant",
         content=response.get('message', 'I apologize, but I could not process your request.'),
-        actions_taken=actions_taken if actions_taken else None
+        actions_taken=action_summary
     )
     db.add(ai_message)
     db.commit()

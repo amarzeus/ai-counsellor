@@ -156,7 +156,7 @@ class ChatMessageResponse(BaseModel):
     id: int
     role: str
     content: str
-    actions_taken: Optional[List[dict]] = None
+    actions_taken: Optional[dict] = None  # {executed: [...], blocked: [...], final_stage: str}
     created_at: datetime
     
     class Config:
