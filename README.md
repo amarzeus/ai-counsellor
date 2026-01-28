@@ -5,10 +5,27 @@
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.128-009688.svg)](https://fastapi.tiangolo.com/)
 [![Gemini AI](https://img.shields.io/badge/Gemini-AI-4285F4.svg)](https://ai.google.dev/)
+[![Vercel](https://img.shields.io/badge/Vercel-Deployed-black.svg)](https://ai-counsellor-plum.vercel.app)
 
 **A stage-based decision system for study-abroad guidance. Not a chatbot — a decision engine.**
 
-[Live Demo](https://ai-counsellor.vercel.app) | [Documentation](docs/CICD.md) | [Report Bug](https://github.com/amarzeus/ai-counsellor/issues)
+<p align="center">
+  <a href="https://ai-counsellor-plum.vercel.app">Live Demo</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#demo-credentials">Demo Login</a> •
+  <a href="docs/CICD.md">CI/CD Docs</a> •
+  <a href="https://github.com/amarzeus/ai-counsellor/issues">Report Bug</a>
+</p>
+
+---
+
+## Live URLs
+
+| Service | URL | Status |
+|---------|-----|--------|
+| **Frontend** | [ai-counsellor-plum.vercel.app](https://ai-counsellor-plum.vercel.app) | Live |
+| **Backend API** | [ai-counsellor-backend-wjlf.onrender.com](https://ai-counsellor-backend-wjlf.onrender.com) | Live |
+| **Health Check** | [/health](https://ai-counsellor-backend-wjlf.onrender.com/health) | Active |
 
 ---
 
@@ -49,6 +66,20 @@ AI Counsellor enforces a **4-stage journey** that forces clarity:
 
 ---
 
+## Demo Credentials
+
+Try the live app with pre-configured profiles:
+
+| Profile | Email | Password | GPA | Budget | AI Behavior |
+|---------|-------|----------|-----|--------|-------------|
+| **Weak** | `weak@demo.com` | `Demo@123` | 2.8 | $25k | Most unis = DREAM |
+| **Average** | `average@demo.com` | `Demo@123` | 3.4 | $45k | Mix of TARGET + SAFE |
+| **Strong** | `strong@demo.com` | `Demo@123` | 3.9 | $70k | Top schools reachable |
+
+**Try it now:** [ai-counsellor-plum.vercel.app](https://ai-counsellor-plum.vercel.app)
+
+---
+
 ## How It Works
 
 ### 1. Onboarding
@@ -76,21 +107,17 @@ System generates personalized tasks: deadlines, document requirements, SOP guida
 | **Backend** | FastAPI (Python 3.11) |
 | **Database** | PostgreSQL |
 | **AI** | Google Gemini API with function calling |
-| **Deployment** | Vercel (frontend) + Replit/Railway (backend) |
+| **Hosting** | Vercel (frontend) + Render (backend) |
 
 ---
 
 ## Quick Start
 
-### Option 1: One-Click Deploy
+### Option 1: Use the Live Demo
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/amarzeus/ai-counsellor&env=NEXT_PUBLIC_API_URL&envDescription=Backend%20API%20URL)
+Visit [ai-counsellor-plum.vercel.app](https://ai-counsellor-plum.vercel.app) and login with demo credentials above.
 
-### Option 2: Run on Replit
-
-[![Run on Replit](https://replit.com/badge/github/amarzeus/ai-counsellor)](https://replit.com/@amarzeus/ai-counsellor)
-
-### Option 3: Docker Compose (Local)
+### Option 2: Docker Compose (Local)
 
 ```bash
 git clone https://github.com/amarzeus/ai-counsellor.git
@@ -103,7 +130,7 @@ docker-compose up -d
 open http://localhost:5000
 ```
 
-### Option 4: Manual Setup
+### Option 3: Manual Setup
 
 ```bash
 # Backend
@@ -116,18 +143,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
----
-
-## Demo Credentials
-
-Try the app with pre-configured profiles:
-
-| Profile | Email | Password | GPA | Budget | AI Behavior |
-|---------|-------|----------|-----|--------|-------------|
-| **Weak** | `weak@demo.com` | `Demo@123` | 2.8 | $25k | Most unis = DREAM |
-| **Average** | `average@demo.com` | `Demo@123` | 3.4 | $45k | Mix of TARGET + SAFE |
-| **Strong** | `strong@demo.com` | `Demo@123` | 3.9 | $70k | Top schools reachable |
 
 ---
 
@@ -147,25 +162,14 @@ ai-counsellor/
 ├── frontend/
 │   ├── src/app/             # Next.js app router pages
 │   ├── src/components/      # React components
-│   ├── src/lib/             # API client & store
-│   └── package.json         # Node dependencies
+│   └── src/lib/             # API client & store
 ├── docs/
 │   └── CICD.md              # CI/CD pipeline documentation
 ├── .github/workflows/       # GitHub Actions CI/CD
 ├── docker-compose.yml       # Local development setup
-└── vercel.json              # Vercel deployment config
+├── render.yaml              # Render deployment config
+└── README.md
 ```
-
----
-
-## Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `DATABASE_URL` | PostgreSQL connection string | Yes |
-| `SESSION_SECRET` | JWT signing secret | Yes |
-| `GEMINI_API_KEY` | Google Gemini API key | Yes |
-| `NEXT_PUBLIC_API_URL` | Backend API URL (for frontend) | Yes |
 
 ---
 
@@ -230,9 +234,45 @@ User: "Lock University of Toronto for my application"
 
 ---
 
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `SESSION_SECRET` | JWT signing secret | Yes |
+| `GEMINI_API_KEY` | Google Gemini API key | Yes |
+| `NEXT_PUBLIC_API_URL` | Backend API URL (for frontend) | Yes |
+
+---
+
+## Deployment
+
+### Current Production
+
+| Component | Platform | URL |
+|-----------|----------|-----|
+| Frontend | Vercel | [ai-counsellor-plum.vercel.app](https://ai-counsellor-plum.vercel.app) |
+| Backend | Render | [ai-counsellor-backend-wjlf.onrender.com](https://ai-counsellor-backend-wjlf.onrender.com) |
+
+### Self-Deploy
+
+**Frontend (Vercel):**
+1. Import repo at [vercel.com/new](https://vercel.com/new)
+2. Set root directory to `frontend`
+3. Add `NEXT_PUBLIC_API_URL`
+4. Deploy
+
+**Backend (Render):**
+1. Create new web service at [render.com](https://render.com)
+2. Connect repo, set root to `backend`
+3. Add `DATABASE_URL`, `SESSION_SECRET`, `GEMINI_API_KEY`
+4. Deploy
+
+---
+
 ## CI/CD Pipeline
 
-Automated testing and deployment on every push:
+Automated testing on every push:
 
 ```
 Backend CI ──┬──▶ Docker Build ──▶ Deploy
@@ -240,24 +280,7 @@ Backend CI ──┬──▶ Docker Build ──▶ Deploy
 Frontend CI ─┘
 ```
 
-See [docs/CICD.md](docs/CICD.md) for detailed pipeline documentation.
-
----
-
-## Deployment
-
-### Frontend (Vercel)
-1. Import repo at [vercel.com/new](https://vercel.com/new)
-2. Set root directory to `frontend`
-3. Add environment variable: `NEXT_PUBLIC_API_URL=https://your-backend-url.com`
-4. Deploy
-
-### Backend (Railway/Render/Replit)
-1. Create new project
-2. Connect GitHub repo
-3. Set root directory to `backend`
-4. Add environment variables: `DATABASE_URL`, `SESSION_SECRET`, `GEMINI_API_KEY`
-5. Deploy
+See [docs/CICD.md](docs/CICD.md) for detailed documentation.
 
 ---
 
@@ -277,11 +300,11 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-## Acknowledgments
+## Links
 
-- Built with [Gemini AI](https://ai.google.dev/) for intelligent decision-making
-- Powered by [FastAPI](https://fastapi.tiangolo.com/) and [Next.js](https://nextjs.org/)
-- Developed on [Replit](https://replit.com/)
+- **Live App**: [ai-counsellor-plum.vercel.app](https://ai-counsellor-plum.vercel.app)
+- **GitHub**: [github.com/amarzeus/ai-counsellor](https://github.com/amarzeus/ai-counsellor)
+- **API Health**: [ai-counsellor-backend-wjlf.onrender.com/health](https://ai-counsellor-backend-wjlf.onrender.com/health)
 
 ---
 
