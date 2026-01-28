@@ -48,6 +48,8 @@ async def google_login(request: Request):
     if "onrender.com" in str(request.base_url) or "vercel.app" in str(request.base_url):
         redirect_uri = redirect_uri.replace("http://", "https://")
     
+    print(f"DEBUG: Generated Google OAuth Redirect URI: {redirect_uri}")
+    
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=redirect_uri,
