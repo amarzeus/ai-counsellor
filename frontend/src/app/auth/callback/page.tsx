@@ -18,7 +18,7 @@ export default function AuthCallbackPage() {
     if (token) {
       localStorage.setItem("token", token);
       
-      authApi.getProfile()
+      authApi.getMe()
         .then((response) => {
           const user = response.data;
           localStorage.setItem("user", JSON.stringify(user));
