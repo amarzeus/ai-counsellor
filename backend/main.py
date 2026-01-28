@@ -33,6 +33,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def root():
+    """Welcome endpoint for API visitors"""
+    return {
+        "name": "AI Counsellor API",
+        "version": "1.0.0",
+        "description": "A stage-based decision system for study-abroad guidance",
+        "status": "running",
+        "endpoints": {
+            "health": "/health",
+            "docs": "/docs",
+            "auth": "/api/auth/login",
+            "universities": "/api/universities",
+            "counsellor": "/api/counsellor/chat"
+        },
+        "demo_accounts": {
+            "weak_profile": "weak@demo.com",
+            "average_profile": "average@demo.com", 
+            "strong_profile": "strong@demo.com",
+            "password": "Demo@123"
+        },
+        "frontend": "https://ai-counsellor-plum.vercel.app",
+        "github": "https://github.com/amarzeus/ai-counsellor"
+    }
+
 @app.get("/health")
 def health_check():
     """Health check endpoint for Docker/Kubernetes"""
