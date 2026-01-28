@@ -44,7 +44,9 @@ async def google_login(request: Request):
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
     
     redirect_uri = str(request.url_for("google_callback"))
-    # redirect_uri = redirect_uri.replace("http://", "https://")
+    # Ensure usage of HTTPS in production environments (like Render)
+    if "onrender.com" in str(request.base_url) or "vercel.app" in str(request.base_url):
+        redirect_uri = redirect_uri.replace("http://", "https://")
     
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
@@ -67,7 +69,9 @@ async def google_callback(request: Request, code: str = None):
     token_endpoint = google_provider_cfg["token_endpoint"]
     
     redirect_uri = str(request.url_for("google_callback"))
-    # redirect_uri = redirect_uri.replace("http://", "https://")
+    # Ensure usage of HTTPS in production environments (like Render)
+    if "onrender.com" in str(request.base_url) or "vercel.app" in str(request.base_url):
+        redirect_uri = redirect_uri.replace("http://", "https://")
     
     authorization_response = str(request.url).replace("http://", "https://")
     
