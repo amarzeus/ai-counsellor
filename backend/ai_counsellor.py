@@ -6,14 +6,20 @@ from google.genai import types
 
 AI_INTEGRATIONS_GEMINI_API_KEY = os.environ.get("AI_INTEGRATIONS_GEMINI_API_KEY")
 AI_INTEGRATIONS_GEMINI_BASE_URL = os.environ.get("AI_INTEGRATIONS_GEMINI_BASE_URL")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
-client = genai.Client(
-    api_key=AI_INTEGRATIONS_GEMINI_API_KEY,
-    http_options={
-        'api_version': '',
-        'base_url': AI_INTEGRATIONS_GEMINI_BASE_URL
-    }
-)
+if AI_INTEGRATIONS_GEMINI_API_KEY and AI_INTEGRATIONS_GEMINI_BASE_URL:
+    client = genai.Client(
+        api_key=AI_INTEGRATIONS_GEMINI_API_KEY,
+        http_options={
+            'api_version': '',
+            'base_url': AI_INTEGRATIONS_GEMINI_BASE_URL
+        }
+    )
+elif GEMINI_API_KEY:
+    client = genai.Client(api_key=GEMINI_API_KEY)
+else:
+    client = None
 
 SYSTEM_PROMPT = """You are an AI Counsellor for a guided study-abroad platform.
 
@@ -212,6 +218,13 @@ async def get_counsellor_response(
     shortlisted: list,
     tasks: list
 ) -> dict:
+    if client is None:
+        return {
+            "message": "AI Counsellor is not configured. Please set GEMINI_API_KEY environment variable.",
+            "actions": [],
+            "suggested_universities": []
+        }
+    
     context = build_context(user_data, profile or {}, universities, shortlisted, tasks)
     
     full_prompt = f"""{SYSTEM_PROMPT}
@@ -226,7 +239,7 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
     
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash",
             contents=full_prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json"
