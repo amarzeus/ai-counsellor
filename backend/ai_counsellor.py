@@ -135,14 +135,14 @@ def categorize_university(university: dict, user_profile: dict) -> tuple:
     uni_min_gpa = university.get('min_gpa') or 3.0
     uni_tuition = university.get('tuition_per_year') or 30000
     
-    if uni_min_gpa > user_gpa + 0.3 or uni_tuition > user_budget * 1.2:
+    if uni_min_gpa > user_gpa + 0.3 or uni_tuition > user_budget:
         category = 'DREAM'
         if uni_min_gpa > user_gpa + 0.3:
             risk = f"GPA requirement ({uni_min_gpa}) is higher than your current GPA ({user_gpa})"
         else:
             risk = f"Tuition (${uni_tuition:,}) exceeds your budget (${user_budget:,})"
         fit = "Prestigious program aligned with your goals"
-    elif uni_min_gpa <= user_gpa - 0.2 and uni_tuition <= user_budget:
+    elif uni_min_gpa < user_gpa - 0.2 and uni_tuition <= user_budget:
         category = 'SAFE'
         risk = "Lower competition may mean less networking opportunities"
         fit = f"Your GPA ({user_gpa}) exceeds requirements ({uni_min_gpa}) and fits budget"
