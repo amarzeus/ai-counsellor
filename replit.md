@@ -50,9 +50,18 @@ The project runs two workflows:
 - SESSION_SECRET - JWT secret key
 - AI_INTEGRATIONS_GEMINI_API_KEY - Gemini API (auto-configured)
 - AI_INTEGRATIONS_GEMINI_BASE_URL - Gemini API URL (auto-configured)
+- GOOGLE_OAUTH_CLIENT_ID - Google OAuth client ID
+- GOOGLE_OAUTH_CLIENT_SECRET - Google OAuth client secret
+
+## Google OAuth Setup
+1. Go to https://console.cloud.google.com/apis/credentials
+2. Create/edit OAuth 2.0 Client ID
+3. Add redirect URI: `https://<REPLIT_DEV_DOMAIN>/api/auth/google/callback`
 
 ## Recent Changes
 - Initial setup of full-stack application
 - Implemented all 4 stages of the state machine
 - Created AI Counsellor with Gemini integration
 - Built dashboard, universities, and tasks pages
+- Added Google OAuth authentication (Jan 2026)
+- Added retry logic for Gemini API rate limits

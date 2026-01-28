@@ -20,6 +20,7 @@ from auth import get_password_hash, verify_password, create_access_token, get_cu
 from universities_data import UNIVERSITIES
 from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
+from google_oauth import google_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -28,10 +29,12 @@ app = FastAPI(title="AI Counsellor API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(google_router)
 
 @app.get("/")
 def root():

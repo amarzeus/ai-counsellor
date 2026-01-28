@@ -42,6 +42,7 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=False)
+    google_id = Column(String(255), unique=True, nullable=True)
     current_stage = Column(Enum(UserStage), default=UserStage.ONBOARDING)
     onboarding_completed = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
