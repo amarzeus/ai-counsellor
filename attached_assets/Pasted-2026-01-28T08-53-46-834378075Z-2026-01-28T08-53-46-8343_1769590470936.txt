@@ -1,0 +1,50 @@
+2026-01-28T08:53:46.834378075Z            ^^^^^^^^^^^^^^^^^^^^^
+2026-01-28T08:53:46.834380915Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+2026-01-28T08:53:46.834383695Z     result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+2026-01-28T08:53:46.834386486Z                                                   ^^^^^^^^^^^^^^^^^^^^^
+2026-01-28T08:53:46.834389306Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+2026-01-28T08:53:46.834402796Z     return self._execute_internal(
+2026-01-28T08:53:46.834404636Z            ^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-28T08:53:46.834406426Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+2026-01-28T08:53:46.834408126Z     result: Result[Any] = compile_state_cls.orm_execute_statement(
+2026-01-28T08:53:46.834409796Z                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-28T08:53:46.834411576Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+2026-01-28T08:53:46.834413316Z     result = conn.execute(
+2026-01-28T08:53:46.834415076Z              ^^^^^^^^^^^^^
+2026-01-28T08:53:46.834416836Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+2026-01-28T08:53:46.834418507Z     return meth(
+2026-01-28T08:53:46.834420187Z            ^^^^^
+2026-01-28T08:53:46.834421937Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+2026-01-28T08:53:46.834423637Z     return connection._execute_clauseelement(
+2026-01-28T08:53:46.834425357Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-28T08:53:46.834427077Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+2026-01-28T08:53:46.834428807Z     ret = self._execute_context(
+2026-01-28T08:53:46.834430497Z           ^^^^^^^^^^^^^^^^^^^^^^
+2026-01-28T08:53:46.834432197Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+2026-01-28T08:53:46.834433917Z     return self._exec_single_context(
+2026-01-28T08:53:46.834435577Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-01-28T08:53:46.834437277Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+2026-01-28T08:53:46.834438937Z     self._handle_dbapi_exception(
+2026-01-28T08:53:46.834440657Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+2026-01-28T08:53:46.834442347Z     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+2026-01-28T08:53:46.834457748Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+2026-01-28T08:53:46.834460738Z     self.dialect.do_execute(
+2026-01-28T08:53:46.834463418Z   File "/opt/render/project/src/.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+2026-01-28T08:53:46.834465948Z     cursor.execute(statement, parameters)
+2026-01-28T08:53:46.834469128Z sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.google_id does not exist
+2026-01-28T08:53:46.834471918Z LINE 1: ...assword_hash, users.full_name AS users_full_name, users.goog...
+2026-01-28T08:53:46.834473658Z                                                              ^
+2026-01-28T08:53:46.834475248Z 
+2026-01-28T08:53:46.834478978Z [SQL: SELECT users.id AS users_id, users.email AS users_email, users.password_hash AS users_password_hash, users.full_name AS users_full_name, users.google_id AS users_google_id, users.current_stage AS users_current_stage, users.onboarding_completed AS users_onboarding_completed, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+2026-01-28T08:53:46.834482409Z FROM users 
+2026-01-28T08:53:46.834484238Z WHERE users.email = %(email_1)s 
+2026-01-28T08:53:46.834485938Z  LIMIT %(param_1)s]
+2026-01-28T08:53:46.834492089Z [parameters: {'email_1': 'weak@demo.com', 'param_1': 1}]
+2026-01-28T08:53:46.834494009Z (Background on this error at: https://sqlalche.me/e/20/f405)
+2026-01-28T08:53:46.834495629Z 
+2026-01-28T08:53:46.834506559Z ERROR:    Application startup failed. Exiting.
+2026-01-28T08:53:52.908552005Z ==> Exited with status 3
+2026-01-28T08:53:52.915750864Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2026-01-28T08:53:57.43597718Z ==> Running 'cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT'
+2026-01-28T08:53:59.692525303Z ==> No open ports detected, continuing to scan...
+2026-01-28T08:53:59.900351937Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding

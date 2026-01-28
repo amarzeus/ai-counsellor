@@ -115,8 +115,21 @@ def seed_demo_users(db: Session):
     db.commit()
     return created
 
+def run_migrations():
+    """Run database migrations on startup"""
+    from sqlalchemy import text
+    from database import engine
+    
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE"))
+            conn.commit()
+        except Exception as e:
+            print(f"Migration warning (may be expected): {e}")
+
 @app.on_event("startup")
 def startup_event():
+    run_migrations()
     db = next(get_db())
     seed_universities(db)
     seed_demo_users(db)
