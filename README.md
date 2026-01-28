@@ -163,6 +163,26 @@ Every action updates the database. No fake responses.
 | LOCKED | Lock universities, view tasks | Change profile |
 | APPLICATION | Complete tasks, get guidance | Unlock universities |
 
+## CI/CD Pipeline
+
+This project includes a GitHub Actions pipeline that runs on every push and PR:
+
+```
+Backend CI → Frontend CI → Docker Build → Deploy
+   (lint)      (lint)       (images)     (main only)
+      │          │             │
+      └────────────────────────┴─── All run in parallel
+```
+
+**Pipeline Features:**
+- Python linting with Ruff
+- TypeScript type checking
+- Production build verification
+- Docker image build testing
+- Automatic deploy trigger on main
+
+See [docs/CICD.md](docs/CICD.md) for detailed pipeline documentation.
+
 ## Contributing
 
 1. Fork the repository
