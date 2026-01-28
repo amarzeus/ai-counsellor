@@ -33,6 +33,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/health")
+def health_check():
+    """Health check endpoint for Docker/Kubernetes"""
+    return {"status": "healthy", "service": "ai-counsellor-backend"}
+
 def seed_universities(db: Session):
     if db.query(University).count() == 0:
         for uni_data in UNIVERSITIES:
