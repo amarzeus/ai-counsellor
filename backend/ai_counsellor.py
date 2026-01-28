@@ -1,5 +1,7 @@
 import os
 import json
+import time
+import asyncio
 from typing import List, Optional
 from google import genai
 from google.genai import types
@@ -242,37 +244,56 @@ async def get_counsellor_response(
 Respond with valid JSON only. Include a helpful message and any actions to take based on the user's stage and request.
 """
     
-    try:
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=full_prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json"
-            )
-        )
-        
-        response_text = response.text or "{}"
+    max_retries = 3
+    retry_delay = 5  # Start with 5 seconds
+    
+    for attempt in range(max_retries):
         try:
-            result = json.loads(response_text)
-        except json.JSONDecodeError:
-            result = {
-                "message": response_text,
+            response = client.models.generate_content(
+                model=MODEL_NAME,
+                contents=full_prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
+            )
+            
+            response_text = response.text or "{}"
+            try:
+                result = json.loads(response_text)
+            except json.JSONDecodeError:
+                result = {
+                    "message": response_text,
+                    "actions": [],
+                    "suggested_universities": []
+                }
+            
+            if "message" not in result:
+                result["message"] = "I'm here to help you with your study abroad journey."
+            if "actions" not in result:
+                result["actions"] = []
+            if "suggested_universities" not in result:
+                result["suggested_universities"] = []
+                
+            return result
+            
+        except Exception as e:
+            error_str = str(e)
+            # Check if it's a rate limit error (429)
+            if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str or "quota" in error_str.lower():
+                if attempt < max_retries - 1:
+                    # Wait with exponential backoff before retrying
+                    wait_time = retry_delay * (2 ** attempt)
+                    await asyncio.sleep(wait_time)
+                    continue
+            # For non-rate-limit errors or final attempt, return error
+            return {
+                "message": f"I apologize, but I'm having trouble connecting right now. Please try again in a moment.",
                 "actions": [],
                 "suggested_universities": []
             }
-        
-        if "message" not in result:
-            result["message"] = "I'm here to help you with your study abroad journey."
-        if "actions" not in result:
-            result["actions"] = []
-        if "suggested_universities" not in result:
-            result["suggested_universities"] = []
-            
-        return result
-        
-    except Exception as e:
-        return {
-            "message": f"I apologize, but I encountered an issue processing your request. Please try again. Error: {str(e)}",
-            "actions": [],
-            "suggested_universities": []
-        }
+    
+    return {
+        "message": "I'm experiencing high demand right now. Please try again in about 30 seconds.",
+        "actions": [],
+        "suggested_universities": []
+    }
