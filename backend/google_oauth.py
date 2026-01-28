@@ -34,14 +34,17 @@ def get_google_provider_cfg():
 
 @google_router.get("/login")
 async def google_login(request: Request):
-    if not client:
-        raise HTTPException(status_code=500, detail="Google OAuth not configured")
+    if not client or GOOGLE_CLIENT_ID == "YOUR_GOOGLE_CLIENT_ID_HERE":
+        raise HTTPException(
+            status_code=500, 
+            detail="Google OAuth not configured. Please set GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET in backend/.env"
+        )
     
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
     
     redirect_uri = str(request.url_for("google_callback"))
-    redirect_uri = redirect_uri.replace("http://", "https://")
+    # redirect_uri = redirect_uri.replace("http://", "https://")
     
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
@@ -64,7 +67,7 @@ async def google_callback(request: Request, code: str = None):
     token_endpoint = google_provider_cfg["token_endpoint"]
     
     redirect_uri = str(request.url_for("google_callback"))
-    redirect_uri = redirect_uri.replace("http://", "https://")
+    # redirect_uri = redirect_uri.replace("http://", "https://")
     
     authorization_response = str(request.url).replace("http://", "https://")
     

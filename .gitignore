@@ -24,6 +24,7 @@ out/
 .vscode/
 *.swp
 *.swo
+.agent
 
 # Environment
 .env
@@ -45,3 +46,4 @@ build/
 # Misc
 *.pyc
 .cache/
+hero assets
