@@ -8,7 +8,9 @@ AI_INTEGRATIONS_GEMINI_API_KEY = os.environ.get("AI_INTEGRATIONS_GEMINI_API_KEY"
 AI_INTEGRATIONS_GEMINI_BASE_URL = os.environ.get("AI_INTEGRATIONS_GEMINI_BASE_URL")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
-if AI_INTEGRATIONS_GEMINI_API_KEY and AI_INTEGRATIONS_GEMINI_BASE_URL:
+USE_REPLIT_INTEGRATION = bool(AI_INTEGRATIONS_GEMINI_API_KEY and AI_INTEGRATIONS_GEMINI_BASE_URL)
+
+if USE_REPLIT_INTEGRATION:
     client = genai.Client(
         api_key=AI_INTEGRATIONS_GEMINI_API_KEY,
         http_options={
@@ -16,10 +18,13 @@ if AI_INTEGRATIONS_GEMINI_API_KEY and AI_INTEGRATIONS_GEMINI_BASE_URL:
             'base_url': AI_INTEGRATIONS_GEMINI_BASE_URL
         }
     )
+    MODEL_NAME = "gemini-2.0-flash"
 elif GEMINI_API_KEY:
     client = genai.Client(api_key=GEMINI_API_KEY)
+    MODEL_NAME = "models/gemini-1.5-flash"
 else:
     client = None
+    MODEL_NAME = None
 
 SYSTEM_PROMPT = """You are an AI Counsellor for a guided study-abroad platform.
 
@@ -239,7 +244,7 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
     
     try:
         response = client.models.generate_content(
-            model="gemini-1.5-flash",
+            model=MODEL_NAME,
             contents=full_prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json"
