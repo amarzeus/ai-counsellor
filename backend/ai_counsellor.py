@@ -21,7 +21,7 @@ if USE_REPLIT_INTEGRATION:
     MODEL_NAME = "gemini-2.5-flash"
 elif GEMINI_API_KEY:
     client = genai.Client(api_key=GEMINI_API_KEY)
-    MODEL_NAME = "models/gemini-1.5-flash"
+    MODEL_NAME = "gemini-2.0-flash"
 else:
     client = None
     MODEL_NAME = None

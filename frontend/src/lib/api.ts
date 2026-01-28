@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// In development (Replit), use relative paths to leverage Next.js rewrites proxy
+// In production, use the full backend URL from env var
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 const api = axios.create({
   baseURL: API_URL,
