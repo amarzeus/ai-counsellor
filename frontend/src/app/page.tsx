@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { GraduationCap, Target, CheckCircle, MessageCircle } from "lucide-react";
+import HeroScroll from "@/components/HeroScroll";
 
 export default function LandingPage() {
   return (
@@ -27,24 +28,12 @@ export default function LandingPage() {
         </div>
       </nav>
 
+
+
+      <HeroScroll />
+
       <main className="max-w-7xl mx-auto px-8 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Plan your study-abroad journey
-            <br />
-            <span className="text-blue-600">with a guided AI counsellor</span>
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            From confusion to clarity. Our AI counsellor guides you step-by-step
-            through university discovery, shortlisting, and application preparation.
-          </p>
-          <Link
-            href="/signup"
-            className="inline-block px-8 py-4 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700 transition shadow-lg"
-          >
-            Start Your Journey
-          </Link>
-        </div>
+
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           <div className="bg-white p-8 rounded-xl shadow-md">
