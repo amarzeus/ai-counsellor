@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { useState, useId, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Slot } from "@radix-ui/react-slot";
@@ -339,6 +341,16 @@ function SignUpForm() {
 function AuthFormContainer({ isSignIn, onToggle }: { isSignIn: boolean; onToggle: () => void; }) {
     return (
         <div className="mx-auto grid w-[350px] gap-2">
+            <div className="flex justify-center mb-4">
+                <Image
+                    src="/logo.png?v=6"
+                    alt="AI Counsellor"
+                    width={180}
+                    height={60}
+                    className="h-12 w-auto" // Increased size
+                    unoptimized // Since it's a local file might need this depending on config, usually safe to add or remove based on next.config
+                />
+            </div>
             {isSignIn ? <SignInForm /> : <SignUpForm />}
             <div className="text-center text-sm">
                 {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}

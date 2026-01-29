@@ -1,6 +1,13 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+
 export default function TermsOfService() {
     return (
         <div className="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
+            <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-6">
+                <ArrowLeft className="w-4 h-4" />
+                Back to Home
+            </Link>
             <h1 className="text-3xl md:text-4xl font-bold mb-8">Terms of Service</h1>
 
             <div className="prose prose-slate dark:prose-invert max-w-none space-y-8">
