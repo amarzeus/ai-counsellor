@@ -6,393 +6,332 @@ interface AIMessageRendererProps {
     content: string;
 }
 
-interface ParsedSection {
-    type: 'context' | 'insight' | 'recommendation' | 'risk' | 'action' | 'general';
-    title?: string;
-    items: string[];
-}
-
 /**
- * Structured AI Message Renderer
- * Parses AI responses into scannable sections with visual hierarchy
+ * Information-Design Focused AI Message Renderer
+ * Renders AI responses as SEPARATE visual blocks, not one card
  */
 export function AIMessageRenderer({ content }: AIMessageRendererProps) {
-    const sections = parseIntoSections(content);
+    const blocks = parseIntoBlocks(content);
 
     return (
-        <div className="ai-structured-message max-w-xl space-y-4">
-            {sections.map((section, idx) => (
-                <SectionRenderer key={idx} section={section} />
+        <div className="ai-blocks-container space-y-3 max-w-lg">
+            {blocks.map((block, idx) => (
+                <BlockRenderer key={idx} block={block} />
             ))}
         </div>
     );
 }
 
+interface Block {
+    type: 'context' | 'insights' | 'recommendations' | 'next-step';
+    items: string[];
+}
+
 /**
- * Section Renderer - Renders each section type with distinct styling
+ * Render each block as a separate visual container
  */
-function SectionRenderer({ section }: { section: ParsedSection }) {
-    switch (section.type) {
+function BlockRenderer({ block }: { block: Block }) {
+    switch (block.type) {
         case 'context':
-            return (
-                <div className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed">
-                    {section.items.map((item, i) => (
-                        <p key={i} className="mb-2 last:mb-0">
-                            <HighlightedText text={item} />
-                        </p>
-                    ))}
-                </div>
-            );
-
-        case 'insight':
-            return (
-                <div className="space-y-2">
-                    <SectionHeader title={section.title || "Key Insights"} />
-                    <ul className="space-y-1.5">
-                        {section.items.map((item, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-slate-300">
-                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0" />
-                                <HighlightedText text={item} />
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            );
-
-        case 'recommendation':
-            return (
-                <div className="space-y-2">
-                    <SectionHeader title={section.title || "Recommendations"} />
-                    <div className="space-y-2">
-                        {section.items.map((item, i) => (
-                            <div
-                                key={i}
-                                className="flex items-start gap-2 p-2.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800/30"
-                            >
-                                <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs mt-0.5">
-                                    {i + 1}.
-                                </span>
-                                <span className="text-sm text-gray-800 dark:text-slate-200">
-                                    <HighlightedText text={item} />
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-
-        case 'risk':
-            return (
-                <div className="space-y-2">
-                    <SectionHeader title={section.title || "Notes"} muted />
-                    <div className="p-3 bg-amber-50 dark:bg-amber-900/15 rounded-lg border-l-3 border-amber-400">
-                        {section.items.map((item, i) => (
-                            <p key={i} className="text-xs text-amber-800 dark:text-amber-200 mb-1 last:mb-0">
-                                <HighlightedText text={item} />
-                            </p>
-                        ))}
-                    </div>
-                </div>
-            );
-
-        case 'action':
-            return (
-                <div className="pt-2 border-t border-gray-100 dark:border-slate-700">
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wide">
-                            Next Step
-                        </span>
-                        <span className="flex-1 h-px bg-gray-100 dark:bg-slate-700" />
-                    </div>
-                    <p className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
-                        {section.items.map((item, i) => (
-                            <span key={i}><HighlightedText text={item} /></span>
-                        ))}
-                    </p>
-                </div>
-            );
-
+            return <ContextBlock items={block.items} />;
+        case 'insights':
+            return <InsightsBlock items={block.items} />;
+        case 'recommendations':
+            return <RecommendationsBlock items={block.items} />;
+        case 'next-step':
+            return <NextStepBlock items={block.items} />;
         default:
-            return (
-                <div className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">
-                    {section.items.map((item, i) => (
-                        <p key={i} className="mb-2 last:mb-0">
-                            <HighlightedText text={item} />
-                        </p>
-                    ))}
-                </div>
-            );
+            return null;
     }
 }
 
 /**
- * Section Header Component
+ * CONTEXT BLOCK
+ * Short, 1-2 lines, muted, stage awareness
  */
-function SectionHeader({ title, muted = false }: { title: string; muted?: boolean }) {
+function ContextBlock({ items }: { items: string[] }) {
+    const text = items.slice(0, 2).join(' ').substring(0, 150);
+
     return (
-        <div className={`flex items-center gap-2 ${muted ? 'opacity-70' : ''}`}>
-            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
-                {title}
-            </h4>
-            <span className="flex-1 h-px bg-gray-100 dark:bg-slate-700" />
+        <div className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed">
+            <HighlightedText text={text} />
         </div>
     );
 }
 
 /**
- * Text with highlighted entities (universities, numbers, categories)
+ * INSIGHTS BLOCK
+ * Pure bullets, profile facts, minimal
+ */
+function InsightsBlock({ items }: { items: string[] }) {
+    // Limit to 4 insights max
+    const displayItems = items.slice(0, 4);
+
+    return (
+        <div className="bg-gray-50 dark:bg-slate-800/50 rounded-lg p-3">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-2">
+                Your Profile
+            </div>
+            <div className="flex flex-wrap gap-2">
+                {displayItems.map((item, i) => (
+                    <span
+                        key={i}
+                        className="inline-flex items-center px-2 py-1 bg-white dark:bg-slate-700 rounded text-xs text-gray-700 dark:text-slate-300 border border-gray-100 dark:border-slate-600"
+                    >
+                        <HighlightedText text={shortenToKeyFact(item)} />
+                    </span>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+/**
+ * RECOMMENDATIONS BLOCK
+ * Visually dominant, each uni as a mini-card
+ */
+function RecommendationsBlock({ items }: { items: string[] }) {
+    // Parse each item for university name and category
+    const recommendations = items.slice(0, 4).map(parseRecommendation);
+
+    return (
+        <div className="space-y-2">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
+                Recommended
+            </div>
+            <div className="space-y-2">
+                {recommendations.map((rec, i) => (
+                    <div
+                        key={i}
+                        className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                    >
+                        <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm text-gray-900 dark:text-white truncate">
+                                {rec.name}
+                            </div>
+                            {rec.reason && (
+                                <div className="text-xs text-gray-500 dark:text-slate-400 truncate mt-0.5">
+                                    {rec.reason}
+                                </div>
+                            )}
+                        </div>
+                        {rec.category && (
+                            <CategoryBadge category={rec.category} />
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+/**
+ * NEXT STEP BLOCK
+ * One clear action, visually lighter
+ */
+function NextStepBlock({ items }: { items: string[] }) {
+    const action = items[0] || '';
+
+    return (
+        <div className="flex items-start gap-2 pt-2 border-t border-gray-100 dark:border-slate-700">
+            <span className="text-blue-500 mt-0.5">→</span>
+            <span className="text-xs text-gray-600 dark:text-slate-400">
+                <HighlightedText text={shortenAction(action)} />
+            </span>
+        </div>
+    );
+}
+
+/**
+ * Category Badge
+ */
+function CategoryBadge({ category }: { category: string }) {
+    const upper = category.toUpperCase();
+    const styles: Record<string, string> = {
+        'DREAM': 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300',
+        'TARGET': 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+        'SAFE': 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
+    };
+
+    return (
+        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${styles[upper] || styles['TARGET']}`}>
+            {upper}
+        </span>
+    );
+}
+
+/**
+ * Highlighted text with entities
  */
 function HighlightedText({ text }: { text: string }) {
-    // Parse and highlight entities
-    const parts = parseHighlights(text);
+    // Highlight numbers
+    const parts = text.split(/(\$[\d,]+(?:\/year)?|\d\.\d+\s*GPA|GPA\s*(?:of\s*)?\d\.\d+|\d+%)/gi);
 
     return (
         <>
             {parts.map((part, i) => {
-                if (part.type === 'university') {
+                if (part.match(/\$|GPA|%/i)) {
                     return (
-                        <strong key={i} className="font-semibold text-gray-900 dark:text-white">
-                            {part.text}
-                        </strong>
-                    );
-                }
-                if (part.type === 'number') {
-                    return (
-                        <span key={i} className="px-1 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs font-medium">
-                            {part.text}
+                        <span key={i} className="px-1 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded text-[11px] font-medium">
+                            {part}
                         </span>
                     );
                 }
-                if (part.type === 'category') {
-                    const colors = {
-                        'DREAM': 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
-                        'TARGET': 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
-                        'SAFE': 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
-                    };
-                    return (
-                        <span
-                            key={i}
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase ${colors[part.text as keyof typeof colors] || colors['TARGET']}`}
-                        >
-                            {part.text}
-                        </span>
-                    );
-                }
-                return <span key={i}>{part.text}</span>;
+                return <span key={i}>{part}</span>;
             })}
         </>
     );
 }
 
 /**
- * Parse AI response into structured sections
+ * Parse content into distinct blocks
  */
-function parseIntoSections(content: string): ParsedSection[] {
-    const sections: ParsedSection[] = [];
+function parseIntoBlocks(content: string): Block[] {
+    const blocks: Block[] = [];
     const lines = content.split('\n').map(l => l.trim()).filter(l => l);
 
-    let currentSection: ParsedSection = { type: 'context', items: [] };
-    let isFirstParagraph = true;
+    const contextItems: string[] = [];
+    const insightItems: string[] = [];
+    const recommendationItems: string[] = [];
+    const nextStepItems: string[] = [];
 
     for (const line of lines) {
-        // Detect section headers
-        const lowerLine = line.toLowerCase();
+        const lower = line.toLowerCase();
+        const cleaned = line.replace(/^[-•*#]+\s*/, '').replace(/^\d+\.\s*/, '').replace(/\*\*/g, '');
 
-        // Check for markdown headers or keyword-based sections
-        if (line.startsWith('##') || line.startsWith('**') && line.endsWith('**')) {
-            // Save current section if it has items
-            if (currentSection.items.length > 0) {
-                sections.push(currentSection);
-            }
+        // Skip empty or header-only lines
+        if (cleaned.length < 3) continue;
 
-            const title = line.replace(/^#+\s*/, '').replace(/\*\*/g, '').trim();
-            const sectionType = detectSectionType(title);
-            currentSection = { type: sectionType, title, items: [] };
+        // Detect next step / action lines
+        if (lower.includes('let me know') || lower.includes('would you like') ||
+            lower.includes('shall i') || lower.includes('next step') ||
+            lower.includes('ready to') || lower.includes('feel free')) {
+            nextStepItems.push(cleaned);
             continue;
         }
 
-        // Detect recommendation patterns
-        if (lowerLine.includes('recommend') || lowerLine.includes('universities for you') ||
-            lowerLine.includes('options') || lowerLine.includes('here are')) {
-            if (currentSection.items.length > 0) {
-                sections.push(currentSection);
-            }
-            currentSection = { type: 'recommendation', items: [] };
-            // Include this line as context for the section
-            if (!lowerLine.includes('here are') && !lowerLine.startsWith('-')) {
-                currentSection.items.push(cleanLine(line));
-            }
+        // Detect recommendations (universities mentioned)
+        if (lower.includes('university') || lower.includes('mit') || lower.includes('stanford') ||
+            lower.includes('oxford') || lower.includes('cambridge') || lower.includes('toronto') ||
+            lower.includes('dream') || lower.includes('target') || lower.includes('safe') ||
+            lower.includes('recommend') && (lower.includes(':') || line.startsWith('-'))) {
+            recommendationItems.push(cleaned);
             continue;
         }
 
-        // Detect risk/warning patterns
-        if (lowerLine.includes('however') || lowerLine.includes('note:') ||
-            lowerLine.includes('keep in mind') || lowerLine.includes('risk') ||
-            lowerLine.includes('caution') || lowerLine.includes('important:')) {
-            if (currentSection.items.length > 0 && currentSection.type !== 'risk') {
-                sections.push(currentSection);
-                currentSection = { type: 'risk', items: [] };
-            }
-        }
-
-        // Detect action/next step patterns
-        if (lowerLine.includes('next step') || lowerLine.includes('let me know') ||
-            lowerLine.includes('would you like') || lowerLine.includes('shall i') ||
-            lowerLine.includes('ready to')) {
-            if (currentSection.items.length > 0 && currentSection.type !== 'action') {
-                sections.push(currentSection);
-                currentSection = { type: 'action', items: [] };
-            }
-        }
-
-        // Handle bullet points
-        if (line.startsWith('-') || line.startsWith('•') || line.match(/^\d+\./)) {
-            const cleanedLine = line.replace(/^[-•]\s*/, '').replace(/^\d+\.\s*/, '').trim();
-
-            // If we're in context mode and see bullets, switch to insight
-            if (currentSection.type === 'context' || currentSection.type === 'general') {
-                if (currentSection.items.length > 0) {
-                    sections.push(currentSection);
-                }
-                currentSection = { type: 'insight', items: [] };
-            }
-
-            currentSection.items.push(cleanedLine);
+        // Detect insight facts (profile data)
+        if (lower.includes('gpa') || lower.includes('budget') || lower.includes('$') ||
+            lower.includes('stage') || lower.includes('profile') || lower.includes('score') ||
+            lower.includes('ielts') || lower.includes('toefl') || lower.includes('gre')) {
+            insightItems.push(cleaned);
             continue;
         }
 
-        // Regular paragraph
-        if (isFirstParagraph) {
-            currentSection.type = 'context';
-            isFirstParagraph = false;
-        }
-
-        currentSection.items.push(cleanLine(line));
-    }
-
-    // Push final section
-    if (currentSection.items.length > 0) {
-        sections.push(currentSection);
-    }
-
-    // Merge small sections and clean up
-    return mergeSections(sections);
-}
-
-/**
- * Detect section type from header text
- */
-function detectSectionType(title: string): ParsedSection['type'] {
-    const lower = title.toLowerCase();
-
-    if (lower.includes('insight') || lower.includes('analysis') || lower.includes('profile')) {
-        return 'insight';
-    }
-    if (lower.includes('recommend') || lower.includes('option') || lower.includes('universit')) {
-        return 'recommendation';
-    }
-    if (lower.includes('risk') || lower.includes('note') || lower.includes('warning') || lower.includes('consider')) {
-        return 'risk';
-    }
-    if (lower.includes('next') || lower.includes('action') || lower.includes('step')) {
-        return 'action';
-    }
-
-    return 'general';
-}
-
-/**
- * Clean line of markdown artifacts
- */
-function cleanLine(line: string): string {
-    return line
-        .replace(/\*\*/g, '')
-        .replace(/\*/g, '')
-        .replace(/^#+\s*/, '')
-        .trim();
-}
-
-/**
- * Merge consecutive sections of same type
- */
-function mergeSections(sections: ParsedSection[]): ParsedSection[] {
-    if (sections.length <= 1) return sections;
-
-    const merged: ParsedSection[] = [];
-    let current = sections[0];
-
-    for (let i = 1; i < sections.length; i++) {
-        if (sections[i].type === current.type) {
-            current.items.push(...sections[i].items);
-        } else {
-            merged.push(current);
-            current = sections[i];
+        // Everything else is context (limit to first 2)
+        if (contextItems.length < 2) {
+            contextItems.push(cleaned);
         }
     }
-    merged.push(current);
 
-    return merged;
+    // Build blocks in order
+    if (contextItems.length > 0) {
+        blocks.push({ type: 'context', items: contextItems });
+    }
+    if (insightItems.length > 0) {
+        blocks.push({ type: 'insights', items: insightItems });
+    }
+    if (recommendationItems.length > 0) {
+        blocks.push({ type: 'recommendations', items: recommendationItems });
+    }
+    if (nextStepItems.length > 0) {
+        blocks.push({ type: 'next-step', items: nextStepItems });
+    }
+
+    // If no recommendations found but we have context, show context
+    if (blocks.length === 0 && lines.length > 0) {
+        blocks.push({ type: 'context', items: lines.slice(0, 3) });
+    }
+
+    return blocks;
 }
 
 /**
- * Parse text to identify and tag entities for highlighting
+ * Parse a recommendation line into name + category
  */
-function parseHighlights(text: string): Array<{ type: 'text' | 'university' | 'number' | 'category'; text: string }> {
-    const parts: Array<{ type: 'text' | 'university' | 'number' | 'category'; text: string }> = [];
+function parseRecommendation(text: string): { name: string; category?: string; reason?: string } {
+    const categoryMatch = text.match(/\b(DREAM|TARGET|SAFE)\b/i);
+    const category = categoryMatch ? categoryMatch[1].toUpperCase() : undefined;
 
-    // Known university names to highlight
-    const universities = [
-        'MIT', 'Stanford', 'Harvard', 'Oxford', 'Cambridge', 'ETH Zurich',
-        'University of Toronto', 'University of British Columbia', 'McGill',
-        'University of Melbourne', 'University of Sydney', 'NUS',
+    // Known uni names
+    const unis = [
+        'Massachusetts Institute of Technology', 'MIT', 'Stanford University', 'Stanford',
+        'Harvard University', 'Harvard', 'University of Oxford', 'Oxford',
+        'University of Cambridge', 'Cambridge', 'ETH Zurich',
+        'University of Toronto', 'Toronto', 'University of British Columbia', 'UBC',
+        'McGill University', 'McGill', 'University of Melbourne', 'Melbourne',
+        'University of Sydney', 'Sydney', 'National University of Singapore', 'NUS',
         'Technical University of Munich', 'TUM', 'RWTH Aachen',
-        'University of Amsterdam', 'Delft', 'University of Waterloo',
-        'University of Manchester', 'University of Edinburgh',
-        'Arizona State University', 'ASU',
-        'Massachusetts Institute of Technology',
-        'National University of Singapore'
+        'University of Amsterdam', 'Amsterdam', 'Delft University of Technology', 'Delft',
+        'University of Waterloo', 'Waterloo', 'University of Manchester', 'Manchester',
+        'University of Edinburgh', 'Edinburgh', 'Arizona State University', 'ASU'
     ];
 
-    // Categories
-    const categories = ['DREAM', 'TARGET', 'SAFE'];
+    let name = text;
+    let reason = '';
 
-    // Build regex pattern
-    const uniPattern = universities.map(u => u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-    const catPattern = categories.join('|');
-    const numPattern = '\\$[\\d,]+(?:\\/year)?|\\d\\.\\d+\\s*GPA|GPA\\s*(?:of\\s*)?\\d\\.\\d+|\\d+(?:\\.\\d+)?%';
-
-    const combinedPattern = new RegExp(`(${uniPattern}|${catPattern}|${numPattern})`, 'gi');
-
-    let lastIndex = 0;
-    let match;
-
-    while ((match = combinedPattern.exec(text)) !== null) {
-        // Add text before match
-        if (match.index > lastIndex) {
-            parts.push({ type: 'text', text: text.slice(lastIndex, match.index) });
+    // Try to extract university name
+    for (const uni of unis) {
+        if (text.toLowerCase().includes(uni.toLowerCase())) {
+            name = uni;
+            // Get reason after the name
+            const idx = text.toLowerCase().indexOf(uni.toLowerCase());
+            const after = text.substring(idx + uni.length).replace(/^[:\-–—\s]+/, '').trim();
+            if (after.length > 5 && after.length < 80) {
+                reason = after.replace(/\b(DREAM|TARGET|SAFE)\b/gi, '').trim();
+            }
+            break;
         }
-
-        const matchedText = match[0];
-        const upperMatch = matchedText.toUpperCase();
-
-        // Determine type
-        if (categories.includes(upperMatch)) {
-            parts.push({ type: 'category', text: upperMatch });
-        } else if (matchedText.match(/\$|GPA|%/i)) {
-            parts.push({ type: 'number', text: matchedText });
-        } else {
-            parts.push({ type: 'university', text: matchedText });
-        }
-
-        lastIndex = combinedPattern.lastIndex;
     }
 
-    // Add remaining text
-    if (lastIndex < text.length) {
-        parts.push({ type: 'text', text: text.slice(lastIndex) });
+    // Clean up
+    name = name.replace(/\b(DREAM|TARGET|SAFE)\b/gi, '').replace(/^[:\-–—\s]+/, '').trim();
+    if (name.length > 40) {
+        name = name.substring(0, 37) + '...';
     }
 
-    return parts.length > 0 ? parts : [{ type: 'text', text }];
+    return { name, category, reason };
+}
+
+/**
+ * Shorten text to key fact (for insights pills)
+ */
+function shortenToKeyFact(text: string): string {
+    // Extract the key metric
+    const gpaMatch = text.match(/\d\.\d+\s*GPA|GPA[:\s]*\d\.\d+/i);
+    if (gpaMatch) return gpaMatch[0];
+
+    const budgetMatch = text.match(/\$[\d,]+(?:\/year)?/);
+    if (budgetMatch) return `Budget: ${budgetMatch[0]}`;
+
+    const stageMatch = text.match(/\b(DISCOVERY|ONBOARDING|APPLICATION|LOCKED)\b/i);
+    if (stageMatch) return `Stage: ${stageMatch[1]}`;
+
+    // Truncate if too long
+    if (text.length > 25) {
+        return text.substring(0, 22) + '...';
+    }
+
+    return text;
+}
+
+/**
+ * Shorten action to one line
+ */
+function shortenAction(text: string): string {
+    if (text.length > 80) {
+        return text.substring(0, 77) + '...';
+    }
+    return text;
 }
 
 export default AIMessageRenderer;
