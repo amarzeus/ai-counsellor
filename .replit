@@ -5,7 +5,7 @@ integrations = ["python_gemini_ai_integrations:1.0.0", "python_database:1.0.0", 
 
 [nix]
 channel = "stable-25_05"
-packages = ["cargo", "jq", "libiconv", "libxcrypt", "rustc"]
+packages = ["cargo", "freetype", "jq", "lcms2", "libiconv", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "rustc", "tcl", "tk", "zlib"]
 
 [workflows]
 runButton = "Project"
