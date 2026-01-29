@@ -127,6 +127,10 @@ export const authApi = {
   login: (data: { email: string; password: string }) =>
     api.post('/api/auth/login', data),
   getMe: () => api.get<User>('/api/user/me'),
+  forgotPassword: (email: string) =>
+    api.post('/api/auth/forgot-password', { email }),
+  resetPassword: (token: string, password: string) =>
+    api.post('/api/auth/reset-password', { token, password }),
 };
 
 export const profileApi = {
@@ -144,12 +148,24 @@ export const universityApi = {
     api.get<University[]>('/api/universities', { params }),
 };
 
+export interface LockResponse {
+  message: string;
+  stage: string;
+}
+
+export interface UnlockResponse {
+  message: string;
+  stage: string;
+  tasks_deleted: boolean;
+}
+
 export const shortlistApi = {
   getAll: () => api.get<Shortlist[]>('/api/shortlist'),
   add: (data: { university_id: number; category: string }) =>
     api.post<Shortlist>('/api/shortlist', data),
-  lock: (id: number) => api.post(`/api/shortlist/${id}/lock`),
-  unlock: (id: number) => api.post(`/api/shortlist/${id}/unlock`),
+  lock: (id: number) => api.post<LockResponse>(`/api/shortlist/${id}/lock`),
+  unlock: (id: number, confirm: boolean = true) => 
+    api.post<UnlockResponse>(`/api/shortlist/${id}/unlock?confirm=${confirm}`),
   remove: (id: number) => api.delete(`/api/shortlist/${id}`),
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Target, Shield, DollarSign, TrendingUp, Plus, Check } from "lucide-react";
+import { Star, Target, Shield, DollarSign, TrendingUp, Plus, Check, AlertCircle, CheckCircle, Info } from "lucide-react";
 
 interface University {
   id: number;
@@ -9,6 +9,10 @@ interface University {
   tuition_per_year?: number;
   ranking?: number;
   category?: string;
+  cost_level?: string;
+  acceptance_chance?: string;
+  fit_reason?: string;
+  risk_reason?: string;
 }
 
 interface UniversityCardProps {
@@ -66,6 +70,24 @@ export default function UniversityCard({
   const config = getCategoryConfig(university.category);
   const CategoryIcon = config.icon;
 
+  const getCostColor = (cost?: string) => {
+    switch (cost) {
+      case "Low": return "text-green-600 bg-green-50";
+      case "Medium": return "text-yellow-600 bg-yellow-50";
+      case "High": return "text-red-600 bg-red-50";
+      default: return "text-gray-600 bg-gray-50";
+    }
+  };
+
+  const getAcceptanceColor = (chance?: string) => {
+    switch (chance) {
+      case "High": return "text-green-600 bg-green-50";
+      case "Medium": return "text-yellow-600 bg-yellow-50";
+      case "Low": return "text-red-600 bg-red-50";
+      default: return "text-gray-600 bg-gray-50";
+    }
+  };
+
   return (
     <div className="group bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-slate-200 transition-all duration-300 overflow-hidden">
       <div className="p-6">
@@ -89,7 +111,7 @@ export default function UniversityCard({
           )}
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-slate-600 mb-6">
+        <div className="flex items-center gap-3 text-sm text-slate-600 mb-4">
           {university.tuition_per_year && (
             <div className="flex items-center gap-1.5">
               <DollarSign className="w-4 h-4 text-slate-400" />
@@ -106,6 +128,36 @@ export default function UniversityCard({
             </div>
           )}
         </div>
+
+        <div className="flex gap-2 mb-4">
+          {university.cost_level && (
+            <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${getCostColor(university.cost_level)}`}>
+              {university.cost_level} Cost
+            </span>
+          )}
+          {university.acceptance_chance && (
+            <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${getAcceptanceColor(university.acceptance_chance)}`}>
+              {university.acceptance_chance} Chance
+            </span>
+          )}
+        </div>
+
+        {(university.fit_reason || university.risk_reason) && (
+          <div className="space-y-2 mb-4 text-xs">
+            {university.fit_reason && (
+              <div className="flex items-start gap-2 p-2 bg-green-50 rounded-lg">
+                <CheckCircle className="w-3.5 h-3.5 text-green-600 flex-shrink-0 mt-0.5" />
+                <span className="text-green-800">{university.fit_reason}</span>
+              </div>
+            )}
+            {university.risk_reason && (
+              <div className="flex items-start gap-2 p-2 bg-amber-50 rounded-lg">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <span className="text-amber-800">{university.risk_reason}</span>
+              </div>
+            )}
+          </div>
+        )}
 
         <button
           onClick={onShortlist}

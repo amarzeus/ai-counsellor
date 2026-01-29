@@ -81,16 +81,17 @@ export default function UniversitiesPage() {
   const handleLock = async () => {
     if (!selectedForLock) return;
     try {
-      await shortlistApi.lock(selectedForLock.id);
+      const response = await shortlistApi.lock(selectedForLock.id);
       fetchData();
       
       const userStr = localStorage.getItem("user");
       if (userStr) {
         const storedUser = JSON.parse(userStr);
-        storedUser.current_stage = "APPLICATION";
+        storedUser.current_stage = response.data.stage;
         localStorage.setItem("user", JSON.stringify(storedUser));
         setUser(storedUser);
       }
+      toast.success(response.data.message);
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to lock university");
       throw error;
@@ -102,9 +103,17 @@ export default function UniversitiesPage() {
       return;
     }
     try {
-      await shortlistApi.unlock(shortlistItem.id);
+      const response = await shortlistApi.unlock(shortlistItem.id, true);
       toast.success(`${shortlistItem.university.name} unlocked.`);
       fetchData();
+      
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        const storedUser = JSON.parse(userStr);
+        storedUser.current_stage = response.data.stage;
+        localStorage.setItem("user", JSON.stringify(storedUser));
+        setUser(storedUser);
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to unlock");
     }

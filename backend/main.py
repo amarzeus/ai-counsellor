@@ -1,10 +1,11 @@
 import os
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from database import engine, get_db, Base
 from models import User, UserProfile, University, ShortlistedUniversity, Task, ChatMessage, UserStage, TaskStatus
@@ -14,7 +15,7 @@ from schemas import (
     UniversityResponse, ShortlistCreate, ShortlistResponse,
     TaskCreate, TaskUpdate, TaskResponse,
     ChatMessageCreate, ChatMessageResponse,
-    DashboardResponse
+    DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest
 )
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 from universities_data import UNIVERSITIES
@@ -24,7 +25,16 @@ from google_oauth import google_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="AI Counsellor API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    run_migrations()
+    db = next(get_db())
+    seed_universities(db)
+    seed_demo_users(db)
+    db.close()
+    yield
+
+app = FastAPI(title="AI Counsellor API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -117,23 +127,12 @@ def seed_demo_users(db: Session):
 
 def run_migrations():
     """Run database migrations on startup"""
-    from sqlalchemy import text
-    from database import engine
-    
     with engine.connect() as conn:
         try:
             conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE"))
             conn.commit()
         except Exception as e:
             print(f"Migration warning (may be expected): {e}")
-
-@app.on_event("startup")
-def startup_event():
-    run_migrations()
-    db = next(get_db())
-    seed_universities(db)
-    seed_demo_users(db)
-    db.close()
 
 @app.post("/api/seed-demo")
 def seed_demo_endpoint(db: Session = Depends(get_db)):
@@ -285,6 +284,17 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 @app.get("/api/user/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     return UserResponse.model_validate(current_user)
+
+@app.post("/api/auth/forgot-password")
+def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user:
+        return {"message": "If an account exists with this email, you will receive password reset instructions."}
+    return {"message": "If an account exists with this email, you will receive password reset instructions."}
+
+@app.post("/api/auth/reset-password")
+def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
+    raise HTTPException(status_code=400, detail="Password reset functionality requires email configuration. Please contact support.")
 
 @app.get("/api/profile", response_model=ProfileResponse)
 def get_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):

@@ -53,10 +53,13 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-600">
+            <Link
+              href="/profile"
+              className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition px-3 py-2 rounded-lg hover:bg-gray-50"
+            >
               <User className="w-5 h-5" />
               <span className="hidden md:inline">{user?.full_name}</span>
-            </div>
+            </Link>
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-red-600 transition"
