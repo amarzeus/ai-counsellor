@@ -32,6 +32,12 @@ def get_google_provider_cfg():
     return response.json()
 
 
+def get_redirect_uri():
+    """Get the correct redirect URI for the environment"""
+    if REPLIT_DEV_DOMAIN:
+        return f"https://{REPLIT_DEV_DOMAIN}/api/auth/google/callback"
+    return None
+
 @google_router.get("/login")
 async def google_login(request: Request):
     if not client or GOOGLE_CLIENT_ID == "YOUR_GOOGLE_CLIENT_ID_HERE":
@@ -43,10 +49,9 @@ async def google_login(request: Request):
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
     
-    redirect_uri = str(request.url_for("google_callback"))
-    # Ensure usage of HTTPS in production environments (like Render)
-    if "onrender.com" in str(request.base_url) or "vercel.app" in str(request.base_url):
-        redirect_uri = redirect_uri.replace("http://", "https://")
+    redirect_uri = get_redirect_uri()
+    if not redirect_uri:
+        redirect_uri = str(request.url_for("google_callback")).replace("http://", "https://")
     
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
@@ -68,10 +73,9 @@ async def google_callback(request: Request, code: str = None):
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
     
-    redirect_uri = str(request.url_for("google_callback"))
-    # Ensure usage of HTTPS in production environments (like Render)
-    if "onrender.com" in str(request.base_url) or "vercel.app" in str(request.base_url):
-        redirect_uri = redirect_uri.replace("http://", "https://")
+    redirect_uri = get_redirect_uri()
+    if not redirect_uri:
+        redirect_uri = str(request.url_for("google_callback")).replace("http://", "https://")
     
     authorization_response = str(request.url).replace("http://", "https://")
     
