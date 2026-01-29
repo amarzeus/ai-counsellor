@@ -168,6 +168,7 @@ export const shortlistApi = {
   unlock: (id: number, confirm: boolean = true) =>
     api.post<UnlockResponse>(`/api/shortlist/${id}/unlock?confirm=${confirm}`),
   remove: (id: number) => api.delete(`/api/shortlist/${id}`),
+  removeByUniversityId: (uniId: number) => api.delete(`/api/shortlist/university/${uniId}`),
 };
 
 export const taskApi = {

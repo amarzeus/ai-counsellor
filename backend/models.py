@@ -152,6 +152,7 @@ class ChatMessage(Base):
     content = Column(Text, nullable=False)
     actions_taken = Column(JSON)
     suggested_universities = Column(JSON)
+    suggested_next_questions = Column(JSON)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     session = relationship("ChatSession", back_populates="messages")

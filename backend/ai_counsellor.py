@@ -91,6 +91,11 @@ Available actions (include in "actions" array):
             "fit_reason": "Your GPA of 3.6 is a perfect match for their 3.5 requirement.",
             "risk_reason": "Tuition is slightly above your preferred budget."
         }
+    ],
+    "suggested_next_questions": [
+        "What are the application deadlines?",
+        "Do I need to take the GRE?",
+        "Tell me more about the University of Toronto"
     ]
 }
 """
@@ -264,6 +269,8 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
                 result["actions"] = []
             if "suggested_universities" not in result:
                 result["suggested_universities"] = []
+            if "suggested_next_questions" not in result:
+                result["suggested_next_questions"] = []
                 
             return result
             

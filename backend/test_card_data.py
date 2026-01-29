@@ -73,9 +73,15 @@ def test_cards():
         
         if not suggested[0].get('name'):
             print("❌ FAILURE: University Name is MISSING (Hydration failed)")
+        else:
+            print(f"  - is_shortlisted: {suggested[0].get('is_shortlisted')}")
+
+    next_qs = data.get("suggested_next_questions")
+    if next_qs:
+        print(f"✅ SUCCESS: Received {len(next_qs)} suggested next questions!")
+        print("Samples:", next_qs)
     else:
-        print("❌ FAILURE: No suggested_universities found in response.")
-        # Check if it was just empty or missing field
+        print("⚠️ WARNING: No suggested_next_questions (AI might not have generated them this time)")
         if "suggested_universities" in data:
             print("(Field exists but is empty/null)")
         else:

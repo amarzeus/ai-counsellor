@@ -24,7 +24,9 @@ interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
     category: "DREAM" | "TARGET" | "SAFE";
     fit_reason: string;
     risk_reason: string;
+    is_shortlisted?: boolean;
   }>;
+  suggested_next_questions?: string[];
 }
 
 export default function CounsellorPage() {
@@ -215,12 +217,31 @@ export default function CounsellorPage() {
     recognition.start();
   };
 
-  const handleQuickShortlist = async (uniId: number, category: string) => {
+  const handleQuickShortlist = async (uniId: number, category: string, isShortlisted: boolean | undefined) => {
     try {
-      await shortlistApi.add({ university_id: uniId, category });
-      toast.success("University added to shortlist!");
+      if (isShortlisted) {
+        await shortlistApi.removeByUniversityId(uniId);
+        toast.success("Removed from shortlist.");
+
+        setMessages(prev => prev.map(msg => ({
+          ...msg,
+          suggested_universities: msg.suggested_universities?.map(u =>
+            u.university_id === uniId ? { ...u, is_shortlisted: false } : u
+          )
+        })));
+      } else {
+        await shortlistApi.add({ university_id: uniId, category });
+        toast.success("University added to shortlist!");
+
+        setMessages(prev => prev.map(msg => ({
+          ...msg,
+          suggested_universities: msg.suggested_universities?.map(u =>
+            u.university_id === uniId ? { ...u, is_shortlisted: true } : u
+          )
+        })));
+      }
     } catch (error) {
-      toast.error("Already in shortlist or error occurred.");
+      toast.error("Action failed. Please try again.");
     }
   };
 
@@ -353,8 +374,8 @@ export default function CounsellorPage() {
                           >
                             {/* Header Stripe */}
                             <div className={`h-2 ${uni.category === 'DREAM' ? 'bg-purple-500' :
-                                uni.category === 'SAFE' ? 'bg-green-500' :
-                                  'bg-blue-500'
+                              uni.category === 'SAFE' ? 'bg-green-500' :
+                                'bg-blue-500'
                               }`} />
 
                             <div className="p-4">
@@ -405,13 +426,39 @@ export default function CounsellorPage() {
                               </div>
 
                               <button
-                                onClick={() => handleQuickShortlist(uni.university_id, uni.category)}
-                                className="w-full py-2 bg-white dark:bg-slate-800 border-2 border-blue-600 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white transition-all flex items-center justify-center gap-2"
+                                onClick={() => handleQuickShortlist(uni.university_id, uni.category, uni.is_shortlisted)}
+                                className={`w-full py-2 border-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2
+                                  ${uni.is_shortlisted
+                                    ? "bg-green-50 dark:bg-green-900/20 border-green-500 text-green-600 dark:text-green-400"
+                                    : "bg-white dark:bg-slate-800 border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500"}
+                                `}
                               >
-                                Shortlist University <ArrowRight className="w-3 h-3" />
+                                {uni.is_shortlisted ? (
+                                  <>
+                                    <CheckCircle className="w-3 h-3" /> Shortlisted
+                                  </>
+                                ) : (
+                                  <>
+                                    Shortlist University <ArrowRight className="w-3 h-3" />
+                                  </>
+                                )}
                               </button>
                             </div>
                           </motion.div>
+                        ))}
+                      </div>
+                    )}
+
+                    {message.role === "assistant" && message.suggested_next_questions && message.suggested_next_questions.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {message.suggested_next_questions.map((question, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setInput(question)}
+                            className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full border border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                          >
+                            {question}
+                          </button>
                         ))}
                       </div>
                     )}

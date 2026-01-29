@@ -78,11 +78,13 @@ def health_check():
     return {"status": "healthy", "service": "ai-counsellor-backend"}
 
 def seed_universities(db: Session):
-    if db.query(University).count() == 0:
-        for uni_data in UNIVERSITIES:
+    # Ensure all universities in code exist in DB
+    for uni_data in UNIVERSITIES:
+        existing = db.query(University).filter(University.name == uni_data["name"]).first()
+        if not existing:
             uni = University(**uni_data)
             db.add(uni)
-        db.commit()
+    db.commit()
 
 def seed_demo_users(db: Session):
     """Create demo users with weak/average/strong profiles for demo purposes"""
@@ -521,6 +523,27 @@ def add_to_shortlist(
         locked_at=shortlist.locked_at
     )
 
+@app.delete("/api/shortlist/university/{university_id}")
+def remove_shortlist_by_university(
+    university_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    shortlist = db.query(ShortlistedUniversity).filter(
+        ShortlistedUniversity.user_id == current_user.id,
+        ShortlistedUniversity.university_id == university_id
+    ).first()
+    
+    if not shortlist:
+        raise HTTPException(status_code=404, detail="University not in shortlist")
+        
+    if shortlist.is_locked:
+        raise HTTPException(status_code=400, detail="Cannot remove locked university. Unlock it first.")
+        
+    db.delete(shortlist)
+    db.commit()
+    return {"message": "Removed from shortlist"}
+
 @app.post("/api/shortlist/{shortlist_id}/lock")
 def lock_university(
     shortlist_id: int,
@@ -752,6 +775,47 @@ def get_chat_history(
     messages = db.query(ChatMessage).filter(
         ChatMessage.session_id == session_id
     ).order_by(ChatMessage.created_at).all()
+
+    # Runtime Hydration (Fix for old messages & dynamic info)
+    shortlisted_ids = [s.university_id for s in current_user.shortlisted_universities]
+    
+    # Pre-fetch universities to avoid N+1 if needed, or query on demand
+    # Simple on-demand for now as universities table is small
+    
+    for msg in messages:
+        if msg.suggested_universities:
+            # We need to modify the dict in place or create a copy
+            # Since SQLA models return immutable-ish JSON, better to modify before returning response model
+            # But here we are returning list of model_validates.
+            # We must modify the underlying dict or handle it in the loop. 
+            # Note: Modifying msg.suggested_universities directly on DB object might trigger update if we commit (we won't).
+            # But for Pydantic validation, we need to pass the modified data.
+            
+            # Create a mutable copy
+            updated_suggestions = []
+            for uni_data in msg.suggested_universities:
+                new_data = uni_data.copy()
+                uni_id = new_data.get('university_id')
+                
+                # Check if hydration needed
+                if uni_id:
+                    # Always re-hydrate to ensure freshness and fix "ID Only" bug
+                    db_uni = db.query(University).filter(University.id == uni_id).first()
+                    if db_uni:
+                        new_data['name'] = db_uni.name
+                        new_data['country'] = db_uni.country
+                        new_data['tuition'] = db_uni.tuition_per_year
+                        new_data['ranking'] = db_uni.ranking
+                    
+                    # Update shortlist status
+                    new_data['is_shortlisted'] = uni_id in shortlisted_ids
+                
+                updated_suggestions.append(new_data)
+            
+            # Temporarily assign to object for response serialization
+            # This works because Python objects are mutable, but won't persist to DB unless committed
+            msg.suggested_universities = updated_suggestions
+
     return [ChatMessageResponse.model_validate(m) for m in messages]
 
 @app.post("/api/chat", response_model=ChatMessageResponse)
@@ -1074,6 +1138,10 @@ async def chat_with_counsellor(
     
     # Hydrate suggested universities with DB data
     suggested_unis = response.get('suggested_universities')
+    
+    # Get user's currently shortlisted IDs for "is_shortlisted" status
+    shortlisted_ids = [s.university_id for s in current_user.shortlisted_universities]
+    
     if suggested_unis:
         for uni_data in suggested_unis:
             uni_id = uni_data.get('university_id')
@@ -1084,6 +1152,7 @@ async def chat_with_counsellor(
                     uni_data['country'] = db_uni.country
                     uni_data['tuition'] = db_uni.tuition_per_year
                     uni_data['ranking'] = db_uni.ranking
+                    uni_data['is_shortlisted'] = uni_id in shortlisted_ids
 
     ai_message = ChatMessage(
         user_id=current_user.id,
@@ -1091,7 +1160,8 @@ async def chat_with_counsellor(
         role="assistant",
         content=response.get('message', 'I apologize, but I could not process your request.'),
         actions_taken=action_summary,
-        suggested_universities=suggested_unis
+        suggested_universities=suggested_unis,
+        suggested_next_questions=response.get('suggested_next_questions')
     )
     db.add(ai_message)
     db.commit()
