@@ -13,7 +13,7 @@ export function Footer() {
                     <Link className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground hover:text-primary transition-colors" href="/privacy-policy">
                         Privacy Policy
                     </Link>
-                    <Link className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground hover:text-primary transition-colors" href="#">
+                    <Link className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground hover:text-primary transition-colors" href="/terms-of-service">
                         Terms of Service
                     </Link>
                 </nav>
