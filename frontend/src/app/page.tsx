@@ -6,8 +6,8 @@ import HeroScroll from "@/components/HeroScroll";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <nav className="absolute top-0 left-0 w-full z-50 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto left-0 right-0">
         <div className="flex items-center gap-2">
           <Link href="/" className="relative h-20 w-auto">
             <img

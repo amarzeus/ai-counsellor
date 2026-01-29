@@ -56,8 +56,9 @@ export default function HeroScroll() {
                 const img = images[index];
 
                 // Calculate aspect ratio to cover
-                const canvasWidth = canvas.width;
-                const canvasHeight = canvas.height;
+                // Use clientWidth/Height for logical CSS pixels since we will be drawing into a scaled context
+                const canvasWidth = canvas.clientWidth || canvas.width / (window.devicePixelRatio || 1);
+                const canvasHeight = canvas.clientHeight || canvas.height / (window.devicePixelRatio || 1);
                 const imgRatio = img.width / img.height;
                 const canvasRatio = canvasWidth / canvasHeight;
 
@@ -96,8 +97,19 @@ export default function HeroScroll() {
 
         // Handle resize
         const resizeCanvas = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+
+            // Set display size (css pixels)
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+
+            // Normalize coordinate system
+            // Important: Reset transform before scaling to prevent compounding
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.scale(dpr, dpr);
+
             // Redraw current frame
             const scrollProgress = getScrollProgress();
             const frameIndex = Math.min(
@@ -139,21 +151,21 @@ export default function HeroScroll() {
                 />
 
                 {/* Overlay Content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-black/30 pointer-events-none">
-                    <div className="text-center px-4 max-w-4xl mx-auto opacity-0 animate-fade-in-up" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
-                        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight drop-shadow-2xl">
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-gradient-to-b from-black/60 via-black/20 to-black/80 pointer-events-none">
+                    <div className="text-center px-4 max-w-5xl mx-auto opacity-0 animate-fade-in-up" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
+                        <h1 className="text-5xl md:text-8xl font-bold text-white mb-6 tracking-tight drop-shadow-2xl">
                             Your Future, <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-purple-300 drop-shadow-sm">
                                 Intelligently Designed
                             </span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-gray-200 mb-8 font-light max-w-2xl mx-auto drop-shadow-md">
+                        <p className="text-xl md:text-2xl text-gray-100 mb-10 font-light max-w-3xl mx-auto drop-shadow-lg leading-relaxed antialiased">
                             Experience the next generation of study abroad counselling tailored specifically for you.
                         </p>
                         <div className="pointer-events-auto">
                             <Link
                                 href="/signup"
-                                className="group relative inline-flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full font-semibold text-lg transition-transform hover:scale-105 active:scale-95"
+                                className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-medium text-lg transition-all hover:bg-white/20 hover:scale-105 active:scale-95 shadow-xl hover:shadow-2xl hover:border-white/40"
                             >
                                 Start Your Journey
                                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -162,7 +174,7 @@ export default function HeroScroll() {
                     </div>
 
                     {/* Scroll Indicator */}
-                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/50 text-sm animate-bounce">
+                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/70 text-sm animate-bounce font-medium tracking-widest uppercase">
                         Scroll to explore
                     </div>
                 </div>
