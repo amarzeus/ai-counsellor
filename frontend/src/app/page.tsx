@@ -9,7 +9,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
         <div className="flex items-center">
-          <Image src="/logo.png?v=3" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto" unoptimized />
+          <Image src="/logo.png?v=5" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto" unoptimized />
         </div>
         <div className="flex gap-4">
           <Link
