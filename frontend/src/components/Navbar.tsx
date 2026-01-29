@@ -28,7 +28,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/dashboard" className="flex items-center">
-            <Image src="/logo.png?v=2" alt="AI Counsellor" width={120} height={40} className="h-10 w-auto" unoptimized />
+            <Image src="/logo.png?v=3" alt="AI Counsellor" width={120} height={40} className="h-10 w-auto" unoptimized />
           </Link>
 
           <div className="flex items-center gap-1">

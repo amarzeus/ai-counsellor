@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
 
         <div className="text-center mb-8">
           <div className="inline-block mb-4">
-            <Image src="/logo.png?v=2" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto mx-auto" unoptimized />
+            <Image src="/logo.png?v=3" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto mx-auto" unoptimized />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Reset Password</h1>
           <p className="text-gray-600 mt-2">
