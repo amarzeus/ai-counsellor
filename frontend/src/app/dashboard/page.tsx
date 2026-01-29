@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { 
+import {
   GraduationCap, Target, CheckCircle, Clock, AlertCircle,
   MessageCircle, Building2, Lock, ArrowRight
 } from "lucide-react";
@@ -32,7 +32,7 @@ export default function DashboardPage() {
     if (userStr) {
       const storedUser = JSON.parse(userStr);
       setUser(storedUser);
-      
+
       if (!storedUser.onboarding_completed) {
         router.push("/onboarding");
         return;
@@ -49,11 +49,11 @@ export default function DashboardPage() {
         shortlistApi.getAll(),
         taskApi.getAll(),
       ]);
-      
+
       setLocalDashboard(dashRes.data);
       setLocalShortlist(shortlistRes.data);
       setLocalTasks(tasksRes.data);
-      
+
       setDashboard(dashRes.data);
       setShortlist(shortlistRes.data);
       setTasks(tasksRes.data);
@@ -76,86 +76,83 @@ export default function DashboardPage() {
   const lockedUniversities = shortlist.filter((s) => s.is_locked);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] transition-colors duration-300">
       <Navbar />
-      
+
       <main className="max-w-7xl mx-auto px-4 pt-20 pb-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Welcome back, {dashboard?.user.full_name?.split(" ")[0]}!
           </h1>
-          <p className="text-gray-600 mt-2">{dashboard?.next_action}</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">{dashboard?.next_action}</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="grid sm:grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
                 <div className="flex items-center gap-3 mb-2">
-                  <Building2 className="w-5 h-5 text-blue-600" />
-                  <span className="text-sm text-gray-500">Shortlisted</span>
+                  <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm text-gray-500 dark:text-slate-400">Shortlisted</span>
                 </div>
-                <p className="text-3xl font-bold">{dashboard?.shortlisted_count || 0}</p>
+                <p className="text-3xl font-bold dark:text-white">{dashboard?.shortlisted_count || 0}</p>
               </div>
-              
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
                 <div className="flex items-center gap-3 mb-2">
-                  <Lock className="w-5 h-5 text-purple-600" />
-                  <span className="text-sm text-gray-500">Locked</span>
+                  <Lock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <span className="text-sm text-gray-500 dark:text-slate-400">Locked</span>
                 </div>
-                <p className="text-3xl font-bold">{dashboard?.locked_count || 0}</p>
+                <p className="text-3xl font-bold dark:text-white">{dashboard?.locked_count || 0}</p>
               </div>
-              
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
                 <div className="flex items-center gap-3 mb-2">
-                  <Clock className="w-5 h-5 text-orange-600" />
-                  <span className="text-sm text-gray-500">Pending Tasks</span>
+                  <Clock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  <span className="text-sm text-gray-500 dark:text-slate-400">Pending Tasks</span>
                 </div>
-                <p className="text-3xl font-bold">{dashboard?.pending_tasks || 0}</p>
+                <p className="text-3xl font-bold dark:text-white">{dashboard?.pending_tasks || 0}</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold mb-4">Profile Strength</h3>
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
+              <h3 className="text-lg font-semibold mb-4 dark:text-white">Profile Strength</h3>
               <div className="grid sm:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <GraduationCap className="w-8 h-8 mx-auto mb-2 text-blue-600" />
-                  <p className="text-sm text-gray-500">Academics</p>
-                  <p className={`font-semibold ${
-                    dashboard?.profile_strength?.academics === "Strong" 
-                      ? "text-green-600" 
-                      : dashboard?.profile_strength?.academics === "Weak"
-                      ? "text-red-600"
-                      : "text-yellow-600"
-                  }`}>
+                <div className="text-center p-4 bg-gray-50 dark:bg-slate-950/50 rounded-lg transition-colors">
+                  <GraduationCap className="w-8 h-8 mx-auto mb-2 text-blue-600 dark:text-blue-400" />
+                  <p className="text-sm text-gray-500 dark:text-slate-400">Academics</p>
+                  <p className={`font-semibold ${dashboard?.profile_strength?.academics === "Strong"
+                    ? "text-green-600 dark:text-green-400"
+                    : dashboard?.profile_strength?.academics === "Weak"
+                      ? "text-red-600 dark:text-red-400"
+                      : "text-yellow-600 dark:text-yellow-400"
+                    }`}>
                     {dashboard?.profile_strength?.academics || "Unknown"}
                   </p>
                 </div>
-                
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <Target className="w-8 h-8 mx-auto mb-2 text-green-600" />
-                  <p className="text-sm text-gray-500">Exams</p>
-                  <p className={`font-semibold ${
-                    dashboard?.profile_strength?.exams === "Completed"
-                      ? "text-green-600"
-                      : dashboard?.profile_strength?.exams === "Not Started"
-                      ? "text-red-600"
-                      : "text-yellow-600"
-                  }`}>
+
+                <div className="text-center p-4 bg-gray-50 dark:bg-slate-950/50 rounded-lg transition-colors">
+                  <Target className="w-8 h-8 mx-auto mb-2 text-green-600 dark:text-green-400" />
+                  <p className="text-sm text-gray-500 dark:text-slate-400">Exams</p>
+                  <p className={`font-semibold ${dashboard?.profile_strength?.exams === "Completed"
+                    ? "text-green-600 dark:text-green-400"
+                    : dashboard?.profile_strength?.exams === "Not Started"
+                      ? "text-red-600 dark:text-red-400"
+                      : "text-yellow-600 dark:text-yellow-400"
+                    }`}>
                     {dashboard?.profile_strength?.exams || "Unknown"}
                   </p>
                 </div>
-                
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <CheckCircle className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                  <p className="text-sm text-gray-500">SOP</p>
-                  <p className={`font-semibold ${
-                    dashboard?.profile_strength?.sop === "Ready"
-                      ? "text-green-600"
-                      : dashboard?.profile_strength?.sop === "Not Started"
-                      ? "text-red-600"
-                      : "text-yellow-600"
-                  }`}>
+
+                <div className="text-center p-4 bg-gray-50 dark:bg-slate-950/50 rounded-lg transition-colors">
+                  <CheckCircle className="w-8 h-8 mx-auto mb-2 text-purple-600 dark:text-purple-400" />
+                  <p className="text-sm text-gray-500 dark:text-slate-400">SOP</p>
+                  <p className={`font-semibold ${dashboard?.profile_strength?.sop === "Ready"
+                    ? "text-green-600 dark:text-green-400"
+                    : dashboard?.profile_strength?.sop === "Not Started"
+                      ? "text-red-600 dark:text-red-400"
+                      : "text-yellow-600 dark:text-yellow-400"
+                    }`}>
                     {dashboard?.profile_strength?.sop || "Unknown"}
                   </p>
                 </div>
@@ -163,19 +160,19 @@ export default function DashboardPage() {
             </div>
 
             {dashboard?.current_stage === "DISCOVERY" && shortlist.length === 0 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 transition-colors">
                 <div className="flex items-start gap-4">
-                  <MessageCircle className="w-8 h-8 text-blue-600 flex-shrink-0" />
+                  <MessageCircle className="w-8 h-8 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-blue-900 mb-1">
+                    <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
                       Start Exploring Universities
                     </h3>
-                    <p className="text-blue-700 mb-4">
+                    <p className="text-blue-700 dark:text-blue-300 mb-4">
                       Talk to your AI Counsellor to get personalized university recommendations based on your profile.
                     </p>
                     <Link
                       href="/counsellor"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                     >
                       Chat with Counsellor
                       <ArrowRight className="w-4 h-4" />
@@ -186,19 +183,19 @@ export default function DashboardPage() {
             )}
 
             {shortlist.length > 0 && lockedUniversities.length === 0 && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-6 transition-colors">
                 <div className="flex items-start gap-4">
-                  <AlertCircle className="w-8 h-8 text-yellow-600 flex-shrink-0" />
+                  <AlertCircle className="w-8 h-8 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-yellow-900 mb-1">
+                    <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">
                       Lock a University to Continue
                     </h3>
-                    <p className="text-yellow-700 mb-4">
+                    <p className="text-yellow-700 dark:text-yellow-300 mb-4">
                       You have {shortlist.length} universities shortlisted. Lock at least one to access application guidance.
                     </p>
                     <Link
                       href="/universities"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition"
                     >
                       View Shortlist
                       <ArrowRight className="w-4 h-4" />
@@ -209,10 +206,10 @@ export default function DashboardPage() {
             )}
 
             {pendingTasks.length > 0 && (
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Pending Tasks</h3>
-                  <Link href="/tasks" className="text-blue-600 text-sm hover:underline">
+                  <h3 className="text-lg font-semibold dark:text-white">Pending Tasks</h3>
+                  <Link href="/tasks" className="text-blue-600 dark:text-blue-400 text-sm hover:underline">
                     View All
                   </Link>
                 </div>
@@ -220,10 +217,10 @@ export default function DashboardPage() {
                   {pendingTasks.slice(0, 4).map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-950/50 rounded-lg transition-colors"
                     >
                       <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                      <span className="text-gray-700">{task.title}</span>
+                      <span className="text-gray-700 dark:text-gray-300">{task.title}</span>
                     </div>
                   ))}
                 </div>
@@ -234,54 +231,54 @@ export default function DashboardPage() {
           <div className="space-y-6">
             <StageIndicator currentStage={dashboard?.current_stage || "ONBOARDING"} />
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-              <h3 className="text-sm font-medium text-gray-500 mb-4">Quick Actions</h3>
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
+              <h3 className="text-sm font-medium text-gray-500 dark:text-slate-400 mb-4">Quick Actions</h3>
               <div className="space-y-2">
                 <Link
                   href="/counsellor"
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <MessageCircle className="w-5 h-5 text-blue-600" />
-                  <span>Chat with AI Counsellor</span>
+                  <MessageCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <span className="dark:text-gray-200">Chat with AI Counsellor</span>
                 </Link>
                 <Link
                   href="/universities"
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <Building2 className="w-5 h-5 text-purple-600" />
-                  <span>Browse Universities</span>
+                  <Building2 className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <span className="dark:text-gray-200">Browse Universities</span>
                 </Link>
                 <Link
                   href="/tasks"
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                  <span>View Tasks</span>
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <span className="dark:text-gray-200">View Tasks</span>
                 </Link>
               </div>
             </div>
 
             {dashboard?.profile && (
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <h3 className="text-sm font-medium text-gray-500 mb-4">Profile Summary</h3>
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-800 transition-colors">
+                <h3 className="text-sm font-medium text-gray-500 dark:text-slate-400 mb-4">Profile Summary</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Target Degree</span>
-                    <span className="font-medium">{dashboard.profile.intended_degree}</span>
+                    <span className="text-gray-500 dark:text-slate-400">Target Degree</span>
+                    <span className="font-medium dark:text-gray-200">{dashboard.profile.intended_degree}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Field</span>
-                    <span className="font-medium">{dashboard.profile.field_of_study}</span>
+                    <span className="text-gray-500 dark:text-slate-400">Field</span>
+                    <span className="font-medium dark:text-gray-200">{dashboard.profile.field_of_study}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Budget</span>
-                    <span className="font-medium">
+                    <span className="text-gray-500 dark:text-slate-400">Budget</span>
+                    <span className="font-medium dark:text-gray-200">
                       ${dashboard.profile.budget_per_year?.toLocaleString()}/yr
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">GPA</span>
-                    <span className="font-medium">{dashboard.profile.gpa}</span>
+                    <span className="text-gray-500 dark:text-slate-400">GPA</span>
+                    <span className="font-medium dark:text-gray-200">{dashboard.profile.gpa}</span>
                   </div>
                 </div>
               </div>

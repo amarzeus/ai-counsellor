@@ -89,14 +89,14 @@ export default function UniversityCard({
   };
 
   return (
-    <div className="group bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-slate-200 transition-all duration-300 overflow-hidden">
+    <div className="group bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-700 transition-all duration-300 overflow-hidden">
       <div className="p-6">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="text-xl font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
               {university.name}
             </h3>
-            <p className="text-sm text-slate-500 mt-1">{university.country}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{university.country}</p>
           </div>
 
           {university.category && (
@@ -111,20 +111,20 @@ export default function UniversityCard({
           )}
         </div>
 
-        <div className="flex items-center gap-3 text-sm text-slate-600 mb-4">
+        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 mb-4">
           {university.tuition_per_year && (
             <div className="flex items-center gap-1.5">
-              <DollarSign className="w-4 h-4 text-slate-400" />
-              <span className="font-medium">
+              <DollarSign className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+              <span className="font-medium dark:text-slate-300">
                 ${(university.tuition_per_year / 1000).toFixed(0)}k
               </span>
-              <span className="text-slate-400">/yr</span>
+              <span className="text-slate-400 dark:text-slate-500">/yr</span>
             </div>
           )}
           {university.ranking && (
             <div className="flex items-center gap-1.5">
-              <TrendingUp className="w-4 h-4 text-slate-400" />
-              <span className="font-medium">#{university.ranking}</span>
+              <TrendingUp className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+              <span className="font-medium dark:text-slate-300">#{university.ranking}</span>
             </div>
           )}
         </div>
@@ -145,15 +145,15 @@ export default function UniversityCard({
         {(university.fit_reason || university.risk_reason) && (
           <div className="space-y-2 mb-4 text-xs">
             {university.fit_reason && (
-              <div className="flex items-start gap-2 p-2 bg-green-50 rounded-lg">
-                <CheckCircle className="w-3.5 h-3.5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-green-800">{university.fit_reason}</span>
+              <div className="flex items-start gap-2 p-2 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                <CheckCircle className="w-3.5 h-3.5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                <span className="text-green-800 dark:text-green-300">{university.fit_reason}</span>
               </div>
             )}
             {university.risk_reason && (
-              <div className="flex items-start gap-2 p-2 bg-amber-50 rounded-lg">
-                <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <span className="text-amber-800">{university.risk_reason}</span>
+              <div className="flex items-start gap-2 p-2 bg-amber-50 dark:bg-amber-900/30 rounded-lg">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                <span className="text-amber-800 dark:text-amber-300">{university.risk_reason}</span>
               </div>
             )}
           </div>
@@ -162,11 +162,10 @@ export default function UniversityCard({
         <button
           onClick={onShortlist}
           disabled={isShortlisted}
-          className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${
-            isShortlisted
-              ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-              : "bg-slate-900 text-white hover:bg-slate-800 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-slate-900/20"
-          }`}
+          className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${isShortlisted
+              ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
+              : "bg-slate-900 dark:bg-blue-600 text-white hover:bg-slate-800 dark:hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-slate-900/20 dark:shadow-blue-900/20"
+            }`}
         >
           {isShortlisted ? (
             <>

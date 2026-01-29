@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
+import {
   Building2, Lock, Unlock, X,
   Star, Target, Shield
 } from "lucide-react";
@@ -35,7 +35,7 @@ export default function UniversitiesPage() {
     if (userStr) {
       const storedUser = JSON.parse(userStr);
       setUser(storedUser);
-      
+
       if (!storedUser.onboarding_completed) {
         router.push("/onboarding");
         return;
@@ -83,7 +83,7 @@ export default function UniversitiesPage() {
     try {
       const response = await shortlistApi.lock(selectedForLock.id);
       fetchData();
-      
+
       const userStr = localStorage.getItem("user");
       if (userStr) {
         const storedUser = JSON.parse(userStr);
@@ -106,7 +106,7 @@ export default function UniversitiesPage() {
       const response = await shortlistApi.unlock(shortlistItem.id, true);
       toast.success(`${shortlistItem.university.name} unlocked.`);
       fetchData();
-      
+
       const userStr = localStorage.getItem("user");
       if (userStr) {
         const storedUser = JSON.parse(userStr);
@@ -176,36 +176,34 @@ export default function UniversitiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] transition-colors duration-300">
       <Navbar />
-      
+
       <main className="max-w-7xl mx-auto px-4 pt-20 pb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Universities</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Universities</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
               Discover and shortlist universities that match your profile
             </p>
           </div>
-          
+
           <div className="flex gap-2 mt-4 sm:mt-0">
             <button
               onClick={() => setActiveTab("all")}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                activeTab === "all"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-600 border border-gray-200"
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "all"
+                ? "bg-blue-600 text-white"
+                : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
+                }`}
             >
               All Universities
             </button>
             <button
               onClick={() => setActiveTab("shortlist")}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                activeTab === "shortlist"
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-600 border border-gray-200"
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "shortlist"
+                ? "bg-blue-600 text-white"
+                : "bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700"
+                }`}
             >
               My Shortlist ({shortlist.length})
             </button>
@@ -217,7 +215,7 @@ export default function UniversitiesPage() {
             <select
               value={countryFilter}
               onChange={(e) => setCountryFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-200 rounded-lg bg-white"
+              className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Countries</option>
               {countries.map((country) => (
@@ -243,12 +241,12 @@ export default function UniversitiesPage() {
         ) : (
           <div className="space-y-4">
             {shortlist.length === 0 ? (
-              <div className="bg-white rounded-xl p-12 text-center">
-                <Building2 className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-12 text-center transition-colors">
+                <Building2 className="w-12 h-12 mx-auto text-gray-300 dark:text-slate-600 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                   No universities shortlisted yet
                 </h3>
-                <p className="text-gray-500 mb-4">
+                <p className="text-gray-500 dark:text-gray-400 mb-4">
                   Browse universities and add them to your shortlist to compare
                 </p>
                 <button
@@ -262,9 +260,8 @@ export default function UniversitiesPage() {
               shortlist.map((item) => (
                 <div
                   key={item.id}
-                  className={`bg-white rounded-xl p-6 shadow-sm border ${
-                    item.is_locked ? "border-purple-300 bg-purple-50" : "border-gray-100"
-                  }`}
+                  className={`bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border transition-colors ${item.is_locked ? "border-purple-300 dark:border-purple-500/50 bg-purple-50 dark:bg-purple-900/10" : "border-gray-100 dark:border-slate-800"
+                    }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-start gap-4">
@@ -277,7 +274,7 @@ export default function UniversitiesPage() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
                             {item.university.name}
                           </h3>
                           {item.is_locked && (
@@ -287,10 +284,10 @@ export default function UniversitiesPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-slate-400">
                           {item.university.country} • ${item.university.tuition_per_year?.toLocaleString()}/year
                         </p>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
                           Category: {item.category}
                         </p>
                       </div>
@@ -300,7 +297,7 @@ export default function UniversitiesPage() {
                       {item.is_locked ? (
                         <button
                           onClick={() => handleUnlock(item)}
-                          className="px-4 py-2 border border-yellow-500 text-yellow-600 rounded-lg hover:bg-yellow-50 flex items-center gap-2"
+                          className="px-4 py-2 border border-yellow-500 dark:border-yellow-600 text-yellow-600 dark:text-yellow-500 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-900/20 flex items-center gap-2 transition-colors"
                         >
                           <Unlock className="w-4 h-4" />
                           Unlock
@@ -316,7 +313,7 @@ export default function UniversitiesPage() {
                           </button>
                           <button
                             onClick={() => handleRemove(item)}
-                            className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50"
+                            className="px-4 py-2 border border-red-300 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -329,8 +326,8 @@ export default function UniversitiesPage() {
             )}
 
             {shortlist.length > 0 && !shortlist.some((s) => s.is_locked) && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                <p className="text-yellow-800 text-sm">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/50 rounded-xl p-4 transition-colors">
+                <p className="text-yellow-800 dark:text-yellow-200 text-sm">
                   <strong>Next Step:</strong> Lock at least one university to access application guidance and generate tasks.
                 </p>
               </div>

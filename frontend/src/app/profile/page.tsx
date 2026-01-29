@@ -61,7 +61,7 @@ export default function ProfilePage() {
     if (userStr) {
       const storedUser = JSON.parse(userStr);
       setUser(storedUser);
-      
+
       if (!storedUser.onboarding_completed) {
         router.push("/onboarding");
         return;
@@ -133,46 +133,46 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] transition-colors duration-300">
       <Navbar />
 
       <main className="max-w-3xl mx-auto px-4 pt-20 pb-8">
         <div className="flex items-center gap-4 mb-6">
           <Link
             href="/dashboard"
-            className="p-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-slate-400" />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Edit Profile</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Edit Profile</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
               Update your profile to get better university recommendations
             </p>
           </div>
         </div>
 
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
-          <p className="text-yellow-800 text-sm">
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/50 rounded-xl p-4 mb-6 transition-colors">
+          <p className="text-yellow-800 dark:text-yellow-200 text-sm">
             <strong>Note:</strong> Changing your profile will recalculate university recommendations and may affect acceptance chances.
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-8">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 space-y-8 transition-colors">
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-blue-600" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               Academic Background
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Current Education Level
                 </label>
                 <select
                   value={formData.current_education_level}
                   onChange={(e) => updateField("current_education_level", e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select...</option>
                   {EDUCATION_LEVELS.map((level) => (
@@ -181,30 +181,30 @@ export default function ProfilePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Current Degree/Major
                 </label>
                 <input
                   type="text"
                   value={formData.degree_major}
                   onChange={(e) => updateField("degree_major", e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Computer Science"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Graduation Year
                 </label>
                 <input
                   type="number"
                   value={formData.graduation_year}
                   onChange={(e) => updateField("graduation_year", parseInt(e.target.value))}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   GPA (out of 4.0)
                 </label>
                 <input
@@ -214,23 +214,23 @@ export default function ProfilePage() {
                   max="4"
                   value={formData.gpa}
                   onChange={(e) => updateField("gpa", parseFloat(e.target.value))}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Study Goals</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Study Goals</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Intended Degree
                 </label>
                 <select
                   value={formData.intended_degree}
                   onChange={(e) => updateField("intended_degree", e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select...</option>
                   {DEGREES.map((degree) => (
@@ -239,13 +239,13 @@ export default function ProfilePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Field of Study
                 </label>
                 <select
                   value={formData.field_of_study}
                   onChange={(e) => updateField("field_of_study", e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select...</option>
                   {FIELDS.map((field) => (
@@ -254,7 +254,7 @@ export default function ProfilePage() {
                 </select>
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Preferred Countries
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -263,11 +263,10 @@ export default function ProfilePage() {
                       key={country}
                       type="button"
                       onClick={() => toggleCountry(country)}
-                      className={`px-4 py-2 rounded-full text-sm ${
-                        formData.preferred_countries.includes(country)
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
+                      className={`px-4 py-2 rounded-full text-sm transition-colors ${formData.preferred_countries.includes(country)
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700"
+                        }`}
                     >
                       {country}
                     </button>
@@ -275,24 +274,24 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Target Intake Year
                 </label>
                 <input
                   type="number"
                   value={formData.target_intake_year}
                   onChange={(e) => updateField("target_intake_year", parseInt(e.target.value))}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Budget & Funding</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Budget & Funding</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Budget Per Year (USD)
                 </label>
                 <input
@@ -302,20 +301,20 @@ export default function ProfilePage() {
                   step="5000"
                   value={formData.budget_per_year}
                   onChange={(e) => updateField("budget_per_year", parseInt(e.target.value))}
-                  className="w-full"
+                  className="w-full accent-blue-600 dark:accent-blue-500"
                 />
-                <div className="text-center text-xl font-bold text-blue-600 mt-2">
+                <div className="text-center text-xl font-bold text-blue-600 dark:text-blue-400 mt-2">
                   ${formData.budget_per_year.toLocaleString()}
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Funding Plan
                 </label>
                 <select
                   value={formData.funding_plan}
                   onChange={(e) => updateField("funding_plan", e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select...</option>
                   {FUNDING_OPTIONS.map((option) => (
@@ -327,16 +326,16 @@ export default function ProfilePage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Exam & Readiness</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Exam & Readiness</h2>
             <div className="grid sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   IELTS/TOEFL Status
                 </label>
                 <select
                   value={formData.ielts_toefl_status}
                   onChange={(e) => updateField("ielts_toefl_status", e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   {EXAM_STATUS.map((status) => (
                     <option key={status.value} value={status.value}>{status.label}</option>
@@ -344,13 +343,13 @@ export default function ProfilePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   GRE/GMAT Status
                 </label>
                 <select
                   value={formData.gre_gmat_status}
                   onChange={(e) => updateField("gre_gmat_status", e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   {EXAM_STATUS.map((status) => (
                     <option key={status.value} value={status.value}>{status.label}</option>
@@ -358,13 +357,13 @@ export default function ProfilePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   SOP Status
                 </label>
                 <select
                   value={formData.sop_status}
                   onChange={(e) => updateField("sop_status", e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   {SOP_STATUS.map((status) => (
                     <option key={status.value} value={status.value}>{status.label}</option>
@@ -374,17 +373,17 @@ export default function ProfilePage() {
             </div>
           </section>
 
-          <div className="flex gap-4 pt-4 border-t border-gray-200">
+          <div className="flex gap-4 pt-4 border-t border-gray-200 dark:border-slate-800">
             <Link
               href="/dashboard"
-              className="flex-1 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition text-center"
+              className="flex-1 py-3 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-white font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition text-center"
             >
               Cancel
             </Link>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-blue-600 dark:bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 dark:hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Save className="w-5 h-5" />
               {saving ? "Saving..." : "Save Changes"}

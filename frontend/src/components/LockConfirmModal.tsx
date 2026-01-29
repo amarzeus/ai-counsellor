@@ -48,7 +48,7 @@ export default function LockConfirmModal({
         onClick={handleClose}
       />
 
-      <div className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
         {state === "confirm" && (
           <>
             <div className="relative bg-gradient-to-br from-amber-500 to-orange-600 p-8 text-white">
@@ -58,11 +58,11 @@ export default function LockConfirmModal({
               >
                 <X className="w-5 h-5" />
               </button>
-              
+
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4">
                 <AlertTriangle className="w-8 h-8" />
               </div>
-              
+
               <h2 className="text-2xl font-bold mb-2">Lock This University?</h2>
               <p className="text-amber-100 text-sm">
                 This is a significant decision in your journey.
@@ -70,35 +70,35 @@ export default function LockConfirmModal({
             </div>
 
             <div className="p-6">
-              <div className="bg-slate-50 rounded-xl p-4 mb-6">
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+              <div className="bg-slate-50 dark:bg-slate-950/50 rounded-xl p-4 mb-6">
+                <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
                   You are locking
                 </p>
-                <p className="text-xl font-bold text-slate-900">{universityName}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{universityName}</p>
               </div>
 
               <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
                     You'll move to the <strong>Application</strong> stage
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
                     Application tasks will be <strong>auto-generated</strong>
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <AlertTriangle className="w-4 h-4 text-amber-600" />
+                  <div className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   </div>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
                     You <strong>won't be able to add</strong> more universities
                   </p>
                 </div>
@@ -107,7 +107,7 @@ export default function LockConfirmModal({
               <div className="flex gap-3">
                 <button
                   onClick={handleClose}
-                  className="flex-1 py-3 px-4 border-2 border-slate-200 text-slate-600 rounded-xl font-semibold hover:bg-slate-50 transition"
+                  className="flex-1 py-3 px-4 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition"
                 >
                   Cancel
                 </button>
@@ -126,10 +126,10 @@ export default function LockConfirmModal({
         {state === "loading" && (
           <div className="p-12 text-center">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-purple-200 border-t-purple-600 animate-spin" />
-            <p className="text-lg font-semibold text-slate-900">
+            <p className="text-lg font-semibold text-slate-900 dark:text-white">
               Locking {universityName}...
             </p>
-            <p className="text-sm text-slate-500 mt-1">Generating your application tasks</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Generating your application tasks</p>
           </div>
         )}
 
@@ -138,13 +138,13 @@ export default function LockConfirmModal({
             <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 animate-in zoom-in duration-300">
               <Rocket className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
               You're Committed!
             </h2>
-            <p className="text-slate-600">
+            <p className="text-slate-600 dark:text-slate-300">
               <strong>{universityName}</strong> is now locked.
             </p>
-            <p className="text-sm text-emerald-600 mt-2 font-medium">
+            <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-2 font-medium">
               Your application journey begins now!
             </p>
           </div>
