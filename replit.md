@@ -65,9 +65,3 @@ The project runs two workflows:
 - Built dashboard, universities, and tasks pages
 - Added Google OAuth authentication (Jan 2026)
 - Added retry logic for Gemini API rate limits
-- Premium landing page redesign with shadcn/ui components (Jan 2026)
-  - Modern gradient hero section with floating animated orbs
-  - Glassmorphism effects and smooth CSS animations
-  - Feature cards with hover effects
-  - Social proof section with avatars and ratings
-  - Premium CTA banner with pattern overlay
