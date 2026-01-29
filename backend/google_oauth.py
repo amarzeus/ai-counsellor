@@ -62,10 +62,16 @@ async def google_login(request: Request):
 
 
 @google_router.get("/callback", name="google_callback")
-async def google_callback(request: Request, code: str = None):
+async def google_callback(request: Request, code: str = None, error: str = None):
     from database import SessionLocal
     from models import User, UserStage
     from auth import create_access_token
+    
+    frontend_base = FRONTEND_URL or f"https://{REPLIT_DEV_DOMAIN}"
+
+    if error:
+        # User denied access or cancelled
+        return RedirectResponse(url=f"{frontend_base}/login?error=access_denied")
     
     if not client or not code:
         raise HTTPException(status_code=400, detail="Invalid callback")
