@@ -51,7 +51,7 @@ export default function SignupPage() {
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-4">
-            <Image src="/logo.png?v=5" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto mx-auto" unoptimized />
+            <Image src="/logo.png?v=6" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto mx-auto" unoptimized />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
           <p className="text-gray-600 mt-2">Start your study abroad journey</p>
