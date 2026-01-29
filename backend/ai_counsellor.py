@@ -23,7 +23,7 @@ if USE_REPLIT_INTEGRATION:
     MODEL_NAME = "gemini-2.5-flash"
 elif GEMINI_API_KEY:
     client = genai.Client(api_key=GEMINI_API_KEY)
-    MODEL_NAME = "gemini-2.0-flash"
+    MODEL_NAME = "gemini-2.5-flash"
 else:
     client = None
     MODEL_NAME = None
@@ -286,6 +286,7 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
                     await asyncio.sleep(wait_time)
                     continue
             # For non-rate-limit errors or final attempt, return error
+
             return {
                 "message": f"I apologize, but I'm having trouble connecting right now. Please try again in a moment.",
                 "actions": [],
