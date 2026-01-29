@@ -26,11 +26,7 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
       </div>
 
       <div className="relative">
-        <div className="absolute left-[18px] top-4 bottom-4 w-0.5 bg-slate-700" />
 
-        <div className="absolute left-[18px] top-4 w-0.5 bg-gradient-to-b from-emerald-400 to-blue-500 transition-all duration-500"
-          style={{ height: `${Math.max(0, currentIndex) * 72}px` }}
-        />
 
         <div className="space-y-4">
           {STAGES.map((stage, idx) => {
@@ -42,18 +38,18 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
               <div
                 key={stage.key}
                 className={`relative flex items-center gap-4 p-3 rounded-xl transition-all duration-300 ${isCurrent
-                    ? "bg-blue-500/20 border border-blue-500/30"
-                    : isCompleted
-                      ? "bg-emerald-500/10"
-                      : "opacity-50"
+                  ? "bg-blue-500/20 border border-blue-500/30"
+                  : isCompleted
+                    ? "bg-emerald-500/10"
+                    : "opacity-50"
                   }`}
               >
                 <div
                   className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${isCompleted
-                      ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
-                      : isCurrent
-                        ? "bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-4 ring-blue-500/20"
-                        : "bg-slate-700 text-slate-500"
+                    ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
+                    : isCurrent
+                      ? "bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-4 ring-blue-500/20"
+                      : "bg-slate-700 text-slate-500"
                     }`}
                 >
                   {isCompleted ? (
@@ -69,10 +65,10 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
                   <div className="flex items-center gap-2">
                     <span
                       className={`font-semibold text-sm ${isCurrent
-                          ? "text-white"
-                          : isCompleted
-                            ? "text-emerald-400"
-                            : "text-slate-500"
+                        ? "text-white"
+                        : isCompleted
+                          ? "text-emerald-400"
+                          : "text-slate-500"
                         }`}
                     >
                       {stage.label}
@@ -86,10 +82,10 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
                   </div>
                   <p
                     className={`text-xs mt-0.5 ${isCurrent
-                        ? "text-blue-200"
-                        : isCompleted
-                          ? "text-slate-400"
-                          : "text-slate-600"
+                      ? "text-blue-200"
+                      : isCompleted
+                        ? "text-slate-400"
+                        : "text-slate-600"
                       }`}
                   >
                     {stage.description}
