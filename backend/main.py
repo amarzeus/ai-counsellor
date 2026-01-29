@@ -8,15 +8,16 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, text
 
 from database import engine, get_db, Base
-from models import User, UserProfile, University, ShortlistedUniversity, Task, ChatMessage, UserStage, TaskStatus
 from schemas import (
     UserCreate, UserLogin, UserResponse, TokenResponse,
     ProfileUpdate, ProfileResponse,
     UniversityResponse, ShortlistCreate, ShortlistResponse,
     TaskCreate, TaskUpdate, TaskResponse,
     ChatMessageCreate, ChatMessageResponse,
+    ChatSessionCreate, ChatSessionResponse,
     DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest
 )
+from models import User, UserProfile, University, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 from universities_data import UNIVERSITIES
 from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university
@@ -691,13 +692,65 @@ def update_task(
     db.refresh(task)
     return TaskResponse.model_validate(task)
 
-@app.get("/api/chat/history", response_model=List[ChatMessageResponse])
-def get_chat_history(
+@app.get("/api/sessions", response_model=List[ChatSessionResponse])
+def get_sessions(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    sessions = db.query(ChatSession).filter(
+        ChatSession.user_id == current_user.id
+    ).order_by(ChatSession.updated_at.desc()).all()
+    return [ChatSessionResponse.model_validate(s) for s in sessions]
+
+@app.post("/api/sessions", response_model=ChatSessionResponse)
+def create_session(
+    session_data: ChatSessionCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    session = ChatSession(
+        user_id=current_user.id,
+        title=session_data.title
+    )
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+    return ChatSessionResponse.model_validate(session)
+
+@app.delete("/api/sessions/{session_id}")
+def delete_session(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    session = db.query(ChatSession).filter(
+        ChatSession.id == session_id,
+        ChatSession.user_id == current_user.id
+    ).first()
+    
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+        
+    db.delete(session)
+    db.commit()
+    return {"message": "Session deleted"}
+
+@app.get("/api/chat/history/{session_id}", response_model=List[ChatMessageResponse])
+def get_chat_history(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Verify session ownership
+    session = db.query(ChatSession).filter(
+        ChatSession.id == session_id,
+        ChatSession.user_id == current_user.id
+    ).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
     messages = db.query(ChatMessage).filter(
-        ChatMessage.user_id == current_user.id
+        ChatMessage.session_id == session_id
     ).order_by(ChatMessage.created_at).all()
     return [ChatMessageResponse.model_validate(m) for m in messages]
 
@@ -707,11 +760,31 @@ async def chat_with_counsellor(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    if not message_data.session_id:
+        # Auto-create session if not provided
+        new_session = ChatSession(
+            user_id=current_user.id,
+            title=message_data.content[:30] + "..."
+        )
+        db.add(new_session)
+        db.commit()
+        db.refresh(new_session)
+        session_id = new_session.id
+    else:
+        session_id = message_data.session_id
+        session = db.query(ChatSession).filter(ChatSession.id == session_id, ChatSession.user_id == current_user.id).first()
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        # Update session title/timestamp if needed
+        session.updated_at = datetime.utcnow()
+
+    # GUARD: Onboarding Check
     if not current_user.onboarding_completed and current_user.current_stage == UserStage.ONBOARDING:
         pass
     
     user_message = ChatMessage(
         user_id=current_user.id,
+        session_id=session_id,
         role="user",
         content=message_data.content
     )
@@ -1001,6 +1074,7 @@ async def chat_with_counsellor(
     
     ai_message = ChatMessage(
         user_id=current_user.id,
+        session_id=session_id,
         role="assistant",
         content=response.get('message', 'I apologize, but I could not process your request.'),
         actions_taken=action_summary

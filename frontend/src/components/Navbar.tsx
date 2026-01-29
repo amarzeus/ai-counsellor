@@ -26,7 +26,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 fixed w-full top-0 z-50 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="w-full px-6">
         <div className="flex items-center justify-between h-16">
           <Link href="/dashboard" className="flex items-center hover:scale-105 transition-transform duration-300">
             <Image src="/logo.png?v=6" alt="AI Counsellor" width={150} height={60} className="h-16 w-auto drop-shadow-sm" unoptimized />

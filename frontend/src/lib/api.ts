@@ -101,7 +101,7 @@ export interface ChatMessage {
   id: number;
   role: 'user' | 'assistant';
   content: string;
-  actions_taken?: { type: string; [key: string]: any }[];
+  actions_taken?: { type: string;[key: string]: any }[];
   created_at: string;
 }
 
@@ -164,7 +164,7 @@ export const shortlistApi = {
   add: (data: { university_id: number; category: string }) =>
     api.post<Shortlist>('/api/shortlist', data),
   lock: (id: number) => api.post<LockResponse>(`/api/shortlist/${id}/lock`),
-  unlock: (id: number, confirm: boolean = true) => 
+  unlock: (id: number, confirm: boolean = true) =>
     api.post<UnlockResponse>(`/api/shortlist/${id}/unlock?confirm=${confirm}`),
   remove: (id: number) => api.delete(`/api/shortlist/${id}`),
 };
@@ -177,9 +177,22 @@ export const taskApi = {
     api.put<Task>(`/api/tasks/${id}`, data),
 };
 
+export interface ChatSession {
+  id: number;
+  title: string;
+  created_at: string;
+}
+
+export const sessionApi = {
+  getAll: () => api.get<ChatSession[]>('/api/sessions'),
+  create: (title: string) => api.post<ChatSession>('/api/sessions', { title }),
+  delete: (id: number) => api.delete(`/api/sessions/${id}`),
+};
+
 export const chatApi = {
-  getHistory: () => api.get<ChatMessage[]>('/api/chat/history'),
-  send: (content: string) => api.post<ChatMessage>('/api/chat', { content }),
+  getHistory: (sessionId: number) => api.get<ChatMessage[]>(`/api/chat/history/${sessionId}`),
+  send: (content: string, sessionId?: number) =>
+    api.post<ChatMessage>('/api/chat', { content, session_id: sessionId }),
 };
 
 export default api;

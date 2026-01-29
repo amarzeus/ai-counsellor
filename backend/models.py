@@ -51,6 +51,7 @@ class User(Base):
     profile = relationship("UserProfile", back_populates="user", uselist=False)
     shortlisted_universities = relationship("ShortlistedUniversity", back_populates="user")
     tasks = relationship("Task", back_populates="user")
+    chat_sessions = relationship("ChatSession", back_populates="user")
 
 class UserProfile(Base):
     __tablename__ = "user_profiles"
@@ -126,12 +127,30 @@ class Task(Base):
     user = relationship("User", back_populates="tasks")
     shortlisted_university = relationship("ShortlistedUniversity", back_populates="tasks")
 
+    user = relationship("User", back_populates="tasks")
+    shortlisted_university = relationship("ShortlistedUniversity", back_populates="tasks")
+
+class ChatSession(Base):
+    __tablename__ = "chat_sessions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String(255), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    user = relationship("User", back_populates="chat_sessions")
+    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
+
 class ChatMessage(Base):
     __tablename__ = "chat_messages"
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
+    session_id = Column(Integer, ForeignKey("chat_sessions.id"), nullable=False)
     role = Column(String(50), nullable=False)
     content = Column(Text, nullable=False)
     actions_taken = Column(JSON)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    session = relationship("ChatSession", back_populates="messages")
