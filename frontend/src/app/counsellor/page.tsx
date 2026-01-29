@@ -11,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import { chatApi, ChatMessage, shortlistApi } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import ChatSidebar from "@/components/chat/ChatSidebar";
+import { AIMessageRenderer } from "@/components/chat/AIMessageRenderer";
 
 // Extended ChatMessage interface to support suggested universities
 interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
@@ -341,11 +342,15 @@ export default function CounsellorPage() {
                         : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200"
                         }`}
                     >
-                      <div className={`prose ${message.role === 'user' ? 'prose-invert text-white' : 'dark:prose-invert'} max-w-none text-sm`}>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {message.content}
-                        </ReactMarkdown>
-                      </div>
+                      {message.role === 'user' ? (
+                        <div className="prose prose-invert text-white max-w-none text-sm">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
+                      ) : (
+                        <AIMessageRenderer content={message.content} />
+                      )}
 
                       {message.actions_taken && message.actions_taken.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700 space-y-2">
