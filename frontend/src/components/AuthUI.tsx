@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Slot } from "@radix-ui/react-slot";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
@@ -340,15 +340,20 @@ function SignUpForm() {
 
 function AuthFormContainer({ isSignIn, onToggle }: { isSignIn: boolean; onToggle: () => void; }) {
     return (
-        <div className="mx-auto grid w-[350px] gap-2">
-            <div className="flex justify-center mb-4">
+        <div className="mx-auto grid w-[350px] gap-6">
+            <div className="flex flex-col items-center gap-6 mb-2">
+                <Link href="/" className="self-start inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-2">
+                    <ArrowLeft className="w-4 h-4" />
+                    Back to Home
+                </Link>
+
                 <Image
                     src="/logo.png?v=6"
                     alt="AI Counsellor"
-                    width={180}
-                    height={60}
-                    className="h-12 w-auto" // Increased size
-                    unoptimized // Since it's a local file might need this depending on config, usually safe to add or remove based on next.config
+                    width={200}
+                    height={67}
+                    className="h-16 w-auto drop-shadow-sm" // Increased size and added subtle shadow
+                    unoptimized
                 />
             </div>
             {isSignIn ? <SignInForm /> : <SignUpForm />}
