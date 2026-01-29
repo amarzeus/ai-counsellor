@@ -99,6 +99,7 @@ export interface Task {
 
 export interface ChatMessage {
   id: number;
+  session_id: number;
   role: 'user' | 'assistant';
   content: string;
   actions_taken?: { type: string;[key: string]: any }[];

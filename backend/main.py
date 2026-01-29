@@ -1072,13 +1072,26 @@ async def chat_with_counsellor(
             'final_stage': current_user.current_stage.value
         }
     
+    # Hydrate suggested universities with DB data
+    suggested_unis = response.get('suggested_universities')
+    if suggested_unis:
+        for uni_data in suggested_unis:
+            uni_id = uni_data.get('university_id')
+            if uni_id:
+                db_uni = db.query(University).filter(University.id == uni_id).first()
+                if db_uni:
+                    uni_data['name'] = db_uni.name
+                    uni_data['country'] = db_uni.country
+                    uni_data['tuition'] = db_uni.tuition_per_year
+                    uni_data['ranking'] = db_uni.ranking
+
     ai_message = ChatMessage(
         user_id=current_user.id,
         session_id=session_id,
         role="assistant",
         content=response.get('message', 'I apologize, but I could not process your request.'),
         actions_taken=action_summary,
-        suggested_universities=response.get('suggested_universities')
+        suggested_universities=suggested_unis
     )
     db.add(ai_message)
     db.commit()

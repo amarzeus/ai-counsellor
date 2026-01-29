@@ -176,6 +176,7 @@ class ChatSessionResponse(BaseModel):
 
 class ChatMessageResponse(BaseModel):
     id: int
+    session_id: int
     role: str
     content: str
     actions_taken: Optional[dict] = None  # {executed: [...], blocked: [...], final_stage: str}

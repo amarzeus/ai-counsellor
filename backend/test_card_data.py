@@ -13,13 +13,34 @@ def test_cards():
         pass # Ignore if exists
 
     print("2. Logging in...")
-    login_data = {"username": email, "password": "password123"}
-    res = requests.post(f"{BASE_URL}/api/auth/login", data=login_data)
+    login_data = {"email": email, "password": "password123"}
+    res = requests.post(f"{BASE_URL}/api/auth/login", json=login_data)
     if res.status_code != 200:
         print("Login failed:", res.text)
         return
     token = res.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
+
+    print("2.5. Completing Profile (to exit ONBOARDING)...")
+    profile_data = {
+        "current_education_level": "Bachelor's",
+        "degree_major": "Computer Science",
+        "graduation_year": 2024,
+        "gpa": 3.8,
+        "intended_degree": "Master's",
+        "field_of_study": "Computer Science",
+        "target_intake_year": 2025,
+        "preferred_countries": ["USA"],
+        "budget_per_year": 50000,
+        "funding_plan": "SELF_FUNDED",
+        "ielts_toefl_status": "COMPLETED",
+        "gre_gmat_status": "COMPLETED",
+        "sop_status": "DRAFT"
+    }
+    res = requests.put(f"{BASE_URL}/api/profile", json=profile_data, headers=headers)
+    if res.status_code != 200:
+        print("Profile update failed:", res.text)
+        return
 
     print("3. Creating Session...")
     res = requests.post(f"{BASE_URL}/api/sessions", json={"title": "Card Test"}, headers=headers)
@@ -44,7 +65,14 @@ def test_cards():
     suggested = data.get("suggested_universities")
     if suggested:
         print(f"✅ SUCCESS: Received {len(suggested)} university cards!")
-        print("First card sample:", suggested[0])
+        print("First card sample details:")
+        print(f"  - ID: {suggested[0].get('university_id')}")
+        print(f"  - Name: {suggested[0].get('name')}")
+        print(f"  - Country: {suggested[0].get('country')}")
+        print(f"  - Tuition: {suggested[0].get('tuition')}")
+        
+        if not suggested[0].get('name'):
+            print("❌ FAILURE: University Name is MISSING (Hydration failed)")
     else:
         print("❌ FAILURE: No suggested_universities found in response.")
         # Check if it was just empty or missing field

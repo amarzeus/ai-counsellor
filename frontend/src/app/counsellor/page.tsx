@@ -2,17 +2,25 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Send, Bot, User, Loader2, CheckCircle, Building2, Mic, MicOff, ArrowRight, Trash2 } from "lucide-react";
+import { Send, Bot, User, Loader2, CheckCircle, Building2, Mic, MicOff, ArrowRight, Trash2, MapPin, DollarSign, GraduationCap } from "lucide-react";
 import toast from "react-hot-toast";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import { chatApi, ChatMessage, shortlistApi } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 
 // Extended ChatMessage interface to support suggested universities
-interface EnrichedChatMessage extends ChatMessage {
+interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
+  session_id?: number;
   suggested_universities?: Array<{
     university_id: number;
+    name?: string;
+    country?: string;
+    tuition?: number;
+    ranking?: number;
     category: "DREAM" | "TARGET" | "SAFE";
     fit_reason: string;
     risk_reason: string;
@@ -100,12 +108,15 @@ export default function CounsellorPage() {
       const sessionIdToSend = currentSessionId || undefined;
       const response = await chatApi.send(userMessage, sessionIdToSend);
 
-      setMessages((prev) => [...prev.slice(0, -1), tempUserMsg, response.data]);
+      const assistantMessage = response.data;
 
-      // If we started a new chat, refresh to get the standard session view eventually
-      if (!currentSessionId) {
-        updateSessionAfterNewChat();
+      // If we just started a new session, the backend response should now contain the session_id
+      if (!currentSessionId && assistantMessage.session_id) {
+        setCurrentSessionId(assistantMessage.session_id);
+        setCurrentSessionId(assistantMessage.session_id);
       }
+
+      setMessages((prev) => [...prev.slice(0, -1), tempUserMsg, assistantMessage]);
 
       if (response.data.actions_taken && response.data.actions_taken.length > 0) {
         response.data.actions_taken.forEach((action: any) => {
@@ -123,14 +134,6 @@ export default function CounsellorPage() {
       setLoading(false);
     }
   };
-
-  const updateSessionAfterNewChat = async () => {
-    setTimeout(async () => {
-      try {
-        window.location.reload();
-      } catch (e) { }
-    }, 500);
-  }
 
   const handleClearHistory = async () => {
     if (!currentSessionId) return;
@@ -296,13 +299,16 @@ export default function CounsellorPage() {
               )}
 
               {messages.map((message) => (
-                <div
+                <motion.div
                   key={message.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                   className={`flex gap-3 mb-6 ${message.role === "user" ? "justify-end" : "justify-start"
                     }`}
                 >
                   {message.role === "assistant" && (
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
                   )}
@@ -314,7 +320,11 @@ export default function CounsellorPage() {
                         : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200"
                         }`}
                     >
-                      <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                      <div className={`prose ${message.role === 'user' ? 'prose-invert text-white' : 'dark:prose-invert'} max-w-none text-sm`}>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
 
                       {message.actions_taken && message.actions_taken.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700 space-y-2">
@@ -332,41 +342,87 @@ export default function CounsellorPage() {
                     </div>
 
                     {message.role === "assistant" && message.suggested_universities && message.suggested_universities.length > 0 && (
-                      <div className="mt-3 grid gap-3 w-full sm:grid-cols-2">
+                      <div className="mt-4 grid gap-4 w-full sm:grid-cols-2">
                         {message.suggested_universities.map((uni, idx) => (
-                          <div key={idx} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex justify-between items-start mb-2">
-                              <div className={`px-2 py-1 rounded-md text-xs font-semibold
-                               ${uni.category === 'DREAM' ? 'bg-purple-100 text-purple-700' :
-                                  uni.category === 'SAFE' ? 'bg-green-100 text-green-700' :
-                                    'bg-blue-100 text-blue-700'}
-                             `}>
-                                {uni.category}
+                          <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group"
+                          >
+                            {/* Header Stripe */}
+                            <div className={`h-2 ${uni.category === 'DREAM' ? 'bg-purple-500' :
+                                uni.category === 'SAFE' ? 'bg-green-500' :
+                                  'bg-blue-500'
+                              }`} />
+
+                            <div className="p-4">
+                              <div className="flex justify-between items-start mb-3">
+                                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase
+                                  ${uni.category === 'DREAM' ? 'bg-purple-100 text-purple-700' :
+                                    uni.category === 'SAFE' ? 'bg-green-100 text-green-700' :
+                                      'bg-blue-100 text-blue-700'}
+                                `}>
+                                  {uni.category}
+                                </span>
+                                {uni.ranking && (
+                                  <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 flex items-center gap-1">
+                                    <GraduationCap className="w-3 h-3" />
+                                    #{uni.ranking}
+                                  </span>
+                                )}
                               </div>
+
+                              <h4 className="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 min-h-[3rem]">
+                                {uni.name || `University ID: ${uni.university_id}`}
+                              </h4>
+
+                              <div className="space-y-2 mb-4 text-xs text-gray-600 dark:text-slate-400">
+                                {uni.country && (
+                                  <div className="flex items-center gap-2">
+                                    <MapPin className="w-3.5 h-3.5 text-gray-400" />
+                                    <span>{uni.country}</span>
+                                  </div>
+                                )}
+                                {uni.tuition && (
+                                  <div className="flex items-center gap-2">
+                                    <DollarSign className="w-3.5 h-3.5 text-gray-400" />
+                                    <span>${uni.tuition.toLocaleString()}/year</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="space-y-2 bg-gray-50 dark:bg-slate-800/50 p-3 rounded-lg text-xs mb-4">
+                                <div className="flex gap-2 items-start">
+                                  <div className="min-w-[4px] mt-1 h-1 rounded-full bg-green-500" />
+                                  <p className="text-gray-600 dark:text-slate-400 leading-relaxed">{uni.fit_reason}</p>
+                                </div>
+                                <div className="flex gap-2 items-start">
+                                  <div className="min-w-[4px] mt-1 h-1 rounded-full bg-orange-400" />
+                                  <p className="text-gray-600 dark:text-slate-400 leading-relaxed">{uni.risk_reason}</p>
+                                </div>
+                              </div>
+
                               <button
                                 onClick={() => handleQuickShortlist(uni.university_id, uni.category)}
-                                className="text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center gap-1"
+                                className="w-full py-2 bg-white dark:bg-slate-800 border-2 border-blue-600 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white transition-all flex items-center justify-center gap-2"
                               >
-                                Shortlist <ArrowRight className="w-3 h-3" />
+                                Shortlist University <ArrowRight className="w-3 h-3" />
                               </button>
                             </div>
-                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">University ID: {uni.university_id}</h4>
-                            <div className="text-xs space-y-1">
-                              <p className="text-green-600 dark:text-green-400">✓ {uni.fit_reason}</p>
-                              <p className="text-orange-600 dark:text-orange-400">⚠ {uni.risk_reason}</p>
-                            </div>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
                     )}
                   </div>
 
                   {message.role === "user" && (
-                    <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
-                      <User className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
+                      <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     </div>
                   )}
-                </div>
+                </motion.div>
               ))}
 
               {loading && (
