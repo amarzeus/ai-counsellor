@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { GraduationCap, Mail, Lock, User } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
 import toast from "react-hot-toast";
 import { authApi } from "@/lib/api";
 import { useStore } from "@/lib/store";
@@ -49,9 +50,8 @@ export default function SignupPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <GraduationCap className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">AI Counsellor</span>
+          <Link href="/" className="inline-block mb-4">
+            <Image src="/logo.png" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto mx-auto" />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
           <p className="text-gray-600 mt-2">Start your study abroad journey</p>

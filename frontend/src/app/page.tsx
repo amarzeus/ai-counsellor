@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { GraduationCap, Target, CheckCircle, MessageCircle } from "lucide-react";
+import Image from "next/image";
+import { Target, CheckCircle, MessageCircle } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <GraduationCap className="w-8 h-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">AI Counsellor</span>
+        <div className="flex items-center">
+          <Image src="/logo.png" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto" />
         </div>
         <div className="flex gap-4">
           <Link

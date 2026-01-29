@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { GraduationCap, LayoutDashboard, MessageCircle, Building2, CheckSquare, LogOut, User } from "lucide-react";
+import { LayoutDashboard, MessageCircle, Building2, CheckSquare, LogOut, User } from "lucide-react";
 import { useStore } from "@/lib/store";
 
 const navItems = [
@@ -26,9 +27,8 @@ export default function Navbar() {
     <nav className="bg-white border-b border-gray-200 fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <GraduationCap className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">AI Counsellor</span>
+          <Link href="/dashboard" className="flex items-center">
+            <Image src="/logo.png" alt="AI Counsellor" width={120} height={40} className="h-10 w-auto" />
           </Link>
 
           <div className="flex items-center gap-1">

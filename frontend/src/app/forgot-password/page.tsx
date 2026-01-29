@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { GraduationCap, Mail, ArrowLeft, CheckCircle } from "lucide-react";
+import Image from "next/image";
+import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { authApi } from "@/lib/api";
 
@@ -72,9 +73,8 @@ export default function ForgotPasswordPage() {
         </Link>
 
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <GraduationCap className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">AI Counsellor</span>
+          <div className="inline-block mb-4">
+            <Image src="/logo.png" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto mx-auto" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Reset Password</h1>
           <p className="text-gray-600 mt-2">
