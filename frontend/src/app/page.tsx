@@ -10,7 +10,18 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 transition-colors duration-500">
       <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
         <div className="flex items-center">
-          <Image src="/logo.png?v=6" alt="AI Counsellor" width={150} height={50} className="h-12 w-auto" unoptimized />
+          <Link href="/">
+            <div className="relative hover:scale-105 transition-transform duration-300">
+              <Image
+                src="/logo.png?v=6"
+                alt="AI Counsellor"
+                width={200}
+                height={80}
+                className="h-24 w-auto drop-shadow-md"
+                unoptimized
+              />
+            </div>
+          </Link>
         </div>
         <div className="flex gap-4 items-center">
           <Switch />
