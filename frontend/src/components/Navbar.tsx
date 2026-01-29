@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, MessageCircle, Building2, CheckSquare, LogOut, User } from "lucide-react";
 import { useStore } from "@/lib/store";
+import Switch from "@/components/Switch";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -24,7 +25,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200 fixed w-full top-0 z-50">
+    <nav className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 fixed w-full top-0 z-50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/dashboard" className="flex items-center">
@@ -39,11 +40,10 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
-                    isActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${isActive
+                    ? "bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800"
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="hidden md:inline">{item.label}</span>
@@ -53,16 +53,17 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
+            <Switch />
             <Link
               href="/profile"
-              className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition px-3 py-2 rounded-lg hover:bg-gray-50"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800"
             >
               <User className="w-5 h-5" />
               <span className="hidden md:inline">{user?.full_name}</span>
             </Link>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-red-600 transition"
+              className="flex items-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition"
             >
               <LogOut className="w-5 h-5" />
             </button>
