@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { GraduationCap, ChevronRight, ChevronLeft, Check } from "lucide-react";
 import toast from "react-hot-toast";
 import { profileApi } from "@/lib/api";
@@ -88,7 +89,7 @@ export default function OnboardingPage() {
     try {
       await profileApi.update(formData);
       const response = await profileApi.completeOnboarding();
-      
+
       const userStr = localStorage.getItem("user");
       if (userStr) {
         const user = JSON.parse(userStr);
@@ -97,7 +98,7 @@ export default function OnboardingPage() {
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
       }
-      
+
       toast.success("Profile complete! Welcome to your dashboard.");
       router.push("/dashboard");
     } catch (error: any) {
@@ -111,8 +112,15 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <nav className="flex items-center justify-between px-8 py-6 max-w-4xl mx-auto">
         <div className="flex items-center gap-2">
-          <GraduationCap className="w-8 h-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">AI Counsellor</span>
+          {/* <GraduationCap className="w-8 h-8 text-blue-600" />
+          <span className="text-xl font-bold text-gray-900">AI Counsellor</span> */}
+          <Link href="/" className="relative h-16 w-auto">
+            <img
+              src="/brand-logo.jpeg"
+              alt="AI Counsellor Logo"
+              className="h-full w-auto object-contain object-left mix-blend-multiply scale-125 origin-left contrast-125 brightness-110"
+            />
+          </Link>
         </div>
         <div className="text-sm text-gray-600">Step {step} of 4</div>
       </nav>
@@ -125,21 +133,19 @@ export default function OnboardingPage() {
               className={`flex items-center ${s < 4 ? "flex-1" : ""}`}
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-medium ${
-                  s < step
-                    ? "bg-green-500 text-white"
-                    : s === step
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-medium ${s < step
+                  ? "bg-green-500 text-white"
+                  : s === step
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200 text-gray-500"
-                }`}
+                  }`}
               >
                 {s < step ? <Check className="w-5 h-5" /> : s}
               </div>
               {s < 4 && (
                 <div
-                  className={`flex-1 h-1 mx-2 ${
-                    s < step ? "bg-green-500" : "bg-gray-200"
-                  }`}
+                  className={`flex-1 h-1 mx-2 ${s < step ? "bg-green-500" : "bg-gray-200"
+                    }`}
                 />
               )}
             </div>
@@ -151,7 +157,7 @@ export default function OnboardingPage() {
             <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-900">Academic Background</h2>
               <p className="text-gray-600">Tell us about your educational background</p>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Current Education Level
@@ -161,11 +167,10 @@ export default function OnboardingPage() {
                     <button
                       key={level}
                       onClick={() => updateField("current_education_level", level)}
-                      className={`p-3 rounded-lg border text-left ${
-                        formData.current_education_level === level
-                          ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`p-3 rounded-lg border text-left ${formData.current_education_level === level
+                        ? "border-blue-600 bg-blue-50 text-blue-600"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                     >
                       {level}
                     </button>
@@ -230,11 +235,10 @@ export default function OnboardingPage() {
                     <button
                       key={degree}
                       onClick={() => updateField("intended_degree", degree)}
-                      className={`p-3 rounded-lg border text-left ${
-                        formData.intended_degree === degree
-                          ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`p-3 rounded-lg border text-left ${formData.intended_degree === degree
+                        ? "border-blue-600 bg-blue-50 text-blue-600"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                     >
                       {degree}
                     </button>
@@ -251,11 +255,10 @@ export default function OnboardingPage() {
                     <button
                       key={field}
                       onClick={() => updateField("field_of_study", field)}
-                      className={`p-3 rounded-lg border text-left ${
-                        formData.field_of_study === field
-                          ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`p-3 rounded-lg border text-left ${formData.field_of_study === field
+                        ? "border-blue-600 bg-blue-50 text-blue-600"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                     >
                       {field}
                     </button>
@@ -272,11 +275,10 @@ export default function OnboardingPage() {
                     <button
                       key={country}
                       onClick={() => toggleCountry(country)}
-                      className={`px-4 py-2 rounded-full text-sm ${
-                        formData.preferred_countries.includes(country)
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
+                      className={`px-4 py-2 rounded-full text-sm ${formData.preferred_countries.includes(country)
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
                     >
                       {country}
                     </button>
@@ -330,11 +332,10 @@ export default function OnboardingPage() {
                     <button
                       key={option.value}
                       onClick={() => updateField("funding_plan", option.value)}
-                      className={`w-full p-4 rounded-lg border text-left ${
-                        formData.funding_plan === option.value
-                          ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`w-full p-4 rounded-lg border text-left ${formData.funding_plan === option.value
+                        ? "border-blue-600 bg-blue-50 text-blue-600"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                     >
                       {option.label}
                     </button>
@@ -358,11 +359,10 @@ export default function OnboardingPage() {
                     <button
                       key={status.value}
                       onClick={() => updateField("ielts_toefl_status", status.value)}
-                      className={`p-3 rounded-lg border text-center text-sm ${
-                        formData.ielts_toefl_status === status.value
-                          ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`p-3 rounded-lg border text-center text-sm ${formData.ielts_toefl_status === status.value
+                        ? "border-blue-600 bg-blue-50 text-blue-600"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                     >
                       {status.label}
                     </button>
@@ -379,11 +379,10 @@ export default function OnboardingPage() {
                     <button
                       key={status.value}
                       onClick={() => updateField("gre_gmat_status", status.value)}
-                      className={`p-3 rounded-lg border text-center text-sm ${
-                        formData.gre_gmat_status === status.value
-                          ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`p-3 rounded-lg border text-center text-sm ${formData.gre_gmat_status === status.value
+                        ? "border-blue-600 bg-blue-50 text-blue-600"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                     >
                       {status.label}
                     </button>
@@ -400,11 +399,10 @@ export default function OnboardingPage() {
                     <button
                       key={status.value}
                       onClick={() => updateField("sop_status", status.value)}
-                      className={`p-3 rounded-lg border text-center text-sm ${
-                        formData.sop_status === status.value
-                          ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`p-3 rounded-lg border text-center text-sm ${formData.sop_status === status.value
+                        ? "border-blue-600 bg-blue-50 text-blue-600"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                     >
                       {status.label}
                     </button>

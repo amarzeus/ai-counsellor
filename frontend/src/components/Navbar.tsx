@@ -27,8 +27,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <GraduationCap className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">AI Counsellor</span>
+            {/* <GraduationCap className="w-8 h-8 text-blue-600" />
+            <span className="text-xl font-bold text-gray-900">AI Counsellor</span> */}
+            <div className="relative h-16 w-auto">
+              <img
+                src="/brand-logo.jpeg"
+                alt="AI Counsellor Logo"
+                className="h-full w-auto object-contain object-left mix-blend-multiply scale-125 origin-left contrast-125 brightness-110"
+              />
+            </div>
           </Link>
 
           <div className="flex items-center gap-1">
@@ -39,11 +46,10 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
-                    isActive
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${isActive
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-gray-600 hover:bg-gray-50"
+                    }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span className="hidden md:inline">{item.label}</span>

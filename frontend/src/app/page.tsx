@@ -9,8 +9,13 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <GraduationCap className="w-8 h-8 text-blue-600" />
-          <span className="text-xl font-bold text-gray-900">AI Counsellor</span>
+          <Link href="/" className="relative h-20 w-auto">
+            <img
+              src="/brand-logo.jpeg"
+              alt="AI Counsellor Logo"
+              className="h-full w-auto object-contain object-left mix-blend-multiply scale-125 origin-left contrast-125 brightness-110"
+            />
+          </Link>
         </div>
         <div className="flex gap-4">
           <Link
