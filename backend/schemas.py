@@ -179,6 +179,7 @@ class ChatMessageResponse(BaseModel):
     role: str
     content: str
     actions_taken: Optional[dict] = None  # {executed: [...], blocked: [...], final_stage: str}
+    suggested_universities: Optional[List[dict]] = None
     created_at: datetime
     
     class Config:

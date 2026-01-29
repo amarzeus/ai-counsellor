@@ -1077,7 +1077,8 @@ async def chat_with_counsellor(
         session_id=session_id,
         role="assistant",
         content=response.get('message', 'I apologize, but I could not process your request.'),
-        actions_taken=action_summary
+        actions_taken=action_summary,
+        suggested_universities=response.get('suggested_universities')
     )
     db.add(ai_message)
     db.commit()
