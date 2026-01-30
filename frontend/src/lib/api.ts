@@ -188,6 +188,7 @@ export interface ChatSession {
 export const sessionApi = {
   getAll: () => api.get<ChatSession[]>('/api/sessions'),
   create: (title: string) => api.post<ChatSession>('/api/sessions', { title }),
+  update: (id: number, title: string) => api.put<ChatSession>(`/api/sessions/${id}`, { title }),
   delete: (id: number) => api.delete(`/api/sessions/${id}`),
 };
 

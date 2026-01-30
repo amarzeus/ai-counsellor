@@ -14,7 +14,8 @@ from schemas import (
     UniversityResponse, ShortlistCreate, ShortlistResponse,
     TaskCreate, TaskUpdate, TaskResponse,
     ChatMessageCreate, ChatMessageResponse,
-    ChatSessionCreate, ChatSessionResponse,
+    ChatMessageCreate, ChatMessageResponse,
+    ChatSessionCreate, ChatSessionUpdate, ChatSessionResponse,
     DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest
 )
 from models import User, UserProfile, University, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus
@@ -736,6 +737,27 @@ def create_session(
         title=session_data.title
     )
     db.add(session)
+    db.commit()
+    db.refresh(session)
+    return ChatSessionResponse.model_validate(session)
+
+@app.put("/api/sessions/{session_id}", response_model=ChatSessionResponse)
+def update_session(
+    session_id: int,
+    session_data: ChatSessionUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    session = db.query(ChatSession).filter(
+        ChatSession.id == session_id,
+        ChatSession.user_id == current_user.id
+    ).first()
+    
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+        
+    session.title = session_data.title
+    session.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(session)
     return ChatSessionResponse.model_validate(session)

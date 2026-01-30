@@ -20,10 +20,10 @@ if USE_REPLIT_INTEGRATION:
             'base_url': AI_INTEGRATIONS_GEMINI_BASE_URL
         }
     )
-    MODEL_NAME = "gemini-2.5-flash"
+    MODEL_NAME = "gemini-2.0-flash"
 elif GEMINI_API_KEY:
     client = genai.Client(api_key=GEMINI_API_KEY)
-    MODEL_NAME = "gemini-2.5-flash"
+    MODEL_NAME = "gemini-2.0-flash"
 else:
     client = None
     MODEL_NAME = None
@@ -283,10 +283,16 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
                     wait_time = retry_delay * (2 ** attempt)
                     await asyncio.sleep(wait_time)
                     continue
+                else:
+                    return {
+                        "message": "AI Service is temporarily unavailable due to high traffic (Quota Exceeded). Please try again in a minute.",
+                        "actions": [],
+                        "suggested_universities": []
+                    }
             # For non-rate-limit errors or final attempt, return error
 
             return {
-                "message": f"I apologize, but I'm having trouble connecting right now. Please try again in a moment.",
+                "message": f"I apologize, but I'm having trouble connecting to the AI service. ({str(e)[:50]}...)",
                 "actions": [],
                 "suggested_universities": []
             }
