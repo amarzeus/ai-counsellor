@@ -1,32 +1,12 @@
-import os
 import json
-import time
+import logging
 import asyncio
 from typing import List, Optional
-from google import genai
 from google.genai import types
 
-AI_INTEGRATIONS_GEMINI_API_KEY = os.environ.get("AI_INTEGRATIONS_GEMINI_API_KEY")
-AI_INTEGRATIONS_GEMINI_BASE_URL = os.environ.get("AI_INTEGRATIONS_GEMINI_BASE_URL")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+from gemini_key_manager import key_manager
 
-USE_REPLIT_INTEGRATION = bool(AI_INTEGRATIONS_GEMINI_API_KEY and AI_INTEGRATIONS_GEMINI_BASE_URL)
-
-if USE_REPLIT_INTEGRATION:
-    client = genai.Client(
-        api_key=AI_INTEGRATIONS_GEMINI_API_KEY,
-        http_options={
-            'api_version': '',
-            'base_url': AI_INTEGRATIONS_GEMINI_BASE_URL
-        }
-    )
-    MODEL_NAME = "gemini-2.0-flash"
-elif GEMINI_API_KEY:
-    client = genai.Client(api_key=GEMINI_API_KEY)
-    MODEL_NAME = "gemini-2.0-flash"
-else:
-    client = None
-    MODEL_NAME = None
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = """You are an AI Counsellor for a guided study-abroad platform.
 
@@ -221,9 +201,12 @@ async def get_counsellor_response(
     shortlisted: list,
     tasks: list
 ) -> dict:
-    if client is None:
+    """Get AI counsellor response with automatic API key rotation."""
+    
+    # Check if any keys are available
+    if not key_manager.has_keys():
         return {
-            "message": "AI Counsellor is not configured. Please set GEMINI_API_KEY environment variable.",
+            "message": "AI Counsellor is not configured. Please set GEMINI_API_KEY or GEMINI_API_KEYS environment variable.",
             "actions": [],
             "suggested_universities": []
         }
@@ -240,13 +223,23 @@ async def get_counsellor_response(
 Respond with valid JSON only. Include a helpful message and any actions to take based on the user's stage and request.
 """
     
-    max_retries = 3
-    retry_delay = 5  # Start with 5 seconds
+    # Track which keys we've tried (for retry with different key)
+    tried_key_indices = []
+    max_attempts = min(2, len(key_manager.keys))  # Try at most 2 different keys
     
-    for attempt in range(max_retries):
+    for attempt in range(max_attempts):
+        # Get a client with a key we haven't tried yet
+        client, key_index = key_manager.create_client(exclude_indices=tried_key_indices)
+        
+        if client is None:
+            # No more keys available
+            break
+        
+        tried_key_indices.append(key_index)
+        
         try:
             response = client.models.generate_content(
-                model=MODEL_NAME,
+                model=key_manager.get_model_name(),
                 contents=full_prompt,
                 config=types.GenerateContentConfig(
                     response_mime_type="application/json"
@@ -276,21 +269,27 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
             
         except Exception as e:
             error_str = str(e)
-            # Check if it's a rate limit error (429)
-            if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str or "quota" in error_str.lower():
-                if attempt < max_retries - 1:
-                    # Wait with exponential backoff before retrying
-                    wait_time = retry_delay * (2 ** attempt)
-                    await asyncio.sleep(wait_time)
+            # Check if it's a rate limit / quota error
+            is_quota_error = "429" in error_str or "RESOURCE_EXHAUSTED" in error_str or "quota" in error_str.lower()
+            
+            if is_quota_error:
+                logger.warning(f"Quota error on key #{key_index + 1}: {error_str[:100]}")
+                
+                # If we have more keys to try, continue to next iteration
+                if attempt < max_attempts - 1:
+                    logger.info(f"Retrying with a different API key...")
+                    await asyncio.sleep(1)  # Brief pause before retry
                     continue
                 else:
+                    # All keys exhausted
                     return {
                         "message": "AI Service is temporarily unavailable due to high traffic (Quota Exceeded). Please try again in a minute.",
                         "actions": [],
                         "suggested_universities": []
                     }
-            # For non-rate-limit errors or final attempt, return error
-
+            
+            # For non-rate-limit errors, return error immediately
+            logger.error(f"AI service error: {error_str}")
             return {
                 "message": f"I apologize, but I'm having trouble connecting to the AI service. ({str(e)[:50]}...)",
                 "actions": [],
