@@ -149,11 +149,36 @@ def seed_demo_users(db: Session):
 def run_migrations():
     """Run database migrations on startup"""
     with engine.connect() as conn:
-        try:
-            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE"))
-            conn.commit()
-        except Exception as e:
-            print(f"Migration warning (may be expected): {e}")
+        migrations = [
+            # Add google_id column to users
+            ("ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE", "google_id"),
+            # Create chat_sessions table if it doesn't exist
+            ("""
+                CREATE TABLE IF NOT EXISTS chat_sessions (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER REFERENCES users(id),
+                    title VARCHAR(255),
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                )
+            """, "chat_sessions table"),
+            # Add session_id column to chat_messages
+            ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS session_id INTEGER REFERENCES chat_sessions(id)", "session_id"),
+            # Add suggested_next_questions column to chat_messages
+            ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS suggested_next_questions JSON", "suggested_next_questions"),
+        ]
+        
+        for sql, name in migrations:
+            try:
+                conn.execute(text(sql))
+                conn.commit()
+                print(f"Migration applied: {name}")
+            except Exception as e:
+                error_str = str(e).lower()
+                if "already exists" in error_str or "duplicate" in error_str:
+                    print(f"Migration skipped (already exists): {name}")
+                else:
+                    print(f"Migration warning for {name}: {e}")
 
 @app.post("/api/seed-demo")
 def seed_demo_endpoint(db: Session = Depends(get_db)):
