@@ -225,7 +225,7 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
     
     # Track which keys we've tried (for retry with different key)
     tried_key_indices = []
-    max_attempts = min(2, len(key_manager.keys))  # Try at most 2 different keys
+    max_attempts = len(key_manager.keys)  # Try ALL available keys
     
     for attempt in range(max_attempts):
         # Get a client with a key we haven't tried yet
@@ -283,7 +283,7 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
                 else:
                     # All keys exhausted
                     return {
-                        "message": "AI Service is temporarily unavailable due to high traffic (Quota Exceeded). Please try again in a minute.",
+                        "message": f"AI Service is temporarily unavailable due to high traffic (Quota exceeded after {len(tried_key_indices)} attempts). Please try again in a few minutes.",
                         "actions": [],
                         "suggested_universities": []
                     }
