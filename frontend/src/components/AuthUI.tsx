@@ -14,6 +14,7 @@ import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
 import { authApi } from "@/lib/api";
 import { useStore } from "@/lib/store";
+import { FlickeringGrid } from "@/components/ui/flickering-grid";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -431,14 +432,22 @@ export function AuthUI({ signInContent = {}, signUpContent = {}, defaultView = "
     const currentContent = isSignIn ? finalSignInContent : finalSignUpContent;
 
     return (
-        <div className="w-full min-h-screen md:grid md:grid-cols-2">
+        <div className="relative w-full min-h-screen md:grid md:grid-cols-2 overflow-hidden">
+            <FlickeringGrid
+                className="absolute inset-0 z-0 [mask-image:radial-gradient(450px_circle_at_center,white,transparent)]"
+                squareSize={4}
+                gridGap={6}
+                color="#60A5FA"
+                maxOpacity={0.5}
+                flickerChance={0.1}
+            />
             <style>{`
         input[type="password"]::-ms-reveal,
         input[type="password"]::-ms-clear {
           display: none;
         }
       `}</style>
-            <div className="flex h-screen items-center justify-center p-6 md:h-auto md:p-0 md:py-12">
+            <div className="relative z-10 flex h-screen items-center justify-center p-6 md:h-auto md:p-0 md:py-12">
                 <AuthFormContainer isSignIn={isSignIn} onToggle={toggleForm} />
             </div>
 
