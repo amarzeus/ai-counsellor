@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, DollarSign, GraduationCap, CheckCircle, TrendingUp, Target, BookOpen, Clock, Award, AlertTriangle } from 'lucide-react';
+import { MapPin, DollarSign, CheckCircle, TrendingUp, Target, BookOpen, Clock, Award, AlertTriangle, Plus, AlertCircle, Sparkles } from 'lucide-react';
 
 interface UniversityCardProps {
     university: {
@@ -23,128 +23,141 @@ interface UniversityCardProps {
 }
 
 /**
- * Decision-focused University Card
- * Information-rich, compact, scannable in <2 seconds
+ * University Card - Final Polish
+ * Single cohesive surface, clear hierarchy, reduced noise.
  */
 export function UniversityCard({ university: uni, index, onShortlistToggle }: UniversityCardProps) {
     const categoryStyles = {
-        DREAM: {
-            badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300',
-            border: 'border-l-purple-500',
-            risk: 'High',
-            riskColor: 'text-red-500',
-        },
+
         TARGET: {
-            badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
-            border: 'border-l-blue-500',
+            badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
+            border: 'border-blue-200 dark:border-blue-800',
             risk: 'Medium',
             riskColor: 'text-amber-500',
+            chance: 'Strong fit for profile',
         },
         SAFE: {
-            badge: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
-            border: 'border-l-green-500',
+            badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+            border: 'border-emerald-200 dark:border-emerald-800',
             risk: 'Low',
             riskColor: 'text-green-500',
+            chance: 'Low-risk option',
+        },
+        DREAM: {
+            badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
+            border: 'border-purple-200 dark:border-purple-800',
+            risk: 'High',
+            riskColor: 'text-red-500',
+            chance: 'Ambitious goal',
         },
     };
 
     const styles = categoryStyles[uni.category] || categoryStyles.TARGET;
 
-    // Derive data from category if not provided
+    // Derived Data
     const minGPA = uni.category === 'DREAM' ? '3.7+' : uni.category === 'SAFE' ? '3.0+' : '3.4+';
     const programName = uni.program_name || 'Computer Science';
     const duration = uni.duration || '2 years';
     const rankingText = uni.ranking ? `#${uni.ranking} World` : 'Top 100';
 
-    // AI insight (1 line max)
-    const insight = uni.fit_reason
-        ? (uni.fit_reason.length > 110 ? uni.fit_reason.substring(0, 107) + '...' : uni.fit_reason)
-        : 'Strong match for your profile';
+    // Insight Processing
+    // DO NOT truncate. Allow full text to render to avoid cutting off decimals (e.g. "3.5").
+    const cleanInsight = (uni.fit_reason || uni.risk_reason || 'Strong match for your profile')
+        .replace(/^[-•]\s*/, '');
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 4 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.2 }}
-            className={`bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg border-l-[3px] ${styles.border} hover:shadow-md transition-shadow`}
+            transition={{ delay: index * 0.05, duration: 0.3 }}
+            className="group flex flex-col h-full bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all duration-200 overflow-hidden"
         >
-            {/* Header: Name + Badge + Country */}
-            <div className="px-2.5 py-1.5 border-b border-gray-100 dark:border-slate-700">
-                <div className="flex items-start justify-between gap-1">
-                    <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-xs text-gray-900 dark:text-white truncate">
-                            {uni.name || `University #${uni.university_id}`}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[9px] text-gray-500 dark:text-slate-400 flex items-center gap-0.5">
-                                <MapPin className="w-2 h-2" />
-                                {uni.country || 'USA'}
-                            </span>
-                            <span className="text-[9px] text-gray-400">•</span>
-                            <span className="text-[9px] text-gray-500 dark:text-slate-400">{programName}</span>
-                        </div>
+            {/* 1. Header: Identity - Reduced Padding */}
+            <div className="p-2.5 pb-2 flex justify-between items-start gap-3">
+                <div className="min-w-0 flex-1">
+                    <h4 className="font-bold text-sm text-slate-900 dark:text-white truncate leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        {uni.name || `University #${uni.university_id}`}
+                    </h4>
+                    <div className="flex items-center gap-1.5 mt-1">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-0.5">
+                            <MapPin className="w-3 h-3" />
+                            {uni.country || 'USA'}
+                        </span>
+                        <span className="text-[10px] text-slate-300">•</span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                            {programName}
+                        </span>
                     </div>
-                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wide uppercase flex-shrink-0 ${styles.badge}`}>
+                </div>
+
+                <div className="flex flex-col items-end gap-1">
+                    <div className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${styles.badge} border ${styles.border}`}>
                         {uni.category}
+                    </div>
+                    {/* Explicit Chance Clarity */}
+                    <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500">
+                        {styles.chance}
                     </span>
                 </div>
             </div>
 
-            {/* Key Metrics - 3x2 Grid */}
-            <div className="px-2.5 py-1.5 grid grid-cols-3 gap-x-2 gap-y-0.5 text-[9px] bg-gray-50 dark:bg-slate-900/50">
-                {/* Row 1 */}
-                <div className="flex items-center gap-1">
-                    <DollarSign className="w-2.5 h-2.5 text-gray-400" />
-                    <span className="text-gray-600 dark:text-slate-400">
+            {/* 2. Metrics Grid: Compact Density */}
+            <div className="px-2.5 py-2 bg-slate-50 dark:bg-slate-800/50 border-y border-slate-100 dark:border-slate-700/50 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                <div className="flex items-center gap-1.5 min-w-0">
+                    <DollarSign className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span className="text-[10px] text-slate-700 dark:text-slate-300 font-medium truncate">
                         {uni.tuition ? `$${Math.round(uni.tuition / 1000)}k/yr` : '$50k/yr'}
                     </span>
                 </div>
-                <div className="flex items-center gap-1">
-                    <Clock className="w-2.5 h-2.5 text-gray-400" />
-                    <span className="text-gray-600 dark:text-slate-400">{duration}</span>
+                <div className="flex items-center gap-1.5 min-w-0">
+                    <Clock className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span className="text-[10px] text-slate-700 dark:text-slate-300 truncate">
+                        {duration}
+                    </span>
                 </div>
-                <div className="flex items-center gap-1">
-                    <Award className="w-2.5 h-2.5 text-gray-400" />
-                    <span className="text-gray-600 dark:text-slate-400">{rankingText}</span>
+                <div className="flex items-center gap-1.5 min-w-0">
+                    <Award className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span className="text-[10px] text-slate-700 dark:text-slate-300 truncate">
+                        {rankingText}
+                    </span>
                 </div>
-
-                {/* Row 2 */}
-                <div className="flex items-center gap-1">
-                    <BookOpen className="w-2.5 h-2.5 text-gray-400" />
-                    <span className="text-gray-600 dark:text-slate-400">GPA {minGPA}</span>
-                </div>
-                <div className="flex items-center gap-1 col-span-2">
-                    <AlertTriangle className="w-2.5 h-2.5 text-gray-400" />
-                    <span className={`font-medium ${styles.riskColor}`}>
-                        {styles.risk} competition
+                <div className="flex items-center gap-1.5 min-w-0">
+                    <BookOpen className="w-3 h-3 text-slate-400 shrink-0" />
+                    <span className="text-[10px] text-slate-700 dark:text-slate-300 truncate">
+                        GPA {minGPA}
                     </span>
                 </div>
             </div>
 
-            {/* AI Insight (1 line, muted) */}
-            <div className="px-2.5 py-1 border-t border-gray-100 dark:border-slate-700">
-                <div className="flex items-start gap-1">
-                    <TrendingUp className="w-2.5 h-2.5 text-blue-400 mt-0.5 flex-shrink-0" />
-                    <p className="text-[9px] text-gray-500 dark:text-slate-400 leading-tight">
-                        {insight}
+            {/* 3. Footer: Insight & Action */}
+            <div className="p-2.5 pt-2 flex flex-col gap-3 flex-1">
+                {/* Secondary AI Insight - Muted Hierarchy */}
+                <div className="flex items-start gap-2 flex-1">
+                    <Sparkles className="w-3 h-3 text-blue-300 dark:text-blue-500/50 mt-0.5 shrink-0" />
+                    <p className="text-[10px] text-slate-500 dark:text-slate-500 leading-relaxed">
+                        {cleanInsight}
                     </p>
                 </div>
-            </div>
 
-            {/* Action Button */}
-            <div className="px-2.5 pb-1.5">
+                {/* Primary/Secondary CTA - Consistent Tone */}
                 <button
                     onClick={() => onShortlistToggle(uni.university_id, uni.category, uni.is_shortlisted)}
-                    className={`w-full py-1 rounded text-[9px] font-semibold transition-all flex items-center justify-center gap-1
+                    className={`w-full py-1.5 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-all
             ${uni.is_shortlisted
-                            ? 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                            ? 'bg-transparent text-green-600 dark:text-green-500 border border-transparent cursor-default'
+                            : 'bg-blue-600/90 text-white hover:bg-blue-600 shadow-sm hover:shadow-md'
                         }`}
                 >
                     {uni.is_shortlisted ? (
-                        <><CheckCircle className="w-2.5 h-2.5" /> Shortlisted</>
+                        <>
+                            <CheckCircle className="w-3 h-3" />
+                            <span>Shortlisted</span>
+                        </>
                     ) : (
-                        'Add to Shortlist'
+                        <>
+                            <Plus className="w-3 h-3" />
+                            <span>Add to Shortlist</span>
+                        </>
                     )}
                 </button>
             </div>

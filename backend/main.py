@@ -151,25 +151,25 @@ def run_migrations():
     with engine.connect() as conn:
         migrations = [
             # Add google_id column to users
-            ("ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE", "google_id"),
+            ("ALTER TABLE users ADD COLUMN google_id VARCHAR(255) UNIQUE", "google_id"),
             # Create chat_sessions table if it doesn't exist
             ("""
                 CREATE TABLE IF NOT EXISTS chat_sessions (
-                    id SERIAL PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER REFERENCES users(id),
                     title VARCHAR(255),
-                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """, "chat_sessions table"),
             # Add session_id column to chat_messages
-            ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS session_id INTEGER REFERENCES chat_sessions(id)", "session_id"),
+            ("ALTER TABLE chat_messages ADD COLUMN session_id INTEGER REFERENCES chat_sessions(id)", "session_id"),
             # Add suggested_next_questions column to chat_messages
-            ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS suggested_next_questions JSON", "suggested_next_questions"),
+            ("ALTER TABLE chat_messages ADD COLUMN suggested_next_questions JSON", "suggested_next_questions"),
             # Add suggested_universities column to chat_messages
-            ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS suggested_universities JSON", "suggested_universities"),
+            ("ALTER TABLE chat_messages ADD COLUMN suggested_universities JSON", "suggested_universities"),
             # Add actions_taken column to chat_messages
-            ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS actions_taken JSON", "actions_taken"),
+            ("ALTER TABLE chat_messages ADD COLUMN actions_taken JSON", "actions_taken"),
         ]
         
         for sql, name in migrations:

@@ -27,9 +27,16 @@ interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
     fit_reason: string;
     risk_reason: string;
     is_shortlisted?: boolean;
+    program_name?: string;
+    duration?: string;
   }>;
   suggested_next_questions?: string[];
 }
+
+// Helper for static system guidance
+const getSystemGuidance = () => {
+  return "Based on your profile and budget, these universities are strong matches. Review and compare the options below.";
+};
 
 // Helper to extract guidance from AI content (no truncation)
 function extractGuidance(content: string): string {
@@ -168,30 +175,7 @@ export default function CounsellorPage() {
   const handleClearHistory = async () => {
     if (!currentSessionId) return;
     if (!confirm("Delete this chat session?")) return;
-    // Logic usually handled by sidebar delete, but this button is confusing if it means "delete session"
-    // Previously it was "clear all history". Now "delete session" is better from sidebar.
-    // Let's make this button delete the CURRENT session.
     try {
-      // We reuse the delete session API
-      // But we need the ID.
-      // Actually, let's keep it simple: Just clear visuals for now or call same API as sidebar?
-      // Let's implement full session delete here too?
-      // Or just remove this button as Sidebar has trash icon per session?
-      // The user screenshot showed a TRASH icon in the header.
-      // Let's keep it but make it just clear messages? Or delete session?
-      // "Clear Chat" usually means specific to this session.
-      // I'll make it loop back to NEW CHAT.
-
-      // Actually, sidebar has individual delete buttons. 
-      // Let's make this button trigger the same logic if possible or just remove it to avoid confusion?
-      // No, user specifically liked the Trash button feature before.
-      // Let's make it delete current session.
-      // import sessionApi...
-      // For now, I will Comment it out or make it just toast "Use sidebar to delete".
-      // Or better:
-      // const response = await sessionApi.delete(currentSessionId);
-      // setCurrentSessionId(null);
-      // But I need sessionApi imported.
       toast.error("Please use the sidebar to delete specific chats.");
     } catch (e) { }
   };
@@ -380,24 +364,18 @@ export default function CounsellorPage() {
                       {/* When universities exist: Slim guidance strip + cards dominate */}
                       {message.suggested_universities && message.suggested_universities.length > 0 ? (
                         <div className="space-y-3">
-                          {/* Slim guidance strip - NO bubble, NO avatar */}
+                          {/* 1. Guidance Strip - Section Header Style (Minimal) */}
                           <div className="flex items-center gap-2 px-1">
-                            <Bot className="w-4 h-4 text-blue-500" />
-                            <p className="text-xs text-gray-500 dark:text-slate-400">
-                              {extractGuidance(message.content)}
+                            <div className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0">
+                              <Bot className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                            </div>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                              {getSystemGuidance()}
                             </p>
                           </div>
 
-                          {/* Section label */}
-                          <div className="flex items-center gap-2 mt-4 mb-2">
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
-                              Recommended for you
-                            </span>
-                            <span className="flex-1 h-px bg-gray-100 dark:bg-slate-700" />
-                          </div>
-
-                          {/* CARDS = Primary Interface */}
-                          <div className="grid gap-2 sm:grid-cols-2">
+                          {/* 2. CARDS Surface - Standalone Grid */}
+                          <div className="grid gap-3 sm:grid-cols-2">
                             {message.suggested_universities.map((uni, idx) => (
                               <UniversityCard
                                 key={idx}
@@ -408,14 +386,15 @@ export default function CounsellorPage() {
                             ))}
                           </div>
 
-                          {/* Suggestion chips */}
+                          {/* 3. Footer: Reduced Actions (Max 2) */}
                           {message.suggested_next_questions && message.suggested_next_questions.length > 0 && (
-                            <div className="mt-3 flex flex-wrap gap-2">
-                              {message.suggested_next_questions.map((question, idx) => (
+                            <div className="flex items-center justify-end gap-2 px-1 pt-1 opacity-80 hover:opacity-100 transition-opacity">
+                              <span className="text-[10px] text-slate-400 font-medium mr-1">Next steps:</span>
+                              {message.suggested_next_questions.slice(0, 2).map((question, idx) => (
                                 <button
                                   key={idx}
                                   onClick={() => setInput(question)}
-                                  className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full border border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                                  className="px-3 py-1 text-[10px] font-medium text-slate-500 hover:text-blue-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-blue-300 transition-colors shadow-sm"
                                 >
                                   {question}
                                 </button>
