@@ -12,6 +12,7 @@ import { chatApi, ChatMessage, shortlistApi } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import { AIMessageRenderer } from "@/components/chat/AIMessageRenderer";
+import { UniversityCard } from "@/components/chat/UniversityCard";
 
 // Extended ChatMessage interface to support suggested universities
 interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
@@ -28,6 +29,32 @@ interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
     is_shortlisted?: boolean;
   }>;
   suggested_next_questions?: string[];
+}
+
+// Helper to extract guidance from AI content (no truncation)
+function extractGuidance(content: string): string {
+  const lines = content.split('\n').map(l => l.trim()).filter(l => l.length > 10);
+  const result: string[] = [];
+
+  for (const line of lines) {
+    const lower = line.toLowerCase();
+    // Look for context/guidance lines
+    if (lower.includes('discovery') || lower.includes('stage') ||
+      lower.includes("you're") || lower.includes('based on') ||
+      lower.includes('profile') || lower.includes('recommend')) {
+      const clean = line.replace(/\*\*/g, '').replace(/^[-•*#]+\s*/, '');
+      result.push(clean);
+      if (result.length >= 2) break; // Max 2 sentences for guidance
+    }
+  }
+
+  if (result.length === 0) {
+    // Fallback to first line
+    const first = lines[0] || 'Here are your recommendations based on your profile.';
+    result.push(first.replace(/\*\*/g, '').replace(/^[-•*#]+\s*/, ''));
+  }
+
+  return result.join(' ');
 }
 
 export default function CounsellorPage() {
@@ -329,149 +356,114 @@ export default function CounsellorPage() {
                   className={`flex gap-3 mb-6 ${message.role === "user" ? "justify-end" : "justify-start"
                     }`}
                 >
-                  {message.role === "assistant" && (
-                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
-                      <Bot className="w-5 h-5 text-white" />
-                    </div>
+                  {/* USER MESSAGE - keep as chat bubble */}
+                  {message.role === "user" && (
+                    <>
+                      <div className={`flex flex-col max-w-[85%] items-end`}>
+                        <div className="rounded-2xl px-5 py-4 shadow-sm bg-blue-600 text-white">
+                          <div className="prose prose-invert text-white max-w-none text-sm">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {message.content}
+                            </ReactMarkdown>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
+                        <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                      </div>
+                    </>
                   )}
 
-                  <div className={`flex flex-col max-w-[85%] ${message.role === "user" ? "items-end" : "items-start"}`}>
-                    <div
-                      className={`rounded-2xl px-5 py-4 shadow-sm ${message.role === "user"
-                        ? "bg-blue-600 text-white"
-                        : "bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200"
-                        }`}
-                    >
-                      {message.role === 'user' ? (
-                        <div className="prose prose-invert text-white max-w-none text-sm">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {message.content}
-                          </ReactMarkdown>
+                  {/* ASSISTANT MESSAGE - Different rendering based on content */}
+                  {message.role === "assistant" && (
+                    <div className="w-full">
+                      {/* When universities exist: Slim guidance strip + cards dominate */}
+                      {message.suggested_universities && message.suggested_universities.length > 0 ? (
+                        <div className="space-y-3">
+                          {/* Slim guidance strip - NO bubble, NO avatar */}
+                          <div className="flex items-center gap-2 px-1">
+                            <Bot className="w-4 h-4 text-blue-500" />
+                            <p className="text-xs text-gray-500 dark:text-slate-400">
+                              {extractGuidance(message.content)}
+                            </p>
+                          </div>
+
+                          {/* Section label */}
+                          <div className="flex items-center gap-2 mt-4 mb-2">
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
+                              Recommended for you
+                            </span>
+                            <span className="flex-1 h-px bg-gray-100 dark:bg-slate-700" />
+                          </div>
+
+                          {/* CARDS = Primary Interface */}
+                          <div className="grid gap-2 sm:grid-cols-2">
+                            {message.suggested_universities.map((uni, idx) => (
+                              <UniversityCard
+                                key={idx}
+                                university={uni}
+                                index={idx}
+                                onShortlistToggle={handleQuickShortlist}
+                              />
+                            ))}
+                          </div>
+
+                          {/* Suggestion chips */}
+                          {message.suggested_next_questions && message.suggested_next_questions.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {message.suggested_next_questions.map((question, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => setInput(question)}
+                                  className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full border border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                                >
+                                  {question}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       ) : (
-                        <AIMessageRenderer content={message.content} />
-                      )}
+                        /* Regular AI message (no universities) - keep bubble style */
+                        <div className="flex gap-3">
+                          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
+                            <Bot className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex flex-col max-w-[85%] items-start">
+                            <div className="rounded-2xl px-5 py-4 shadow-sm bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200">
+                              <AIMessageRenderer content={message.content} />
 
-                      {message.actions_taken && message.actions_taken.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700 space-y-2">
-                          {message.actions_taken.map((action: any, idx: number) => (
-                            <div
-                              key={idx}
-                              className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 font-medium"
-                            >
-                              <CheckCircle className="w-4 h-4" />
-                              <span>Action Taken: {action.type}</span>
+                              {message.actions_taken && message.actions_taken.length > 0 && (
+                                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700 space-y-2">
+                                  {message.actions_taken.map((action: any, idx: number) => (
+                                    <div
+                                      key={idx}
+                                      className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 font-medium"
+                                    >
+                                      <CheckCircle className="w-4 h-4" />
+                                      <span>Action Taken: {action.type}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-                          ))}
+
+                            {message.suggested_next_questions && message.suggested_next_questions.length > 0 && (
+                              <div className="mt-4 flex flex-wrap gap-2">
+                                {message.suggested_next_questions.map((question, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => setInput(question)}
+                                    className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full border border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                                  >
+                                    {question}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
-                    </div>
-
-                    {message.role === "assistant" && message.suggested_universities && message.suggested_universities.length > 0 && (
-                      <div className="mt-4 grid gap-4 w-full sm:grid-cols-2">
-                        {message.suggested_universities.map((uni, idx) => (
-                          <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: idx * 0.1 }}
-                            className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group"
-                          >
-                            {/* Header Stripe */}
-                            <div className={`h-2 ${uni.category === 'DREAM' ? 'bg-purple-500' :
-                              uni.category === 'SAFE' ? 'bg-green-500' :
-                                'bg-blue-500'
-                              }`} />
-
-                            <div className="p-4">
-                              <div className="flex justify-between items-start mb-3">
-                                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase
-                                  ${uni.category === 'DREAM' ? 'bg-purple-100 text-purple-700' :
-                                    uni.category === 'SAFE' ? 'bg-green-100 text-green-700' :
-                                      'bg-blue-100 text-blue-700'}
-                                `}>
-                                  {uni.category}
-                                </span>
-                                {uni.ranking && (
-                                  <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 flex items-center gap-1">
-                                    <GraduationCap className="w-3 h-3" />
-                                    #{uni.ranking}
-                                  </span>
-                                )}
-                              </div>
-
-                              <h4 className="font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 min-h-[3rem]">
-                                {uni.name || `University ID: ${uni.university_id}`}
-                              </h4>
-
-                              <div className="space-y-2 mb-4 text-xs text-gray-600 dark:text-slate-400">
-                                {uni.country && (
-                                  <div className="flex items-center gap-2">
-                                    <MapPin className="w-3.5 h-3.5 text-gray-400" />
-                                    <span>{uni.country}</span>
-                                  </div>
-                                )}
-                                {uni.tuition && (
-                                  <div className="flex items-center gap-2">
-                                    <DollarSign className="w-3.5 h-3.5 text-gray-400" />
-                                    <span>${uni.tuition.toLocaleString()}/year</span>
-                                  </div>
-                                )}
-                              </div>
-
-                              <div className="space-y-2 bg-gray-50 dark:bg-slate-800/50 p-3 rounded-lg text-xs mb-4">
-                                <div className="flex gap-2 items-start">
-                                  <div className="min-w-[4px] mt-1 h-1 rounded-full bg-green-500" />
-                                  <p className="text-gray-600 dark:text-slate-400 leading-relaxed">{uni.fit_reason}</p>
-                                </div>
-                                <div className="flex gap-2 items-start">
-                                  <div className="min-w-[4px] mt-1 h-1 rounded-full bg-orange-400" />
-                                  <p className="text-gray-600 dark:text-slate-400 leading-relaxed">{uni.risk_reason}</p>
-                                </div>
-                              </div>
-
-                              <button
-                                onClick={() => handleQuickShortlist(uni.university_id, uni.category, uni.is_shortlisted)}
-                                className={`w-full py-2 border-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2
-                                  ${uni.is_shortlisted
-                                    ? "bg-green-50 dark:bg-green-900/20 border-green-500 text-green-600 dark:text-green-400"
-                                    : "bg-white dark:bg-slate-800 border-blue-600 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500"}
-                                `}
-                              >
-                                {uni.is_shortlisted ? (
-                                  <>
-                                    <CheckCircle className="w-3 h-3" /> Shortlisted
-                                  </>
-                                ) : (
-                                  <>
-                                    Shortlist University <ArrowRight className="w-3 h-3" />
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </div>
-                    )}
-
-                    {message.role === "assistant" && message.suggested_next_questions && message.suggested_next_questions.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {message.suggested_next_questions.map((question, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => setInput(question)}
-                            className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full border border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
-                          >
-                            {question}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {message.role === "user" && (
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
-                      <User className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     </div>
                   )}
                 </motion.div>
@@ -531,7 +523,7 @@ export default function CounsellorPage() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
