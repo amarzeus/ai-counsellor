@@ -1,0 +1,6 @@
+update_profile(field, value)
+update_stage(stage)
+shortlist_university(university_id)
+lock_university(university_id)
+create_task(type, title)
+update_task(task_id, status)

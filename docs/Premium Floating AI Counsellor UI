@@ -1,0 +1,44 @@
+Design a premium floating AI Counsellor assistant UI.
+
+Design Philosophy:
+Quiet, confident, non-intrusive.
+Feels like a senior counsellor presence.
+
+Idle State:
+- Circular avatar (44–48px)
+- Neutral background
+- Subtle border
+- Fixed bottom-right
+- No animation
+
+Attention State:
+- Soft pulse or halo
+- No text labels
+- Only when action is required
+
+Expanded State:
+- Compact card panel
+- Max width ~300px
+- Show:
+  1) One guidance sentence
+  2) Max two action buttons
+- No scrolling
+- No chat history
+
+Voice Controls:
+- Voice Assistant button only in expanded state
+- Dictation mic stays inside text input
+
+Rules:
+- Never auto-open
+- Never steal focus
+- Never block UI
+- Respect PRD stage rules
+
+Constraints:
+- No flashy gradients
+- No new colors
+- No heavy animations
+
+Goal:
+A premium AI presence that feels calm, trustworthy, and intelligent.

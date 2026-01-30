@@ -1,0 +1,35 @@
+Implement a floating AI Counsellor assistant that lives across the app.
+
+This is NOT a chat widget.
+This is a persistent, context-aware AI supervisor.
+
+AI must always know:
+- User stage
+- Profile completeness
+- Shortlisted universities
+- Locked university
+- Pending tasks
+- Current route/page
+
+Behavior:
+- Observe silently by default
+- Nudge only when useful
+- Never interrupt or block UI
+
+Stage-based Behavior:
+Stage 1:
+- Prompt profile completion
+Stage 2:
+- Encourage shortlisting
+- Prevent premature locking
+Stage 3:
+- Confirm commitment
+- Generate tasks
+Stage 4:
+- Track tasks
+- Suggest next steps
+
+Allowed actions:
+- Suggest next step
+- Trigger allowed system actions
+- Explain blocked actions

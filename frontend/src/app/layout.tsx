@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import FooterWrapper from "@/components/layout/FooterWrapper";
+import FloatingCounsellorWrapper from "@/components/floating-counsellor/FloatingCounsellorWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +27,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Toaster position="top-right" />
           {children}
+          <FloatingCounsellorWrapper />
           <FooterWrapper />
         </ThemeProvider>
       </body>

@@ -1,0 +1,339 @@
+.floating-counsellor {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  font-family: inherit;
+}
+
+/* Idle Avatar */
+.fc-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.1);
+}
+
+.fc-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.15);
+}
+
+.fc-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Attention State - Soft Pulse */
+.fc-avatar--attention {
+  animation: fc-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fc-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px hsl(var(--primary) / 0);
+  }
+}
+
+/* Expanded Panel */
+.fc-panel {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  width: 300px;
+  max-width: calc(100vw - 48px);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  box-shadow: 0 8px 32px hsl(var(--foreground) / 0.12);
+  overflow: hidden;
+  animation: fc-slide-up 0.2s ease-out;
+}
+
+@keyframes fc-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Panel Header */
+.fc-panel-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid hsl(var(--border));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fc-panel-header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.fc-panel-header-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fc-panel-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.fc-panel-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.fc-panel-stage {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+  margin: 0;
+}
+
+.fc-panel-close {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: hsl(var(--muted-foreground));
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.fc-panel-close:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+/* Panel Content */
+.fc-panel-content {
+  padding: 16px;
+}
+
+.fc-guidance {
+  font-size: 14px;
+  line-height: 1.5;
+  color: hsl(var(--foreground));
+  margin: 0 0 16px 0;
+}
+
+/* Action Buttons */
+.fc-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fc-action-btn {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+}
+
+.fc-action-btn--primary {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.fc-action-btn--primary:hover {
+  opacity: 0.9;
+}
+
+.fc-action-btn--secondary {
+  background: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+.fc-action-btn--secondary:hover {
+  background: hsl(var(--muted));
+}
+
+/* Voice Controls */
+.fc-voice-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.fc-voice-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.fc-voice-btn:hover {
+  background: hsl(var(--muted));
+}
+
+.fc-voice-btn--active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+.fc-voice-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Loading State */
+.fc-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.fc-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid hsl(var(--muted));
+  border-top-color: hsl(var(--primary));
+  border-radius: 50%;
+  animation: fc-spin 0.8s linear infinite;
+}
+
+@keyframes fc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .floating-counsellor {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .fc-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .fc-panel {
+    width: calc(100vw - 32px);
+    right: 0;
+    bottom: 56px;
+  }
+}
+
+/* Hide on auth pages */
+.floating-counsellor--hidden {
+  display: none;
+}
+
+/* Status Text */
+.fc-status {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* Quick Input Area */
+.fc-quick-input {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.fc-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.fc-input:focus {
+  border-color: hsl(var(--primary));
+}
+
+.fc-input:read-only {
+  background: hsl(var(--muted));
+}
+
+.fc-send-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.fc-send-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.fc-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Disabled Voice Button */
+.fc-voice-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

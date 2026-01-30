@@ -1,0 +1,50 @@
+Implement TWO distinct voice interaction modes.
+
+-----------------------------------------
+MODE 1: Voice Dictation (Utility)
+-----------------------------------------
+Purpose:
+- Replace typing with speech-to-text
+
+Behavior:
+- Mic icon inside text input
+- Converts speech to text
+- Populates input field only
+- Message sends ONLY when user clicks Send
+
+Rules:
+- No automation
+- No AI response triggered automatically
+- No PRD logic execution
+
+-----------------------------------------
+MODE 2: Voice Conversation Assistant
+-----------------------------------------
+Purpose:
+- Real-time spoken conversation with AI Counsellor
+
+Behavior:
+- Separate “Voice Assistant” button
+- AI speaks first
+- Turn-based (push-to-talk is acceptable)
+- AI listens, responds via TTS
+
+Rules:
+- Uses SAME AI brain as text
+- Enforces ALL PRD rules
+- Cannot bypass stages
+- Must verbally explain blocked actions
+- Must confirm irreversible actions (e.g. locking)
+
+Automation via Voice:
+- Update profile from spoken answers
+- Move user across stages
+- Shortlist universities
+- Lock university (with confirmation)
+- Create and update tasks
+
+GLOBAL RULES:
+- Dictation ≠ Conversation
+- Voice ≠ Chat replacement
+- Same logic for text and voice
+- No duplicate AI systems

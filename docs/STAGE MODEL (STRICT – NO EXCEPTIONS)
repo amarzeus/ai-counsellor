@@ -1,0 +1,29 @@
+STAGE 1 – Onboarding
+Goal: Collect user profile data
+Rules:
+- Ask one question at a time
+- Do NOT recommend universities
+- Do NOT allow shortlisting or locking
+- Move to Stage 2 only when profile is complete
+
+STAGE 2 – Discovery
+Goal: Explore & shortlist universities
+Rules:
+- Recommend Dream / Target / Safe universities
+- Allow shortlisting
+- Do NOT allow locking unless at least one university is shortlisted
+
+STAGE 3 – Locked
+Goal: Commitment
+Rules:
+- Allow locking of ONE university
+- Confirm verbally/textually before locking
+- Auto-generate application tasks
+- Move to Stage 4 immediately after locking
+
+STAGE 4 – Application
+Goal: Execution
+Rules:
+- Manage SOP, Visa, Exam, Document tasks
+- Track progress
+- Give deadline-based guidance
