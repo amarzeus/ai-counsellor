@@ -78,6 +78,23 @@ def health_check():
     """Health check endpoint for Docker/Kubernetes"""
     return {"status": "healthy", "service": "ai-counsellor-backend"}
 
+@app.get("/api/health")
+def api_health():
+    """API health check"""
+    return {"status": "healthy"}
+
+@app.delete("/api/user/sessions/all")
+def delete_all_user_sessions(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Delete all chat sessions for the current user (cleanup endpoint)"""
+    deleted_count = db.query(ChatSession).filter(
+        ChatSession.user_id == current_user.id
+    ).delete()
+    db.commit()
+    return {"message": f"Deleted {deleted_count} sessions", "deleted": deleted_count}
+
 def seed_universities(db: Session):
     # Ensure all universities in code exist in DB
     for uni_data in UNIVERSITIES:
