@@ -8,7 +8,6 @@ import {
   MessageCircle, Building2, Lock, ArrowRight
 } from "lucide-react";
 import toast from "react-hot-toast";
-import Navbar from "@/components/Navbar";
 import StageIndicator from "@/components/StageIndicator";
 import { dashboardApi, shortlistApi, taskApi, Dashboard, Shortlist, Task } from "@/lib/api";
 import { useStore } from "@/lib/store";
@@ -77,7 +76,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] transition-colors duration-300">
-      <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 pt-20 pb-8">
         <div className="mb-8">

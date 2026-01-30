@@ -8,42 +8,6 @@ import Switch from "@/components/Switch";
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 transition-colors duration-500">
-      <nav className="fixed w-full top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-800/50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="relative flex items-center justify-center">
-                <Image
-                  src="/logo.png?v=6"
-                  alt="AI Counsellor"
-                  width={250}
-                  height={80}
-                  className="h-[110px] w-auto object-contain transition-opacity group-hover:opacity-90"
-                  priority
-                  unoptimized
-                />
-              </div>
-            </Link>
-          </div>
-          <div className="flex items-center gap-6">
-            <Switch />
-            <div className="flex items-center gap-8">
-              <Link
-                href="/login"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="px-6 py-2.5 text-sm font-medium bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 transition-all hover:shadow focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
       {/* Spacer for fixed navbar */}
       <div className="h-20" />
 

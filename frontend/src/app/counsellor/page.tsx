@@ -8,7 +8,6 @@ import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { motion, AnimatePresence } from "framer-motion";
-import Navbar from "@/components/Navbar";
 import { chatApi, ChatMessage, shortlistApi } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import ChatSidebar from "@/components/chat/ChatSidebar";
@@ -275,7 +274,6 @@ export default function CounsellorPage() {
 
   return (
     <div className="h-screen bg-gray-50 dark:bg-[#0B1120] flex flex-col overflow-hidden transition-colors duration-300">
-      <Navbar />
 
       <div className="flex flex-1 overflow-hidden pt-16 w-full">
         {/* SIDEBAR */}

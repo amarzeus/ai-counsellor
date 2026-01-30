@@ -7,7 +7,6 @@ import {
   CheckCircle, Circle, Clock, AlertCircle, Lock, Building2
 } from "lucide-react";
 import toast from "react-hot-toast";
-import Navbar from "@/components/Navbar";
 import { taskApi, shortlistApi, Task, Shortlist } from "@/lib/api";
 import { useStore } from "@/lib/store";
 
@@ -83,7 +82,6 @@ export default function TasksPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] transition-colors duration-300">
-      <Navbar />
 
       <main className="max-w-5xl mx-auto px-4 pt-20 pb-8">
         <div className="mb-6">

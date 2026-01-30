@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GraduationCap, Save, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-import Navbar from "@/components/Navbar";
 import { profileApi, Profile } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import Link from "next/link";
@@ -134,7 +133,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] transition-colors duration-300">
-      <Navbar />
 
       <main className="max-w-3xl mx-auto px-4 pt-20 pb-8">
         <div className="flex items-center gap-4 mb-6">

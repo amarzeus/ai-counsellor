@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import FooterWrapper from "@/components/layout/FooterWrapper";
+import { Header } from "@/components/ui/header-1";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} antialiased`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Toaster position="top-right" />
+          <Header />
           {children}
           <FooterWrapper />
         </ThemeProvider>
