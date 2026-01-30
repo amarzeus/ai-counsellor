@@ -16,9 +16,9 @@ export default function LandingPage() {
                 <Image
                   src="/logo.png?v=6"
                   alt="AI Counsellor"
-                  width={180}
-                  height={60}
-                  className="h-[72px] w-auto object-contain transition-opacity group-hover:opacity-90"
+                  width={220}
+                  height={80}
+                  className="h-[110px] w-auto object-contain transition-opacity group-hover:opacity-90"
                   priority
                   unoptimized
                 />
