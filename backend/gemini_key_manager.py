@@ -31,10 +31,16 @@ class GeminiKeyManager:
             logger.info("GeminiKeyManager: Using Replit AI integration")
         else:
             # Parse comma-separated keys from GEMINI_API_KEYS
+            # Handle keys that might have newlines or extra whitespace (from Render env vars)
             keys_str = os.environ.get("GEMINI_API_KEYS", "")
             if keys_str:
-                self.keys = [k.strip() for k in keys_str.split(",") if k.strip()]
+                # Remove all whitespace including newlines, then split by comma
+                cleaned_keys_str = "".join(keys_str.split())
+                self.keys = [k.strip() for k in cleaned_keys_str.split(",") if k.strip()]
                 logger.info(f"GeminiKeyManager: Loaded {len(self.keys)} API keys from GEMINI_API_KEYS")
+                # Log first few chars of each key for debugging (not full key)
+                for i, key in enumerate(self.keys):
+                    logger.info(f"  Key #{i+1}: {key[:10]}...{key[-4:]} (len={len(key)})")
             else:
                 # Fall back to single GEMINI_API_KEY for backward compatibility
                 single_key = os.environ.get("GEMINI_API_KEY", "")
@@ -42,9 +48,12 @@ class GeminiKeyManager:
                 if self.keys:
                     logger.info("GeminiKeyManager: Using single GEMINI_API_KEY (backward compatibility)")
                 else:
-                    logger.warning("GeminiKeyManager: No API keys configured")
+                    logger.warning("GeminiKeyManager: No API keys configured! Set GEMINI_API_KEYS or GEMINI_API_KEY")
         
         self.model_name = "gemini-2.0-flash"
+        
+        # Log initialization summary
+        print(f"[STARTUP] GeminiKeyManager initialized with {len(self.keys)} keys")
     
     def has_keys(self) -> bool:
         """Check if any API keys are available."""
