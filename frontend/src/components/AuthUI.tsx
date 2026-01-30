@@ -1,14 +1,14 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+
 import Image from "next/image";
 import { useState, useId, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Slot } from "@radix-ui/react-slot";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import toast from "react-hot-toast";
@@ -342,10 +342,7 @@ function AuthFormContainer({ isSignIn, onToggle }: { isSignIn: boolean; onToggle
     return (
         <div className="mx-auto grid w-[350px] gap-6">
             <div className="flex flex-col items-center gap-6 mb-2">
-                <Link href="/" className="self-start inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-2">
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Home
-                </Link>
+
 
                 <Image
                     src="/logo.png?v=6"
