@@ -166,6 +166,10 @@ def run_migrations():
             ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS session_id INTEGER REFERENCES chat_sessions(id)", "session_id"),
             # Add suggested_next_questions column to chat_messages
             ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS suggested_next_questions JSON", "suggested_next_questions"),
+            # Add suggested_universities column to chat_messages
+            ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS suggested_universities JSON", "suggested_universities"),
+            # Add actions_taken column to chat_messages
+            ("ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS actions_taken JSON", "actions_taken"),
         ]
         
         for sql, name in migrations:
