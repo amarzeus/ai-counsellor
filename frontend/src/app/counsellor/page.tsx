@@ -287,10 +287,10 @@ export default function CounsellorPage() {
 
         {/* CHAT AREA */}
         <main className="flex-1 flex flex-col h-full relative w-full">
-          <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 py-4 transition-colors">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 py-2 transition-colors">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full overflow-hidden relative border border-gray-100 dark:border-slate-700 shadow-sm shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full overflow-hidden relative border border-gray-100 dark:border-slate-700 shadow-sm shrink-0">
                   <Image
                     src="/ai-avatar-processed.png"
                     alt="AI"
@@ -299,10 +299,10 @@ export default function CounsellorPage() {
                   />
                 </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
                     {currentSessionId ? "Chat Session" : "New Chat"}
                   </h1>
-                  <p className="text-sm text-gray-500 dark:text-slate-400">
+                  <p className="text-xs text-gray-500 dark:text-slate-400">
                     AI Counsellor & Guide
                   </p>
                 </div>
@@ -312,11 +312,11 @@ export default function CounsellorPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50 dark:bg-[#0B1120]">
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6 bg-gray-50 dark:bg-[#0B1120]">
             <div className="max-w-4xl mx-auto w-full">
               {messages.length === 0 && (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 mx-auto mb-6 relative rounded-full overflow-hidden shadow-md border border-gray-100 dark:border-slate-700">
+                <div className="text-center py-10">
+                  <div className="w-16 h-16 mx-auto mb-5 relative rounded-full overflow-hidden shadow-md border border-gray-100 dark:border-slate-700">
                     <Image
                       src="/ai-avatar-processed.png"
                       alt="AI"
@@ -327,7 +327,7 @@ export default function CounsellorPage() {
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                     Hello! I'm your AI Counsellor
                   </h2>
-                  <p className="text-gray-600 dark:text-slate-400 mb-6 max-w-md mx-auto">
+                  <p className="text-gray-600 dark:text-slate-400 mb-6 max-w-md mx-auto text-base">
                     Start a new conversation to get personalized guidance.
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center">
@@ -335,7 +335,7 @@ export default function CounsellorPage() {
                       <button
                         key={prompt}
                         onClick={() => setInput(prompt)}
-                        className="px-4 py-2 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-full text-sm hover:bg-gray-200 dark:hover:bg-slate-700 transition"
+                        className="px-4 py-2 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-full text-xs font-medium hover:bg-gray-200 dark:hover:bg-slate-700 transition"
                       >
                         {prompt}
                       </button>
@@ -350,15 +350,15 @@ export default function CounsellorPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`flex gap-3 mb-6 ${message.role === "user" ? "justify-end" : "justify-start"
+                  className={`flex gap-4 mb-6 ${message.role === "user" ? "justify-end" : "justify-start"
                     }`}
                 >
                   {/* USER MESSAGE - keep as chat bubble */}
                   {message.role === "user" && (
                     <>
-                      <div className={`flex flex-col max-w-[85%] items-end`}>
-                        <div className="rounded-2xl px-5 py-4 shadow-sm bg-blue-600 text-white">
-                          <div className="prose prose-invert text-white max-w-none text-sm">
+                      <div className={`flex flex-col max-w-[80%] items-end`}>
+                        <div className="rounded-2xl px-5 py-3 shadow-sm bg-blue-600 text-white">
+                          <div className="prose prose-invert text-white max-w-none text-sm leading-relaxed">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
                               {message.content}
                             </ReactMarkdown>
@@ -376,10 +376,11 @@ export default function CounsellorPage() {
                     <div className="w-full">
                       {/* When universities exist: Slim guidance strip + cards dominate */}
                       {message.suggested_universities && message.suggested_universities.length > 0 ? (
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           {/* 1. Guidance Strip - Section Header Style (Minimal) */}
-                          <div className="flex items-center gap-2 px-1">
-                            <div className="w-6 h-6 rounded-full overflow-hidden relative shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
+                          {/* Increased size for clarity */}
+                          <div className="flex items-center gap-3 px-1 mb-2">
+                            <div className="w-8 h-8 rounded-full overflow-hidden relative shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
                               <Image
                                 src="/ai-avatar-processed.png"
                                 alt="AI"
@@ -387,13 +388,13 @@ export default function CounsellorPage() {
                                 className="object-cover"
                               />
                             </div>
-                            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                            <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
                               {getSystemGuidance()}
                             </p>
                           </div>
 
                           {/* 2. CARDS Surface - Standalone Grid */}
-                          <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="grid gap-4 gap-y-5 sm:grid-cols-2">
                             {message.suggested_universities.map((uni, idx) => (
                               <UniversityCard
                                 key={idx}
@@ -406,13 +407,13 @@ export default function CounsellorPage() {
 
                           {/* 3. Footer: Reduced Actions (Max 2) */}
                           {message.suggested_next_questions && message.suggested_next_questions.length > 0 && (
-                            <div className="flex items-center justify-end gap-2 px-1 pt-1 opacity-80 hover:opacity-100 transition-opacity">
-                              <span className="text-[10px] text-slate-400 font-medium mr-1">Next steps:</span>
+                            <div className="flex items-center justify-end gap-2 px-1 pt-3 opacity-90 hover:opacity-100 transition-opacity">
+                              <span className="text-[10px] text-slate-400 font-medium mr-1 uppercase tracking-wide">Next steps:</span>
                               {message.suggested_next_questions.slice(0, 2).map((question, idx) => (
                                 <button
                                   key={idx}
                                   onClick={() => setInput(question)}
-                                  className="px-3 py-1 text-[10px] font-medium text-slate-500 hover:text-blue-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-blue-300 transition-colors shadow-sm"
+                                  className="px-3 py-1 text-[10px] font-medium text-slate-600 hover:text-blue-600 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-blue-300 transition-colors shadow-sm"
                                 >
                                   {question}
                                 </button>
@@ -422,7 +423,7 @@ export default function CounsellorPage() {
                         </div>
                       ) : (
                         /* Regular AI message (no universities) - keep bubble style */
-                        <div className="flex gap-3">
+                        <div className="flex gap-4">
                           <div className="w-12 h-12 rounded-full overflow-hidden relative flex-shrink-0 mt-1 border border-gray-100 dark:border-slate-700 shadow-sm ring-1 ring-white dark:ring-slate-800">
                             <Image
                               src="/ai-avatar-processed.png"
@@ -432,17 +433,17 @@ export default function CounsellorPage() {
                             />
                           </div>
                           <div className="flex flex-col max-w-[85%] items-start">
-                            <div className="rounded-2xl px-5 py-4 shadow-sm bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200">
+                            <div className="rounded-2xl px-6 py-4 shadow-sm bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200">
                               <AIMessageRenderer content={message.content} />
 
                               {message.actions_taken && message.actions_taken.length > 0 && (
-                                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700 space-y-2">
+                                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700 space-y-1.5">
                                   {message.actions_taken.map((action: any, idx: number) => (
                                     <div
                                       key={idx}
-                                      className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 font-medium"
+                                      className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 font-medium"
                                     >
-                                      <CheckCircle className="w-4 h-4" />
+                                      <CheckCircle className="w-3.5 h-3.5" />
                                       <span>Action Taken: {action.type}</span>
                                     </div>
                                   ))}
@@ -451,12 +452,12 @@ export default function CounsellorPage() {
                             </div>
 
                             {message.suggested_next_questions && message.suggested_next_questions.length > 0 && (
-                              <div className="mt-4 flex flex-wrap gap-2">
+                              <div className="mt-3 flex flex-wrap gap-2">
                                 {message.suggested_next_questions.map((question, idx) => (
                                   <button
                                     key={idx}
                                     onClick={() => setInput(question)}
-                                    className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs rounded-full border border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
+                                    className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-xs font-medium rounded-full border border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
                                   >
                                     {question}
                                   </button>
@@ -472,7 +473,7 @@ export default function CounsellorPage() {
               ))}
 
               {loading && (
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                   <div className="w-10 h-10 rounded-full overflow-hidden relative flex-shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
                     <Image
                       src="/ai-avatar-processed.png"
@@ -481,10 +482,10 @@ export default function CounsellorPage() {
                       className="object-cover"
                     />
                   </div>
-                  <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-5 py-4 shadow-sm">
+                  <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-5 py-3 shadow-sm">
                     <div className="flex items-center gap-2 text-gray-500">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-sm">Analyzing...</span>
+                      <span className="text-xs font-medium">Analyzing...</span>
                     </div>
                   </div>
                 </div>
@@ -494,7 +495,7 @@ export default function CounsellorPage() {
             </div>
           </div>
 
-          <div className="flex-shrink-0 border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+          <div className="flex-shrink-0 border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-3 transition-colors">
             <div className="max-w-4xl mx-auto w-full">
               <div className="flex gap-2 items-center">
                 <button
@@ -513,18 +514,18 @@ export default function CounsellorPage() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder={isListening ? "Listening..." : "Ask me anything..."}
-                  className="flex-1 px-4 py-3 border border-gray-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-sm"
                   disabled={loading}
                 />
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || loading}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95"
+                  className="px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95 font-medium"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-center text-xs text-gray-400 dark:text-slate-600 mt-2">
+              <p className="text-center text-[10px] text-gray-400 dark:text-slate-600 mt-1.5">
                 AI Counsellor can make mistakes. Please verify important information.
               </p>
             </div>

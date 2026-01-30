@@ -72,13 +72,13 @@ export function UniversityCard({ university: uni, index, onShortlistToggle }: Un
             transition={{ delay: index * 0.05, duration: 0.3 }}
             className="group flex flex-col h-full bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all duration-200 overflow-hidden"
         >
-            {/* 1. Header: Identity - Reduced Padding */}
-            <div className="p-2.5 pb-2 flex justify-between items-start gap-3">
+            {/* 1. Header: Identity - Increased Padding for Calm */}
+            <div className="p-4 pb-2 flex justify-between items-start gap-3">
                 <div className="min-w-0 flex-1">
                     <h4 className="font-bold text-sm text-slate-900 dark:text-white truncate leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {uni.name || `University #${uni.university_id}`}
                     </h4>
-                    <div className="flex items-center gap-1.5 mt-1">
+                    <div className="flex items-center gap-1.5 mt-1.5">
                         <span className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-0.5">
                             <MapPin className="w-3 h-3" />
                             {uni.country || 'USA'}
@@ -90,8 +90,8 @@ export function UniversityCard({ university: uni, index, onShortlistToggle }: Un
                     </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-1">
-                    <div className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${styles.badge} border ${styles.border}`}>
+                <div className="flex flex-col items-end gap-1.5">
+                    <div className={`shrink-0 px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase ${styles.badge} border ${styles.border}`}>
                         {uni.category}
                     </div>
                     {/* Explicit Chance Clarity */}
@@ -101,40 +101,40 @@ export function UniversityCard({ university: uni, index, onShortlistToggle }: Un
                 </div>
             </div>
 
-            {/* 2. Metrics Grid: Compact Density */}
-            <div className="px-2.5 py-2 bg-slate-50 dark:bg-slate-800/50 border-y border-slate-100 dark:border-slate-700/50 grid grid-cols-2 gap-x-4 gap-y-1.5">
-                <div className="flex items-center gap-1.5 min-w-0">
-                    <DollarSign className="w-3 h-3 text-slate-400 shrink-0" />
-                    <span className="text-[10px] text-slate-700 dark:text-slate-300 font-medium truncate">
+            {/* 2. Metrics Grid: Airy Density */}
+            <div className="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-y border-slate-100 dark:border-slate-700/50 grid grid-cols-2 gap-x-6 gap-y-2.5">
+                <div className="flex items-center gap-2 min-w-0">
+                    <DollarSign className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="text-[11px] text-slate-700 dark:text-slate-300 font-medium truncate">
                         {uni.tuition ? `$${Math.round(uni.tuition / 1000)}k/yr` : '$50k/yr'}
                     </span>
                 </div>
-                <div className="flex items-center gap-1.5 min-w-0">
-                    <Clock className="w-3 h-3 text-slate-400 shrink-0" />
-                    <span className="text-[10px] text-slate-700 dark:text-slate-300 truncate">
+                <div className="flex items-center gap-2 min-w-0">
+                    <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="text-[11px] text-slate-700 dark:text-slate-300 truncate">
                         {duration}
                     </span>
                 </div>
-                <div className="flex items-center gap-1.5 min-w-0">
-                    <Award className="w-3 h-3 text-slate-400 shrink-0" />
-                    <span className="text-[10px] text-slate-700 dark:text-slate-300 truncate">
+                <div className="flex items-center gap-2 min-w-0">
+                    <Award className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="text-[11px] text-slate-700 dark:text-slate-300 truncate">
                         {rankingText}
                     </span>
                 </div>
-                <div className="flex items-center gap-1.5 min-w-0">
-                    <BookOpen className="w-3 h-3 text-slate-400 shrink-0" />
-                    <span className="text-[10px] text-slate-700 dark:text-slate-300 truncate">
+                <div className="flex items-center gap-2 min-w-0">
+                    <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="text-[11px] text-slate-700 dark:text-slate-300 truncate">
                         GPA {minGPA}
                     </span>
                 </div>
             </div>
 
-            {/* 3. Footer: Insight & Action */}
-            <div className="p-2.5 pt-2 flex flex-col gap-3 flex-1">
+            {/* 3. Footer: Insight & Action - More Breathing Room */}
+            <div className="p-4 pt-3 flex flex-col gap-4 flex-1">
                 {/* Secondary AI Insight - Muted Hierarchy */}
-                <div className="flex items-start gap-2 flex-1">
-                    <Sparkles className="w-3 h-3 text-blue-300 dark:text-blue-500/50 mt-0.5 shrink-0" />
-                    <p className="text-[10px] text-slate-500 dark:text-slate-500 leading-relaxed">
+                <div className="flex items-start gap-2.5 flex-1">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-300 dark:text-blue-500/50 mt-0.5 shrink-0" />
+                    <p className="text-[11px] text-slate-500 dark:text-slate-500 leading-relaxed">
                         {cleanInsight}
                     </p>
                 </div>
@@ -142,7 +142,7 @@ export function UniversityCard({ university: uni, index, onShortlistToggle }: Un
                 {/* Primary/Secondary CTA - Consistent Tone */}
                 <button
                     onClick={() => onShortlistToggle(uni.university_id, uni.category, uni.is_shortlisted)}
-                    className={`w-full py-1.5 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-all
+                    className={`w-full py-2 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-all
             ${uni.is_shortlisted
                             ? 'bg-transparent text-green-600 dark:text-green-500 border border-transparent cursor-default'
                             : 'bg-blue-600/90 text-white hover:bg-blue-600 shadow-sm hover:shadow-md'
@@ -150,12 +150,12 @@ export function UniversityCard({ university: uni, index, onShortlistToggle }: Un
                 >
                     {uni.is_shortlisted ? (
                         <>
-                            <CheckCircle className="w-3 h-3" />
+                            <CheckCircle className="w-3.5 h-3.5" />
                             <span>Shortlisted</span>
                         </>
                     ) : (
                         <>
-                            <Plus className="w-3 h-3" />
+                            <Plus className="w-3.5 h-3.5" />
                             <span>Add to Shortlist</span>
                         </>
                     )}
