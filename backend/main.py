@@ -973,11 +973,119 @@ async def chat_with_counsellor(
         params = action.get('params', {})
         
         # ------------------------------------------------------------
+        # TOOL: update_profile
+        # JSON: {"type": "update_profile", "params": {"field": "gpa", "value": 3.5}}
+        # Allowed fields: gpa, degree_major, field_of_study, preferred_countries, etc.
+        # ------------------------------------------------------------
+        if action_type == 'update_profile':
+            field = params.get('field')
+            value = params.get('value')
+            
+            # Allowed profile fields
+            allowed_fields = [
+                'current_education_level', 'degree_major', 'graduation_year', 'gpa',
+                'intended_degree', 'field_of_study', 'target_intake_year',
+                'preferred_countries', 'budget_per_year', 'funding_plan',
+                'ielts_toefl_status', 'gre_gmat_status', 'sop_status'
+            ]
+            
+            if field not in allowed_fields:
+                actions_blocked.append({'type': action_type, 'reason': f'Invalid field: {field}'})
+                continue
+            
+            profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
+            if not profile:
+                profile = UserProfile(user_id=current_user.id)
+                db.add(profile)
+                db.flush()
+            
+            # Set the field value
+            old_value = getattr(profile, field, None)
+            setattr(profile, field, value)
+            
+            # Check if onboarding should be completed
+            required_fields = [
+                profile.current_education_level,
+                profile.degree_major,
+                profile.intended_degree,
+                profile.field_of_study,
+                profile.preferred_countries,
+                profile.budget_per_year,
+                profile.funding_plan
+            ]
+            
+            if all(required_fields) and current_user.current_stage == UserStage.ONBOARDING:
+                current_user.onboarding_completed = True
+                current_user.current_stage = UserStage.DISCOVERY
+                actions_taken.append({
+                    'type': 'update_profile',
+                    'field': field,
+                    'old_value': str(old_value) if old_value else None,
+                    'new_value': str(value),
+                    'stage_changed': True,
+                    'new_stage': 'DISCOVERY',
+                    'confirmed': True
+                })
+            else:
+                actions_taken.append({
+                    'type': 'update_profile',
+                    'field': field,
+                    'old_value': str(old_value) if old_value else None,
+                    'new_value': str(value),
+                    'confirmed': True
+                })
+        
+        # ------------------------------------------------------------
+        # TOOL: update_stage
+        # JSON: {"type": "update_stage", "params": {"stage": "DISCOVERY"}}
+        # Valid stages: ONBOARDING, DISCOVERY, LOCKED, APPLICATION
+        # Rules: Cannot skip stages, can only move forward or back with valid reason
+        # ------------------------------------------------------------
+        elif action_type == 'update_stage':
+            target_stage = params.get('stage')
+            
+            valid_stages = ['ONBOARDING', 'DISCOVERY', 'LOCKED', 'APPLICATION']
+            if target_stage not in valid_stages:
+                actions_blocked.append({'type': action_type, 'reason': f'Invalid stage: {target_stage}'})
+                continue
+            
+            stage_order = {'ONBOARDING': 1, 'DISCOVERY': 2, 'LOCKED': 3, 'APPLICATION': 4}
+            current_level = stage_order.get(current_user.current_stage.value, 1)
+            target_level = stage_order.get(target_stage, 1)
+            
+            # Moving forward requires validation
+            if target_level > current_level:
+                # ONBOARDING -> DISCOVERY requires profile completion
+                if target_stage == 'DISCOVERY' and not current_user.onboarding_completed:
+                    actions_blocked.append({'type': action_type, 'reason': 'Complete profile first'})
+                    continue
+                
+                # DISCOVERY -> LOCKED/APPLICATION requires locked universities
+                if target_stage in ['LOCKED', 'APPLICATION']:
+                    locked_count = db.query(ShortlistedUniversity).filter(
+                        ShortlistedUniversity.user_id == current_user.id,
+                        ShortlistedUniversity.is_locked == True
+                    ).count()
+                    if locked_count == 0:
+                        actions_blocked.append({'type': action_type, 'reason': 'Lock at least one university first'})
+                        continue
+            
+            previous_stage = current_user.current_stage.value
+            current_user.current_stage = UserStage(target_stage)
+            
+            actions_taken.append({
+                'type': 'update_stage',
+                'previous_stage': previous_stage,
+                'new_stage': target_stage,
+                'confirmed': True
+            })
+        
+        # ------------------------------------------------------------
         # TOOL: shortlist_university
         # JSON: {"type": "shortlist_university", "params": {"university_id": 1, "category": "TARGET"}}
         # Requires: DISCOVERY stage, onboarding complete
         # ------------------------------------------------------------
-        if action_type == 'shortlist_university':
+        elif action_type == 'shortlist_university':
             uni_id = params.get('university_id')
             category = params.get('category', 'TARGET')
             
@@ -1237,6 +1345,333 @@ async def chat_with_counsellor(
     
     return ChatMessageResponse.model_validate(ai_message)
 
+# ============================================================
+# FLOATING COUNSELLOR API ENDPOINTS
+# ============================================================
+# These endpoints support the floating assistant UI
+# ============================================================
+
+@app.get("/api/counsellor/context")
+def get_counsellor_context(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Get current user context for the floating counsellor.
+    Returns stage, profile completeness, shortlist/tasks summary, and guidance.
+    """
+    profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
+    
+    shortlisted_count = db.query(ShortlistedUniversity).filter(
+        ShortlistedUniversity.user_id == current_user.id
+    ).count()
+    
+    locked_count = db.query(ShortlistedUniversity).filter(
+        ShortlistedUniversity.user_id == current_user.id,
+        ShortlistedUniversity.is_locked == True
+    ).count()
+    
+    pending_tasks = db.query(Task).filter(
+        Task.user_id == current_user.id,
+        Task.status == TaskStatus.PENDING
+    ).count()
+    
+    in_progress_tasks = db.query(Task).filter(
+        Task.user_id == current_user.id,
+        Task.status == TaskStatus.IN_PROGRESS
+    ).count()
+    
+    # Calculate profile completeness
+    profile_strength = analyze_profile_strength(profile.__dict__ if profile else {})
+    
+    # Generate stage-appropriate guidance
+    stage = current_user.current_stage.value
+    
+    if stage == 'ONBOARDING':
+        if profile_strength['overall'] == 'weak':
+            guidance = "Let's complete your profile! Tell me about your academic background."
+            actions = [
+                {'type': 'navigate', 'label': 'Complete Profile', 'target': '/profile'},
+            ]
+        else:
+            guidance = "Almost there! A few more details and you can start exploring universities."
+            actions = [
+                {'type': 'navigate', 'label': 'Finish Profile', 'target': '/profile'},
+            ]
+    elif stage == 'DISCOVERY':
+        if shortlisted_count == 0:
+            guidance = "Ready to discover! Browse universities and shortlist ones that interest you."
+            actions = [
+                {'type': 'navigate', 'label': 'Browse Universities', 'target': '/universities'},
+            ]
+        else:
+            guidance = f"You have {shortlisted_count} universities shortlisted. Lock your choices when ready!"
+            actions = [
+                {'type': 'navigate', 'label': 'View Shortlist', 'target': '/universities'},
+                {'type': 'lock_universities', 'label': 'Lock Choices'},
+            ]
+    elif stage == 'LOCKED':
+        guidance = f"You've locked {locked_count} universities. Proceed to applications when ready."
+        actions = [
+            {'type': 'navigate', 'label': 'Start Applications', 'target': '/tasks'},
+        ]
+    else:  # APPLICATION
+        if pending_tasks > 0:
+            guidance = f"You have {pending_tasks} pending tasks. Let's work on your applications!"
+            actions = [
+                {'type': 'navigate', 'label': 'View Tasks', 'target': '/tasks'},
+            ]
+        else:
+            guidance = "Great progress! Keep working on your application tasks."
+            actions = [
+                {'type': 'navigate', 'label': 'View Tasks', 'target': '/tasks'},
+            ]
+    
+    # Determine if attention is needed
+    needs_attention = False
+    if stage == 'ONBOARDING' and profile_strength['overall'] in ['weak', 'average']:
+        needs_attention = True
+    elif stage == 'DISCOVERY' and shortlisted_count == 0:
+        needs_attention = True
+    elif stage == 'APPLICATION' and pending_tasks > 0:
+        needs_attention = True
+    
+    return {
+        'user_stage': stage,
+        'onboarding_completed': current_user.onboarding_completed,
+        'profile_completeness': profile_strength['overall'],
+        'shortlisted_count': shortlisted_count,
+        'locked_count': locked_count,
+        'pending_tasks': pending_tasks,
+        'in_progress_tasks': in_progress_tasks,
+        'guidance': guidance,
+        'actions': actions,
+        'needs_attention': needs_attention,
+        'full_name': current_user.full_name
+    }
+
+@app.post("/api/counsellor/action")
+def execute_counsellor_action(
+    action_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Execute a counsellor action directly from the floating assistant.
+    Supports: update_profile, shortlist_university, lock_university, create_task, update_task
+    """
+    action_type = action_data.get('type')
+    params = action_data.get('params', {})
+    
+    result = {'success': False, 'type': action_type, 'message': ''}
+    
+    # update_profile
+    if action_type == 'update_profile':
+        field = params.get('field')
+        value = params.get('value')
+        
+        allowed_fields = [
+            'current_education_level', 'degree_major', 'graduation_year', 'gpa',
+            'intended_degree', 'field_of_study', 'target_intake_year',
+            'preferred_countries', 'budget_per_year', 'funding_plan',
+            'ielts_toefl_status', 'gre_gmat_status', 'sop_status'
+        ]
+        
+        if field not in allowed_fields:
+            result['message'] = f'Invalid field: {field}'
+            return result
+        
+        profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
+        if not profile:
+            profile = UserProfile(user_id=current_user.id)
+            db.add(profile)
+        
+        setattr(profile, field, value)
+        db.commit()
+        
+        result['success'] = True
+        result['message'] = f'Updated {field}'
+        result['field'] = field
+        result['value'] = value
+    
+    # shortlist_university
+    elif action_type == 'shortlist_university':
+        uni_id = params.get('university_id')
+        category = params.get('category', 'TARGET')
+        
+        if current_user.current_stage == UserStage.ONBOARDING:
+            result['message'] = 'Complete onboarding first'
+            return result
+        
+        if current_user.current_stage in [UserStage.LOCKED, UserStage.APPLICATION]:
+            result['message'] = 'Cannot modify shortlist after locking'
+            return result
+        
+        existing = db.query(ShortlistedUniversity).filter(
+            ShortlistedUniversity.user_id == current_user.id,
+            ShortlistedUniversity.university_id == uni_id
+        ).first()
+        
+        if existing:
+            result['message'] = 'Already shortlisted'
+            return result
+        
+        shortlist = ShortlistedUniversity(
+            user_id=current_user.id,
+            university_id=uni_id,
+            category=category
+        )
+        db.add(shortlist)
+        db.commit()
+        
+        uni = db.query(University).filter(University.id == uni_id).first()
+        result['success'] = True
+        result['message'] = f'Shortlisted {uni.name if uni else "university"}'
+        result['university_id'] = uni_id
+    
+    # lock_university
+    elif action_type == 'lock_university':
+        uni_id = params.get('university_id')
+        
+        shortlist = db.query(ShortlistedUniversity).filter(
+            ShortlistedUniversity.user_id == current_user.id,
+            ShortlistedUniversity.university_id == uni_id
+        ).first()
+        
+        if not shortlist:
+            result['message'] = 'University not in shortlist'
+            return result
+        
+        if shortlist.is_locked:
+            result['message'] = 'Already locked'
+            return result
+        
+        shortlist.is_locked = True
+        shortlist.locked_at = datetime.utcnow()
+        current_user.current_stage = UserStage.APPLICATION
+        
+        # Create default tasks
+        uni = db.query(University).filter(University.id == uni_id).first()
+        tasks = [
+            Task(user_id=current_user.id, shortlisted_university_id=shortlist.id, 
+                 title=f"Research {uni.name} requirements", priority=1),
+            Task(user_id=current_user.id, shortlisted_university_id=shortlist.id,
+                 title=f"Prepare SOP for {uni.name}", priority=2),
+        ]
+        for task in tasks:
+            db.add(task)
+        
+        db.commit()
+        
+        result['success'] = True
+        result['message'] = f'Locked {uni.name if uni else "university"}'
+        result['new_stage'] = 'APPLICATION'
+    
+    # create_task
+    elif action_type == 'create_task':
+        if current_user.current_stage != UserStage.APPLICATION:
+            result['message'] = 'Tasks can only be created in APPLICATION stage'
+            return result
+        
+        task = Task(
+            user_id=current_user.id,
+            title=params.get('title', 'New Task'),
+            description=params.get('description'),
+            priority=params.get('priority', 1)
+        )
+        db.add(task)
+        db.commit()
+        db.refresh(task)
+        
+        result['success'] = True
+        result['message'] = f'Created task: {task.title}'
+        result['task_id'] = task.id
+    
+    # update_task
+    elif action_type == 'update_task':
+        task_id = params.get('task_id')
+        new_status = params.get('status', 'IN_PROGRESS')
+        
+        task = db.query(Task).filter(
+            Task.id == task_id,
+            Task.user_id == current_user.id
+        ).first()
+        
+        if not task:
+            result['message'] = 'Task not found'
+            return result
+        
+        try:
+            task.status = TaskStatus(new_status)
+            db.commit()
+            result['success'] = True
+            result['message'] = f'Updated task to {new_status}'
+            result['task_id'] = task_id
+        except ValueError:
+            result['message'] = f'Invalid status: {new_status}'
+    
+    else:
+        result['message'] = f'Unknown action type: {action_type}'
+    
+    return result
+
+@app.post("/api/counsellor/quick")
+async def quick_counsellor_message(
+    message_data: dict,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Quick message endpoint for floating assistant (no session management).
+    Returns guidance and actions without creating chat history.
+    """
+    content = message_data.get('content', '')
+    
+    profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
+    universities = db.query(University).all()
+    shortlisted = db.query(ShortlistedUniversity).filter(
+        ShortlistedUniversity.user_id == current_user.id
+    ).all()
+    tasks = db.query(Task).filter(Task.user_id == current_user.id).all()
+    
+    user_dict = {
+        'id': current_user.id,
+        'full_name': current_user.full_name,
+        'email': current_user.email,
+        'current_stage': current_user.current_stage.value,
+        'onboarding_completed': current_user.onboarding_completed
+    }
+    profile_dict = profile.__dict__ if profile else {}
+    uni_list = [u.__dict__ for u in universities]
+    shortlist_data = []
+    for s in shortlisted:
+        uni = db.query(University).filter(University.id == s.university_id).first()
+        shortlist_data.append({
+            'id': s.id,
+            'university_id': s.university_id,
+            'university': uni.__dict__ if uni else {},
+            'category': s.category.value if s.category else None,
+            'is_locked': s.is_locked
+        })
+    task_list = [{'id': t.id, 'title': t.title, 'status': t.status.value} for t in tasks]
+    
+    response = await get_counsellor_response(
+        content,
+        user_dict,
+        profile_dict,
+        uni_list,
+        shortlist_data,
+        task_list
+    )
+    
+    return {
+        'content': response.get('message', 'I apologize, but I could not process your request.'),
+        'actions_taken': response.get('actions', []),
+        'suggested_universities': response.get('suggested_universities', []),
+        'suggested_next_questions': response.get('suggested_next_questions', [])
+    }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000, proxy_headers=True, forwarded_allow_ips="*")
+

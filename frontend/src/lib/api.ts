@@ -198,4 +198,42 @@ export const chatApi = {
     api.post<ChatMessage>('/api/chat', { content, session_id: sessionId }),
 };
 
+// Floating Counsellor API for the floating assistant
+export interface CounsellorContext {
+  user_stage: string;
+  onboarding_completed: boolean;
+  profile_completeness: string;
+  shortlisted_count: number;
+  locked_count: number;
+  pending_tasks: number;
+  in_progress_tasks: number;
+  guidance: string;
+  actions: { type: string; label: string; target?: string }[];
+  needs_attention: boolean;
+  full_name: string;
+}
+
+export interface CounsellorActionResult {
+  success: boolean;
+  type: string;
+  message: string;
+  [key: string]: unknown;
+}
+
+export interface CounsellorQuickResponse {
+  content: string;
+  actions_taken: { type: string; params?: Record<string, unknown> }[];
+  suggested_universities: Record<string, unknown>[];
+  suggested_next_questions: string[];
+}
+
+export const counsellorApi = {
+  getContext: () => api.get<CounsellorContext>('/api/counsellor/context'),
+  executeAction: (action: { type: string; params?: Record<string, unknown> }) =>
+    api.post<CounsellorActionResult>('/api/counsellor/action', action),
+  quickMessage: (content: string) =>
+    api.post<CounsellorQuickResponse>('/api/counsellor/quick', { content }),
+};
+
 export default api;
+
