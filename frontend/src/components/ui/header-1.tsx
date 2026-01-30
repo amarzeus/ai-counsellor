@@ -40,14 +40,23 @@ export function Header() {
 		router.push('/');
 	};
 
-	const links = [
+	const links = user ? [
+		{
+			label: 'Dashboard',
+			href: '/dashboard',
+		},
+		{
+			label: 'AI Counsellor',
+			href: '/counsellor',
+		},
+		{
+			label: 'Tasks',
+			href: '/tasks',
+		},
+	] : [
 		{
 			label: 'How it Works',
 			href: '/#how-it-works',
-		},
-		{
-			label: 'Universities',
-			href: '/universities',
 		},
 		{
 			label: 'Pricing',
