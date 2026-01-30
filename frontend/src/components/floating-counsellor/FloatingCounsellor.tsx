@@ -69,8 +69,10 @@ export function FloatingCounsellor() {
     const [quickInput, setQuickInput] = useState('');
 
     // Don't render on auth pages or if not authenticated
-    const hiddenRoutes = ['/login', '/signup', '/auth', '/forgot-password', '/'];
-    const shouldHide = !isAuthenticated || hiddenRoutes.some(route => currentRoute.startsWith(route));
+    const authRoutes = ['/login', '/signup', '/auth', '/forgot-password'];
+    const isLandingPage = currentRoute === '/';
+    const isAuthPage = authRoutes.some(route => currentRoute.startsWith(route));
+    const shouldHide = !isAuthenticated || isLandingPage || isAuthPage;
 
     if (shouldHide) {
         return null;
@@ -123,10 +125,11 @@ export function FloatingCounsellor() {
                     <div className="fc-panel-header">
                         <div className="fc-panel-header-avatar">
                             <Image
-                                src="/ai-counsellor-logo.png"
-                                alt="AI Counsellor"
-                                width={32}
-                                height={32}
+                                src="/Avatar.png"
+                                alt="AI"
+                                width={64}
+                                height={64}
+                                quality={100}
                             />
                         </div>
                         <div className="fc-panel-header-info">
@@ -226,10 +229,12 @@ export function FloatingCounsellor() {
                 aria-expanded={isExpanded}
             >
                 <Image
-                    src="/ai-counsellor-logo.png"
+                    src="/Avatar.png"
                     alt="AI Counsellor"
-                    width={48}
-                    height={48}
+                    width={256}
+                    height={256}
+                    className="fc-avatar-image"
+                    quality={100}
                     priority
                 />
             </button>
