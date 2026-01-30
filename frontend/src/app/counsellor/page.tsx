@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Send, Bot, User, Loader2, CheckCircle, Building2, Mic, MicOff, ArrowRight, Trash2, MapPin, DollarSign, GraduationCap } from "lucide-react";
+import Image from "next/image";
+import { Send, User, Loader2, CheckCircle, Building2, Mic, MicOff, ArrowRight, Trash2, MapPin, DollarSign, GraduationCap } from "lucide-react";
 import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -289,8 +290,13 @@ export default function CounsellorPage() {
           <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 py-4 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="w-12 h-12 rounded-full overflow-hidden relative border border-gray-100 dark:border-slate-700 shadow-sm shrink-0">
+                  <Image
+                    src="/ai-avatar-processed.png"
+                    alt="AI"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
                 <div>
                   <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -310,7 +316,14 @@ export default function CounsellorPage() {
             <div className="max-w-4xl mx-auto w-full">
               {messages.length === 0 && (
                 <div className="text-center py-12">
-                  <Bot className="w-16 h-16 mx-auto text-blue-600 dark:text-blue-500 mb-4" />
+                  <div className="w-20 h-20 mx-auto mb-6 relative rounded-full overflow-hidden shadow-md border border-gray-100 dark:border-slate-700">
+                    <Image
+                      src="/ai-avatar-processed.png"
+                      alt="AI"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                     Hello! I'm your AI Counsellor
                   </h2>
@@ -366,8 +379,13 @@ export default function CounsellorPage() {
                         <div className="space-y-3">
                           {/* 1. Guidance Strip - Section Header Style (Minimal) */}
                           <div className="flex items-center gap-2 px-1">
-                            <div className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0">
-                              <Bot className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                            <div className="w-6 h-6 rounded-full overflow-hidden relative shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
+                              <Image
+                                src="/ai-avatar-processed.png"
+                                alt="AI"
+                                fill
+                                className="object-cover"
+                              />
                             </div>
                             <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
                               {getSystemGuidance()}
@@ -405,8 +423,13 @@ export default function CounsellorPage() {
                       ) : (
                         /* Regular AI message (no universities) - keep bubble style */
                         <div className="flex gap-3">
-                          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
-                            <Bot className="w-5 h-5 text-white" />
+                          <div className="w-12 h-12 rounded-full overflow-hidden relative flex-shrink-0 mt-1 border border-gray-100 dark:border-slate-700 shadow-sm ring-1 ring-white dark:ring-slate-800">
+                            <Image
+                              src="/ai-avatar-processed.png"
+                              alt="AI"
+                              fill
+                              className="object-cover"
+                            />
                           </div>
                           <div className="flex flex-col max-w-[85%] items-start">
                             <div className="rounded-2xl px-5 py-4 shadow-sm bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200">
@@ -450,8 +473,13 @@ export default function CounsellorPage() {
 
               {loading && (
                 <div className="flex gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 rounded-full overflow-hidden relative flex-shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
+                    <Image
+                      src="/ai-avatar-processed.png"
+                      alt="AI"
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                   <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-5 py-4 shadow-sm">
                     <div className="flex items-center gap-2 text-gray-500">
