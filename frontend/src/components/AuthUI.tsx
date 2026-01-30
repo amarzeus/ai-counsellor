@@ -220,7 +220,7 @@ function SignInForm() {
     };
 
     return (
-        <form onSubmit={handleSignIn} autoComplete="on" className="flex flex-col gap-8">
+        <form onSubmit={handleSignIn} autoComplete="on" className="flex flex-col gap-4">
             <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Sign in to your account</h1>
                 <p className="text-balance text-sm text-muted-foreground">Enter your email below to sign in</p>
@@ -290,7 +290,7 @@ function SignUpForm() {
     };
 
     return (
-        <form onSubmit={handleSignUp} autoComplete="on" className="flex flex-col gap-8">
+        <form onSubmit={handleSignUp} autoComplete="on" className="flex flex-col gap-4">
             <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Create an account</h1>
                 <p className="text-balance text-sm text-muted-foreground">Enter your details below to sign up</p>
@@ -341,8 +341,8 @@ function SignUpForm() {
 
 function AuthFormContainer({ isSignIn, onToggle }: { isSignIn: boolean; onToggle: () => void; }) {
     return (
-        <div className="mx-auto grid w-[350px] gap-6">
-            <div className="flex flex-col items-center gap-6 mb-2">
+        <div className="mx-auto grid w-[350px] gap-4">
+            <div className="flex flex-col items-center gap-4 mb-1">
 
 
                 <Image
@@ -432,7 +432,7 @@ export function AuthUI({ signInContent = {}, signUpContent = {}, defaultView = "
     const currentContent = isSignIn ? finalSignInContent : finalSignUpContent;
 
     return (
-        <div className="relative w-full min-h-screen md:grid md:grid-cols-2 overflow-hidden">
+        <div className="relative w-full min-h-screen md:grid md:grid-cols-2">
             <FlickeringGrid
                 className="absolute inset-0 z-0 [mask-image:radial-gradient(450px_circle_at_center,white,transparent)]"
                 squareSize={4}
@@ -447,7 +447,7 @@ export function AuthUI({ signInContent = {}, signUpContent = {}, defaultView = "
           display: none;
         }
       `}</style>
-            <div className="relative z-10 flex h-screen items-center justify-center p-6 md:h-auto md:p-0 md:py-12">
+            <div className="relative z-10 flex min-h-screen items-center justify-center p-6 md:p-8">
                 <AuthFormContainer isSignIn={isSignIn} onToggle={toggleForm} />
             </div>
 
