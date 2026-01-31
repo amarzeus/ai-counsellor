@@ -68,6 +68,7 @@ export default function PricingPage() {
                 description: isYearly ? "Yearly Subscription" : "Monthly Subscription",
                 image: "/logo.png",
                 order_id: data.order_id, // This is a Order ID.
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 handler: async function (response: any) {
                     // 3. Verify Payment
                     const verifyRes = await fetch("http://localhost:8000/api/subscriptions/verify-payment", {
@@ -99,6 +100,7 @@ export default function PricingPage() {
                 }
             };
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const rzp1 = new (window as any).Razorpay(options);
             rzp1.open();
 

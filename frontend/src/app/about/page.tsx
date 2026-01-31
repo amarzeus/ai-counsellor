@@ -30,7 +30,7 @@ export default function AboutPage() {
                             Study abroad planning is fragmented. Students juggle expensive counsellors, endless spreadsheets, scattered WhatsApp messages, and generic AI tools that hallucinate answers.
                         </p>
                         <p>
-                            The result is anxiety. Advice is often unstructured, inconsistent, and hard to trust. We realized that students don't just need more information—they need a reliable filter and a clear path forward.
+                            The result is anxiety. Advice is often unstructured, inconsistent, and hard to trust. We realized that students don&apos;t just need more information—they need a reliable filter and a clear path forward.
                         </p>
                     </div>
                 </section>
@@ -50,7 +50,7 @@ export default function AboutPage() {
                         <div className="grid sm:grid-cols-2 gap-6">
                             <div className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm">
                                 <h3 className="font-semibold text-neutral-900 mb-2">Stage-Based Journey</h3>
-                                <p className="text-neutral-600 text-sm">Every user follows a deliberate progression. No jumping ahead until you're ready.</p>
+                                <p className="text-neutral-600 text-sm">Every user follows a deliberate progression. No jumping ahead until you&apos;re ready.</p>
                             </div>
                             <div className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm">
                                 <h3 className="font-semibold text-neutral-900 mb-2">Discipline over Randomness</h3>
@@ -128,7 +128,7 @@ export default function AboutPage() {
                             We built this with a deep respect for your agency. The AI guides you, but you stay in control. It never auto-decides critical steps—locking universities always requires your explicit confirmation.
                         </p>
                         <p>
-                            Whether you use voice or text, the rules remain the same. It's a system designed to support your decisions, not replace your judgment.
+                            Whether you use voice or text, the rules remain the same. It&apos;s a system designed to support your decisions, not replace your judgment.
                         </p>
                     </div>
                 </section>

@@ -111,6 +111,7 @@ export interface ChatMessage {
   session_id: number;
   role: 'user' | 'assistant';
   content: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actions_taken?: { type: string;[key: string]: any }[];
   created_at: string;
 }

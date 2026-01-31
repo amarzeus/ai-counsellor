@@ -83,6 +83,7 @@ export function Typewriter({
         delay,
         displayText,
         text,
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     ]);
 
     return (
@@ -212,6 +213,7 @@ function SignInForm() {
             } else {
                 router.push("/dashboard");
             }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Login failed");
         } finally {
@@ -282,6 +284,7 @@ function SignUpForm() {
 
             toast.success("Account created! Let's set up your profile.");
             router.push("/onboarding");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Signup failed");
         } finally {

@@ -57,6 +57,7 @@ export default function OnboardingPage() {
     }
   }, [router]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateField = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -102,6 +103,7 @@ export default function OnboardingPage() {
 
       toast.success("Profile complete! Welcome to your dashboard.");
       router.push("/dashboard");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to complete onboarding");
     } finally {

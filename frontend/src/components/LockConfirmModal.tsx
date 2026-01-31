@@ -83,7 +83,7 @@ export default function LockConfirmModal({
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <p className="text-sm text-slate-600 dark:text-slate-300">
-                    You'll move to the <strong>Application</strong> stage
+                    You&apos;ll move to the <strong>Application</strong> stage
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
@@ -99,7 +99,7 @@ export default function LockConfirmModal({
                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   </div>
                   <p className="text-sm text-slate-600 dark:text-slate-300">
-                    You <strong>won't be able to add</strong> more universities
+                    You <strong>won&apos;t be able to add</strong> more universities
                   </p>
                 </div>
               </div>
@@ -139,7 +139,7 @@ export default function LockConfirmModal({
               <Rocket className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-              You're Committed!
+              You&apos;re Committed!
             </h2>
             <p className="text-slate-600 dark:text-slate-300">
               <strong>{universityName}</strong> is now locked.

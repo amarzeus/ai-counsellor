@@ -20,6 +20,7 @@ export default function ForgotPasswordPage() {
       await authApi.forgotPassword(email);
       setSubmitted(true);
       toast.success("Password reset instructions sent!");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to send reset email");
     } finally {
@@ -36,11 +37,11 @@ export default function ForgotPasswordPage() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h1>
           <p className="text-gray-600 mb-6">
-            We've sent password reset instructions to <strong>{email}</strong>. 
+            We&apos;ve sent password reset instructions to <strong>{email}</strong>.
             Please check your inbox and follow the link to reset your password.
           </p>
           <p className="text-sm text-gray-500 mb-6">
-            Didn't receive the email? Check your spam folder or try again.
+            Didn&apos;t receive the email? Check your spam folder or try again.
           </p>
           <div className="space-y-3">
             <button
@@ -78,7 +79,7 @@ export default function ForgotPasswordPage() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Reset Password</h1>
           <p className="text-gray-600 mt-2">
-            Enter your email and we'll send you instructions to reset your password
+            Enter your email and we&apos;ll send you instructions to reset your password
           </p>
         </div>
 
