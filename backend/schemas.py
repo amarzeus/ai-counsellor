@@ -84,6 +84,7 @@ class ProfileUpdate(BaseModel):
     preferred_countries: Optional[List[str]] = None
     budget_per_year: Optional[int] = None
     funding_plan: Optional[FundingPlan] = None
+    work_experience_years: Optional[int] = None
     ielts_toefl_status: Optional[ExamStatus] = None
     gre_gmat_status: Optional[ExamStatus] = None
     sop_status: Optional[SOPStatus] = None
@@ -100,6 +101,7 @@ class ProfileResponse(BaseModel):
     preferred_countries: Optional[List[str]] = None
     budget_per_year: Optional[int] = None
     funding_plan: Optional[FundingPlan] = None
+    work_experience_years: Optional[int] = None
     ielts_toefl_status: Optional[ExamStatus] = None
     gre_gmat_status: Optional[ExamStatus] = None
     sop_status: Optional[SOPStatus] = None

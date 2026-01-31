@@ -87,6 +87,7 @@ class UserProfile(Base):
     
     budget_per_year = Column(Integer)
     funding_plan = Column(Enum(FundingPlan))
+    work_experience_years = Column(Integer, default=0)
     
     ielts_toefl_status = Column(Enum(ExamStatus), default=ExamStatus.NOT_STARTED)
     gre_gmat_status = Column(Enum(ExamStatus), default=ExamStatus.NOT_STARTED)
