@@ -124,10 +124,12 @@ export default function CounsellorPage() {
     }
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
+  const shouldSpeakRef = useRef(false);
 
-    const userMessage = input.trim();
+  const handleSend = async (overrideInput?: string) => {
+    const userMessage = overrideInput || input.trim();
+    if (!userMessage || loading) return;
+
     setInput("");
     setLoading(true);
 
@@ -144,6 +146,16 @@ export default function CounsellorPage() {
       // If null, backend will create new session
       const sessionIdToSend = currentSessionId || undefined;
       const response = await chatApi.send(userMessage, sessionIdToSend);
+
+      const assistantMessage = response.data;
+
+      // Automatic Text-to-Speech if triggered by Voice
+      if (shouldSpeakRef.current) {
+        // Strip Markdown for cleaner speech
+        const cleanText = assistantMessage.content.replace(/[*#]/g, '');
+        speakResponse(cleanText);
+        shouldSpeakRef.current = false;
+      }
 
       const assistantMessage = response.data;
 
@@ -187,7 +199,27 @@ export default function CounsellorPage() {
     }
   };
 
+  // TTS Helper
+  const speakResponse = (text: string) => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel(); // Stop previous
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.volume = 1;
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  };
+
   const toggleVoiceInput = () => {
+    // Premium Gating
+    if (user?.subscription_plan !== "PREMIUM") {
+      toast.error("Voice Mode is a Premium Feature. Upgrade to unlock.", {
+        icon: "💎",
+        duration: 4000
+      });
+      return;
+    }
+
     if (isListening) {
       setIsListening(false);
       return;
@@ -208,13 +240,17 @@ export default function CounsellorPage() {
 
     recognition.onstart = () => {
       setIsListening(true);
-      toast.success("Listening...");
+      toast.success("Listening...", { icon: "🎙️" });
     };
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
       setInput(transcript);
       setIsListening(false);
+
+      // Auto-send and enable TTS for response
+      shouldSpeakRef.current = true;
+      handleSend(transcript);
     };
 
     recognition.onerror = (event: any) => {

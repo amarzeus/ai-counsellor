@@ -35,6 +35,16 @@ class UniversityCategory(str, enum.Enum):
     TARGET = "TARGET"
     SAFE = "SAFE"
 
+class SubscriptionPlan(str, enum.Enum):
+    FREE = "FREE"
+    PREMIUM = "PREMIUM"
+
+class SubscriptionStatus(str, enum.Enum):
+    ACTIVE = "ACTIVE"
+    TRIALING = "TRIALING"
+    CANCELED = "CANCELED"
+    PAST_DUE = "PAST_DUE"
+
 class User(Base):
     __tablename__ = "users"
     
@@ -45,6 +55,12 @@ class User(Base):
     google_id = Column(String(255), unique=True, nullable=True)
     current_stage = Column(Enum(UserStage), default=UserStage.ONBOARDING)
     onboarding_completed = Column(Boolean, default=False)
+    
+    # Subscription (Feature Gating)
+    subscription_plan = Column(Enum(SubscriptionPlan), default=SubscriptionPlan.FREE)
+    subscription_status = Column(Enum(SubscriptionStatus), default=SubscriptionStatus.ACTIVE)
+    trial_ends_at = Column(DateTime(timezone=True), nullable=True)
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     

@@ -24,6 +24,7 @@ from universities_data import UNIVERSITIES
 from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
+import subscriptions
 
 Base.metadata.create_all(bind=engine)
 
@@ -47,6 +48,7 @@ app.add_middleware(
 )
 
 app.include_router(google_router)
+app.include_router(subscriptions.router)
 
 @app.get("/")
 def root():
@@ -1114,7 +1116,8 @@ async def chat_with_counsellor(
         'full_name': current_user.full_name,
         'email': current_user.email,
         'current_stage': current_user.current_stage.value,
-        'onboarding_completed': current_user.onboarding_completed
+        'onboarding_completed': current_user.onboarding_completed,
+        'subscription_plan': current_user.subscription_plan.value if hasattr(current_user.subscription_plan, 'value') else str(current_user.subscription_plan)
     }
     profile_dict = profile.__dict__ if profile else {}
     
@@ -1175,6 +1178,14 @@ async def chat_with_counsellor(
                 continue
             if current_user.current_stage in [UserStage.LOCKED, UserStage.APPLICATION]:
                 actions_blocked.append({'type': action_type, 'reason': 'Cannot modify shortlist after locking'})
+                continue
+                
+            # FEATURE GATE: Shortlist Limit (Free Plan)
+            plan = str(current_user.subscription_plan.value) if hasattr(current_user.subscription_plan, 'value') else str(current_user.subscription_plan)
+            current_count = db.query(ShortlistedUniversity).filter(ShortlistedUniversity.user_id == current_user.id).count()
+            
+            if plan == 'FREE' and current_count >= 3:
+                actions_blocked.append({'type': action_type, 'reason': 'Shortlist limit (3) reached on Free Plan. Upgrade to add more.', 'code': 'PLAN_LIMIT'})
                 continue
             
             existing = db.query(ShortlistedUniversity).filter(

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, MessageCircle, Building2, CheckSquare, LogOut, User } from "lucide-react";
+import { LayoutDashboard, MessageCircle, Building2, CheckSquare, LogOut, User, Sparkles } from "lucide-react";
 import { useStore } from "@/lib/store";
 import Switch from "@/components/Switch";
 
@@ -54,6 +54,14 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4">
             <Switch />
+
+            <Link
+              href="/pricing"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-full shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105 transition-all"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Upgrade</span>
+            </Link>
             <Link
               href="/profile"
               className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800"
