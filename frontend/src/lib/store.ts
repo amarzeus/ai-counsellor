@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, Profile, Dashboard, Shortlist, Task, ChatMessage } from './api';
+import { User, Profile, Dashboard, Shortlist, Task, ChatMessage, University } from './api';
 
 interface AppState {
   user: User | null;
@@ -8,8 +8,11 @@ interface AppState {
   shortlist: Shortlist[];
   tasks: Task[];
   chatMessages: ChatMessage[];
+  comparisonList: University[];
+  addToComparison: (uni: University) => void;
+  removeFromComparison: (id: number) => void;
   isLoading: boolean;
-  
+
   setUser: (user: User | null) => void;
   setProfile: (profile: Profile | null) => void;
   setDashboard: (dashboard: Dashboard | null) => void;
@@ -28,16 +31,26 @@ export const useStore = create<AppState>((set) => ({
   shortlist: [],
   tasks: [],
   chatMessages: [],
+  comparisonList: [],
   isLoading: false,
-  
+
   setUser: (user) => set({ user }),
   setProfile: (profile) => set({ profile }),
   setDashboard: (dashboard) => set({ dashboard }),
   setShortlist: (shortlist) => set({ shortlist }),
   setTasks: (tasks) => set({ tasks }),
   setChatMessages: (messages) => set({ chatMessages: messages }),
-  addChatMessage: (message) => set((state) => ({ 
-    chatMessages: [...state.chatMessages, message] 
+  addChatMessage: (message) => set((state) => ({
+    chatMessages: [...state.chatMessages, message]
+  })),
+  comparisonList: [] as University[],
+  addToComparison: (uni: University) => set((state) => {
+    if (state.comparisonList.find(u => u.id === uni.id)) return state;
+    if (state.comparisonList.length >= 3) return state;
+    return { comparisonList: [...state.comparisonList, uni] };
+  }),
+  removeFromComparison: (id: number) => set((state) => ({
+    comparisonList: state.comparisonList.filter(u => u.id !== id)
   })),
   setLoading: (isLoading) => set({ isLoading }),
   logout: () => {
@@ -45,13 +58,13 @@ export const useStore = create<AppState>((set) => ({
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     }
-    set({ 
-      user: null, 
-      profile: null, 
-      dashboard: null, 
-      shortlist: [], 
-      tasks: [], 
-      chatMessages: [] 
+    set({
+      user: null,
+      profile: null,
+      dashboard: null,
+      shortlist: [],
+      tasks: [],
+      chatMessages: []
     });
   },
 }));

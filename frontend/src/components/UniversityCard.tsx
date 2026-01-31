@@ -18,7 +18,9 @@ export default function UniversityCard({
   onShortlist,
   onClick,
   index = 0,
-}: UniversityCardProps) {
+  isSelectedForComparison = false,
+  onToggleComparison,
+}: UniversityCardProps & { isSelectedForComparison?: boolean; onToggleComparison?: () => void }) {
   const getCategoryConfig = (category?: string) => {
     switch (category) {
       case "DREAM":
@@ -106,6 +108,21 @@ export default function UniversityCard({
             </div>
           )}
         </div>
+
+        {onToggleComparison && (
+          <div className="mb-4 flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={isSelectedForComparison}
+              onChange={(e) => {
+                e.stopPropagation();
+                onToggleComparison();
+              }}
+              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            />
+            <span className="text-xs text-slate-500 font-medium">Select for comparison</span>
+          </div>
+        )}
 
         <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 mb-4 flex-wrap">
           {university.tuition_per_year && (

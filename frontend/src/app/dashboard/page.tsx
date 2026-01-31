@@ -9,6 +9,7 @@ import {
   Pencil, DollarSign, MapPin, Award, Lightbulb, ChevronRight
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 import StageIndicator from "@/components/StageIndicator";
 import UniversityDrawer from "@/components/UniversityDrawer";
 import { dashboardApi, shortlistApi, taskApi, Dashboard, Shortlist, Task } from "@/lib/api";
@@ -110,8 +111,38 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+      <div className="h-[calc(100vh-64px)] bg-slate-50 dark:bg-[#0B1120] overflow-hidden">
+        <main className="max-w-7xl mx-auto px-6 py-3 h-full flex flex-col">
+          {/* Header Skeleton */}
+          <div className="flex items-baseline justify-between mb-3">
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+            <Skeleton className="hidden md:block h-4 w-96" />
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0">
+            {/* Left Column Skeleton */}
+            <div className="lg:col-span-8 flex flex-col gap-3">
+              <div className="grid grid-cols-2 gap-3">
+                <Skeleton className="h-32 rounded-xl" />
+                <Skeleton className="h-32 rounded-xl" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Skeleton className="h-48 rounded-xl" />
+                <Skeleton className="h-48 rounded-xl" />
+              </div>
+              <Skeleton className="flex-1 rounded-xl" />
+            </div>
+
+            {/* Right Column Skeleton */}
+            <div className="lg:col-span-4 flex flex-col gap-3">
+              <Skeleton className="h-16 rounded-xl" />
+              <Skeleton className="flex-1 rounded-xl" />
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
