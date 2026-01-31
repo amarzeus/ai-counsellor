@@ -1,7 +1,7 @@
 import json
 import logging
 import asyncio
-from typing import List, Optional
+
 from google.genai import types
 
 from gemini_key_manager import key_manager
@@ -124,7 +124,7 @@ def categorize_university(university: dict, user_profile: dict) -> tuple:
     else:
         category = 'TARGET'
         risk = "Competitive admission with moderate acceptance chances"
-        fit = f"Good match - your profile meets requirements and budget"
+        fit = "Good match - your profile meets requirements and budget"
     
     acceptance_rate = university.get('acceptance_rate') or 0.5  # Default to 0.5 if None
     if acceptance_rate < 0.1:
@@ -186,7 +186,7 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
     for t in tasks[:5]:
         context += f"- {t.get('title', 'Unknown')} ({t.get('status', 'Unknown')})\n"
     
-    context += f"\n### Available Universities (READ-ONLY SOURCE)\n"
+    context += "\n### Available Universities (READ-ONLY SOURCE)\n"
     
     # Calculate user specs
     user_work_exp = profile.get('work_experience_years', 0)
@@ -199,7 +199,6 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
         programs_str = ""
         programs = uni.get('programs', [])
         
-        eligible_programs = []
         for p in programs[:3]: # Top 3 programs
             # Eligibility Validation
             reasons = []
@@ -316,7 +315,7 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
                 
                 # If we have more keys to try, continue to next iteration
                 if attempt < max_attempts - 1:
-                    logger.info(f"Retrying with a different API key...")
+                    logger.info("Retrying with a different API key...")
                     await asyncio.sleep(1)  # Brief pause before retry
                     continue
                 else:

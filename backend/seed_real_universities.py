@@ -2,10 +2,8 @@
 Seed script to populate the database with real, verified university data.
 Run this AFTER running migrate_universities.py
 """
-from datetime import datetime
-from sqlalchemy.orm import Session
-from database import SessionLocal, engine
-from models import University, Program, Base
+from database import SessionLocal
+from models import University, Program
 from real_universities_data import UNIVERSITIES_DATA, VERIFIED_AT, DATA_SOURCE
 
 def seed_real_universities():
@@ -149,7 +147,7 @@ def verify_data_integrity():
         
         # Check programs have valid tuition
         invalid_tuition = db.query(Program).filter(
-            (Program.tuition_per_year_usd == None) | (Program.tuition_per_year_usd < 0)
+            (Program.tuition_per_year_usd.is_(None)) | (Program.tuition_per_year_usd < 0)
         ).count()
         
         if invalid_tuition > 0:
@@ -159,7 +157,7 @@ def verify_data_integrity():
         
         # Check for required fields
         programs_missing_degree = db.query(Program).filter(
-            Program.degree_level == None
+            Program.degree_level.is_(None)
         ).count()
         
         if programs_missing_degree > 0:

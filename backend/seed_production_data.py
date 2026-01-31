@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime
-from sqlalchemy.orm import Session
+
 from database import SessionLocal, engine, Base
 from models import University, Program, ProgramCategory
 

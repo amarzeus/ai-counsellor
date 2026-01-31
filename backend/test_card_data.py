@@ -9,7 +9,7 @@ def test_cards():
     signup_data = {"email": email, "password": "password123", "full_name": "Card Tester"}
     try:
         requests.post(f"{BASE_URL}/api/auth/signup", json=signup_data)
-    except:
+    except Exception:
         pass # Ignore if exists
 
     print("2. Logging in...")

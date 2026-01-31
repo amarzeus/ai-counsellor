@@ -17,7 +17,7 @@ def test_sessions():
     # Try signup
     try:
         requests.post(f"{BASE_URL}/api/auth/signup", json=auth_data)
-    except:
+    except Exception:
         pass # User might exist
 
     # Login

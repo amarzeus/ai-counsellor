@@ -10,7 +10,7 @@ import random
 import logging
 from typing import Optional, Tuple, List
 from google import genai
-from google.genai import types
+
 
 logger = logging.getLogger(__name__)
 

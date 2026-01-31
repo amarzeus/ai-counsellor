@@ -1,12 +1,6 @@
-import sys
-import os
-from datetime import datetime
-
-# Add current directory to path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from ai_counsellor import categorize_university, build_context
-from models import University, Program, ProgramCategory
+from models import ProgramCategory
 
 # Mock Data Classes
 class MockProgram:
@@ -40,8 +34,10 @@ class MockUniversity:
         self.tuition_per_year = sum(p.tuition_per_year_usd for p in programs) / len(programs) if programs else 50000
 
     def get(self, key, default=None):
-        if key == 'programs': return self.programs
-        if hasattr(self, key): return getattr(self, key)
+        if key == 'programs':
+            return self.programs
+        if hasattr(self, key):
+            return getattr(self, key)
         return default
     
     def __getitem__(self, key):

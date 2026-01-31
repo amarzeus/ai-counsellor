@@ -1,5 +1,5 @@
 import requests
-import json
+
 import sys
 
 BASE_URL = "http://localhost:8000/api"
@@ -15,7 +15,7 @@ def verify():
         resp = requests.post(f"{BASE_URL}/auth/login", json={"email": EMAIL, "password": PASSWORD})
         if resp.status_code == 200:
             token = resp.json()["access_token"]
-    except:
+    except Exception:
         pass
         
     if not token:
@@ -52,7 +52,7 @@ def verify():
     universities = resp.json()
     print(f"Found {len(universities)} universities matching 'Data'")
     
-    found_programs = []
+
     
     # Check specific universities
     targets = {

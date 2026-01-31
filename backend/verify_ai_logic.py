@@ -1,7 +1,6 @@
 import requests
-import json
 import sys
-import time
+
 
 BASE_URL = "http://localhost:8000/api"
 EMAIL = "ai_verify_logic@example.com"

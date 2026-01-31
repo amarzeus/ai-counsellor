@@ -1,14 +1,13 @@
 import os
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, Request, Header
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import Optional
 
 from database import get_db
 from models import User, SubscriptionPlan, SubscriptionStatus
 from auth import get_current_user
-from razorpay_utils import create_razorpay_order, verify_razorpay_signature, RAZORPAY_KEY_SECRET
+from razorpay_utils import create_razorpay_order, verify_razorpay_signature
 
 router = APIRouter(prefix="/api/subscriptions", tags=["subscriptions"])
 

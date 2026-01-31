@@ -1,11 +1,10 @@
-import os
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List, Optional
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from sqlalchemy import func, text, String
+from sqlalchemy import text, String
 
 from database import engine, get_db, Base
 from schemas import (
@@ -14,10 +13,10 @@ from schemas import (
     UniversityResponse, ShortlistCreate, ShortlistResponse,
     TaskCreate, TaskUpdate, TaskResponse,
     ChatMessageCreate, ChatMessageResponse,
-    ChatMessageCreate, ChatMessageResponse,
     ChatSessionCreate, ChatSessionUpdate, ChatSessionResponse,
     DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest
 )
+from real_universities_data import UNIVERSITIES_DATA
 from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus, SubscriptionPlan
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 # from universities_data import UNIVERSITIES # Replaced by real_universities_data
@@ -97,7 +96,7 @@ def delete_all_user_sessions(
     db.commit()
     return {"message": f"Deleted {deleted_count} sessions", "deleted": deleted_count}
 
-from real_universities_data import UNIVERSITIES_DATA
+
 
 def seed_universities(db: Session):
     # Ensure all universities in code exist in DB
@@ -302,9 +301,7 @@ def get_next_step_guidance(current_stage: UserStage) -> str:
     }
     return guidance.get(current_stage, "Continue with your study abroad journey.")
 
-@app.get("/api/health")
-def health_check():
-    return {"status": "healthy"}
+
 
 @app.post("/api/auth/signup", response_model=TokenResponse)
 def signup(user_data: UserCreate, db: Session = Depends(get_db)):
@@ -444,7 +441,7 @@ def get_dashboard(
     ).count()
     locked_count = db.query(ShortlistedUniversity).filter(
         ShortlistedUniversity.user_id == current_user.id,
-        ShortlistedUniversity.is_locked == True
+        ShortlistedUniversity.is_locked
     ).count()
     pending_tasks = db.query(Task).filter(
         Task.user_id == current_user.id,
@@ -883,7 +880,7 @@ def lock_university(
     
     db.commit()
     
-    return {"message": f"University locked successfully. You are now in the Application stage.", "stage": current_user.current_stage.value}
+    return {"message": "University locked successfully. You are now in the Application stage.", "stage": current_user.current_stage.value}
 
 @app.post("/api/shortlist/{shortlist_id}/unlock")
 def unlock_university(
@@ -922,7 +919,7 @@ def unlock_university(
     
     other_locked = db.query(ShortlistedUniversity).filter(
         ShortlistedUniversity.user_id == current_user.id,
-        ShortlistedUniversity.is_locked == True,
+        ShortlistedUniversity.is_locked,
         ShortlistedUniversity.id != shortlist_id
     ).count()
     
@@ -1386,7 +1383,7 @@ async def chat_with_counsellor(
             # Check if any other locked universities remain
             other_locked = db.query(ShortlistedUniversity).filter(
                 ShortlistedUniversity.user_id == current_user.id,
-                ShortlistedUniversity.is_locked == True,
+                ShortlistedUniversity.is_locked,
                 ShortlistedUniversity.id != shortlist.id
             ).count()
             
