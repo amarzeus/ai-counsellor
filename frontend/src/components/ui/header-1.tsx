@@ -85,9 +85,9 @@ export function Header() {
 						<Image
 							src="/logo.png?v=6"
 							alt="AI Counsellor"
-							width={240}
-							height={80}
-							className="h-[5.4rem] w-auto object-contain"
+							width={260}
+							height={86}
+							className="h-[5.8rem] w-auto object-contain"
 							unoptimized
 						/>
 					</Link>
