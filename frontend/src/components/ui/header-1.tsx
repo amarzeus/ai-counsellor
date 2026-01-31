@@ -55,6 +55,10 @@ export function Header() {
 		},
 	] : [
 		{
+			label: 'About Us',
+			href: '/about',
+		},
+		{
 			label: 'How it Works',
 			href: '/how-it-works',
 		},
