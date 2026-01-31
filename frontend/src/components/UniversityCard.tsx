@@ -8,6 +8,7 @@ interface UniversityCardProps {
   university: University;
   isShortlisted: boolean;
   onShortlist: () => void;
+  onClick?: () => void;
   index?: number;
 }
 
@@ -15,6 +16,7 @@ export default function UniversityCard({
   university,
   isShortlisted,
   onShortlist,
+  onClick,
   index = 0,
 }: UniversityCardProps) {
   const getCategoryConfig = (category?: string) => {
@@ -82,7 +84,10 @@ export default function UniversityCard({
   return (
     <div className="group bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-700 transition-all duration-300 overflow-hidden">
       <div className="p-6">
-        <div className="flex items-start justify-between gap-4 mb-4">
+        <div
+          className={`flex items-start justify-between gap-4 mb-4 ${onClick ? 'cursor-pointer' : ''}`}
+          onClick={onClick}
+        >
           <div className="flex-1 min-w-0">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
               {university.name}

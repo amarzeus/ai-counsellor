@@ -90,11 +90,11 @@ export default function DashboardPage() {
   };
 
   const handleRemove = async (id: number) => {
-    if (!confirm("Remove this university from your shortlist?")) {
-      return;
-    }
+    // Get the university_id from the selected university
+    const uniId = selectedUniversity?.university_id;
+    if (!uniId) return;
     try {
-      await shortlistApi.remove(id);
+      await shortlistApi.removeByUniversityId(uniId);
       toast.success("Removed from shortlist");
       setDrawerOpen(false);
       fetchData();

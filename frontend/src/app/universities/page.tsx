@@ -9,6 +9,7 @@ import {
 import toast from "react-hot-toast";
 import UniversityCard from "@/components/UniversityCard";
 import LockConfirmModal from "@/components/LockConfirmModal";
+import UniversityDrawer from "@/components/UniversityDrawer";
 import { universityApi, shortlistApi, University, Shortlist } from "@/lib/api";
 import { useStore } from "@/lib/store";
 
@@ -22,6 +23,8 @@ export default function UniversitiesPage() {
   const [countryFilter, setCountryFilter] = useState<string>("");
   const [lockModalOpen, setLockModalOpen] = useState(false);
   const [selectedForLock, setSelectedForLock] = useState<Shortlist | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedUniversity, setSelectedUniversity] = useState<Shortlist | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -122,11 +125,8 @@ export default function UniversitiesPage() {
   };
 
   const handleRemove = async (shortlistItem: Shortlist) => {
-    if (!confirm("Remove this university from your shortlist?")) {
-      return;
-    }
     try {
-      await shortlistApi.remove(shortlistItem.id);
+      await shortlistApi.removeByUniversityId(shortlistItem.university_id);
       setShortlist((prev) => prev.filter((s) => s.id !== shortlistItem.id));
       toast.success("Removed from shortlist");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,9 +136,6 @@ export default function UniversitiesPage() {
   };
 
   const handleRemoveByUniversityId = async (universityId: number) => {
-    if (!confirm("Remove this university from your shortlist?")) {
-      return;
-    }
     try {
       await shortlistApi.removeByUniversityId(universityId);
       setShortlist((prev) => prev.filter((s) => s.university_id !== universityId));
@@ -151,6 +148,58 @@ export default function UniversitiesPage() {
 
   const isShortlisted = (uniId: number) => {
     return shortlist.some((s) => s.university_id === uniId);
+  };
+
+  const getShortlistItem = (uniId: number) => {
+    return shortlist.find((s) => s.university_id === uniId);
+  };
+
+  const openDrawer = (item: Shortlist) => {
+    setSelectedUniversity(item);
+    setDrawerOpen(true);
+  };
+
+  const openDrawerForUniversity = (uni: University) => {
+    const item = getShortlistItem(uni.id);
+    if (item) {
+      openDrawer(item);
+    }
+  };
+
+  const handleDrawerLock = async (id: number) => {
+    try {
+      const response = await shortlistApi.lock(id);
+      toast.success(response.data.message);
+      setDrawerOpen(false);
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to lock");
+    }
+  };
+
+  const handleDrawerUnlock = async (id: number) => {
+    try {
+      await shortlistApi.unlock(id, true);
+      toast.success("University unlocked");
+      setDrawerOpen(false);
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to unlock");
+    }
+  };
+
+  const handleDrawerRemove = async (id: number) => {
+    // Get the university_id from the selected university
+    const uniId = selectedUniversity?.university_id;
+    if (!uniId) return;
+    try {
+      await shortlistApi.removeByUniversityId(uniId);
+      toast.success("Removed from shortlist");
+      setDrawerOpen(false);
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to remove");
+    }
   };
 
   const getCategoryIcon = (category: string) => {
@@ -257,6 +306,7 @@ export default function UniversitiesPage() {
                 index={uni.id}
                 isShortlisted={isShortlisted(uni.id)}
                 onShortlist={() => isShortlisted(uni.id) ? handleRemoveByUniversityId(uni.id) : handleShortlist(uni)}
+                onClick={isShortlisted(uni.id) ? () => openDrawerForUniversity(uni) : undefined}
               />
             ))}
           </div>
@@ -290,7 +340,10 @@ export default function UniversitiesPage() {
                     }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div className="flex items-start gap-5">
+                    <div
+                      className="flex items-start gap-5 cursor-pointer flex-1"
+                      onClick={() => openDrawer(item)}
+                    >
                       <div
                         className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${getCategoryColor(
                           item.category
@@ -300,7 +353,7 @@ export default function UniversitiesPage() {
                       </div>
                       <div>
                         <div className="flex items-center gap-3 mb-1">
-                          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                          <h3 className="text-lg font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                             {item.university.name}
                           </h3>
                           {item.is_locked && (
@@ -377,6 +430,15 @@ export default function UniversitiesPage() {
           setSelectedForLock(null);
         }}
         onConfirm={handleLock}
+      />
+
+      <UniversityDrawer
+        university={selectedUniversity}
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onLock={handleDrawerLock}
+        onUnlock={handleDrawerUnlock}
+        onRemove={handleDrawerRemove}
       />
     </div>
   );
