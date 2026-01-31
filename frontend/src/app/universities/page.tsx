@@ -87,7 +87,10 @@ export default function UniversitiesPage() {
       toast.success(`${university.name} added to shortlist!`);
 
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to shortlist");
+      console.error("Failed to update shortlist", error);
+      const detail = error.response?.data?.detail;
+      const message = typeof detail === 'object' ? detail.message : detail || "Failed to update shortlist";
+      toast.error(message);
     }
   };
 
@@ -107,13 +110,13 @@ export default function UniversitiesPage() {
         const storedUser = JSON.parse(userStr);
         storedUser.current_stage = response.data.stage;
         localStorage.setItem("user", JSON.stringify(storedUser));
-        setUser(storedUser);
+        toast.success(response.data.message);
       }
-      toast.success(response.data.message);
-
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to lock university");
-      throw error;
+      console.error("Locking failed", error);
+      const detail = error.response?.data?.detail;
+      const message = typeof detail === 'object' ? detail.message : detail || "Failed to lock university";
+      toast.error(message);
     }
   };
 
@@ -206,11 +209,13 @@ export default function UniversitiesPage() {
   const handleDrawerUnlock = async (id: number) => {
     try {
       await shortlistApi.unlock(id, true);
-      toast.success("University unlocked");
-      setDrawerOpen(false);
-      fetchData();
+      toast.success("University unlocked.");
+      router.refresh();
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to unlock");
+      console.error("Unlock failed", error);
+      const detail = error.response?.data?.detail;
+      const message = typeof detail === 'object' ? detail.message : detail || "Failed to unlock";
+      toast.error(message);
     }
   };
 

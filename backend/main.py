@@ -14,13 +14,14 @@ from schemas import (
     TaskCreate, TaskUpdate, TaskResponse,
     ChatMessageCreate, ChatMessageResponse,
     ChatSessionCreate, ChatSessionUpdate, ChatSessionResponse,
-    DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest
+    DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest,
+    SOPReviewRequest, SOPReviewResponse
 )
 from real_universities_data import UNIVERSITIES_DATA
 from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 # from universities_data import UNIVERSITIES # Replaced by real_universities_data
-from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university
+from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university, analyze_sop
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
 # import subscriptions  # DISABLED: Payment system deactivated
@@ -1528,6 +1529,31 @@ async def chat_with_counsellor(
     db.refresh(ai_message)
     
     return ChatMessageResponse.model_validate(ai_message)
+
+@app.post("/api/sop/review", response_model=SOPReviewResponse)
+async def review_sop(
+    request: SOPReviewRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Analyze SOP using AI (Requires Application Phase Access - via Locking)"""
+    # GUARD: Must be at least in LOCKED stage (which implies they are ready for applications)
+    # Actually, let's stick to the plan: UNLOCKED after locking a university.
+    # Logic: If user has at least 1 locked university, they are in LOCKED stage or higher.
+    
+    require_stage_minimum(current_user, UserStage.LOCKED, "review SOP")
+    
+    # Optional: Check word count
+    if len(request.text.split()) < 50:
+         raise HTTPException(status_code=400, detail="SOP is too short. Please provide at least 50 words.")
+         
+    analysis = await analyze_sop(
+        sop_text=request.text, 
+        university_name=request.university_name, 
+        program_name=request.program_name
+    )
+    
+    return SOPReviewResponse(**analysis)
 
 if __name__ == "__main__":
     import uvicorn

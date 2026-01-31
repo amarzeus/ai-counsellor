@@ -293,3 +293,16 @@ class DashboardResponse(BaseModel):
     locked_count: int
     pending_tasks: int
     next_action: str
+
+class SOPReviewRequest(BaseModel):
+    text: str
+    university_name: Optional[str] = None
+    program_name: Optional[str] = None
+
+class SOPReviewResponse(BaseModel):
+    overall_score: int
+    strengths: List[str]
+    weaknesses: List[str]
+    grammar_mistakes: List[str]
+    improved_snippet: Optional[str] = None
+    ai_feedback: str

@@ -111,7 +111,7 @@ export interface ChatMessage {
   session_id: number;
   role: 'user' | 'assistant';
   content: string;
-   
+
   actions_taken?: { type: string;[key: string]: any }[];
   created_at: string;
 }
@@ -206,6 +206,21 @@ export const chatApi = {
   getHistory: (sessionId: number) => api.get<ChatMessage[]>(`/api/chat/history/${sessionId}`),
   send: (content: string, sessionId?: number) =>
     api.post<ChatMessage>('/api/chat', { content, session_id: sessionId }),
+};
+
+
+export interface SOPReviewResponse {
+  overall_score: number;
+  strengths: string[];
+  weaknesses: string[];
+  grammar_mistakes: string[];
+  improved_snippet?: string;
+  ai_feedback: string;
+}
+
+export const sopApi = {
+  review: (data: { text: string; university_name?: string; program_name?: string }) =>
+    api.post<SOPReviewResponse>('/api/sop/review', data),
 };
 
 export default api;

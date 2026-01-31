@@ -406,8 +406,88 @@ Goal: Ensure this response is unique from any previous output.
                 "suggested_universities": []
             }
     
-    return {
-        "message": "I'm experiencing high demand right now. Please try again in about 30 seconds.",
-        "actions": [],
-        "suggested_universities": []
-    }
+
+SOP_SYSTEM_PROMPT = """You are an expert Admissions Committee Officer at a top-tier university.
+Your task is to review a Statement of Purpose (SOP) and provide structured, critical, and constructive feedback.
+
+## Review Criteria
+1. **Clarity & Structure**: Is the flow logical? Does it have a clear hook?
+2. **Content Strength**: Does it show (not just tell) achievements? Is the motivation clear?
+3. **Grammar & Tone**: Is the language professional, concise, and error-free?
+4. **Impact**: Does it stand out?
+
+## Output Format (Strict JSON)
+{
+    "overall_score": <int 1-100>,
+    "strengths": ["<strength 1>", "<strength 2>"],
+    "weaknesses": ["<weakness 1>", "<weakness 2>"],
+    "grammar_mistakes": ["<mistake 1>"],
+    "improved_snippet": "<Rewrite the weakest paragraph to be stronger>",
+    "ai_feedback": "<Overall summary and advice>"
+}
+"""
+
+async def analyze_sop(sop_text: str, university_name: str = None, program_name: str = None) -> dict:
+    """Analyze SOP using Gemini."""
+    
+    if not key_manager.has_keys():
+        return {
+            "overall_score": 0,
+            "strengths": [],
+            "weaknesses": ["AI Service Unavailable - No API Key"],
+            "grammar_mistakes": [],
+            "improved_snippet": None,
+            "ai_feedback": "Please configure the API Key to use this feature."
+        }
+
+    client, key_index = key_manager.create_client() # Simple client creation for now
+    
+    context = ""
+    if university_name:
+        context += f"Target University: {university_name}\n"
+    if program_name:
+        context += f"Target Program: {program_name}\n"
+        
+    full_prompt = f"""{SOP_SYSTEM_PROMPT}
+
+{context}
+
+## Student SOP
+{sop_text}
+
+Analyze this SOP and provide feedback in JSON format.
+"""
+
+    try:
+        response = client.models.generate_content(
+            model=key_manager.get_model_name(),
+            contents=full_prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
+        response_text = response.text or "{}"
+        try:
+            return json.loads(response_text)
+        except json.JSONDecodeError:
+            return {
+                "overall_score": 0,
+                "strengths": [],
+                "weaknesses": ["Failed to parse AI response"],
+                "grammar_mistakes": [],
+                "improved_snippet": None,
+                "ai_feedback": "Error analyzing SOP. Please try again."
+            }
+            
+    except Exception as e:
+        logger.error(f"SOP Analysis Error: {str(e)}")
+        return {
+            "overall_score": 0,
+            "strengths": [],
+            "weaknesses": [f"Error: {str(e)}"],
+            "grammar_mistakes": [],
+            "improved_snippet": None,
+            "ai_feedback": "An error occurred during analysis."
+        }
+

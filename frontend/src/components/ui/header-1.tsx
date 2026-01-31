@@ -57,6 +57,10 @@ export function Header() {
 			label: 'Tasks',
 			href: '/tasks',
 		},
+		...(user.current_stage === 'LOCKED' || user.current_stage === 'APPLICATION' ? [{
+			label: 'SOP Review',
+			href: '/sop-review',
+		}] : []),
 	] : [
 		{
 			label: 'About Us',

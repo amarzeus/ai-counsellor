@@ -59,6 +59,10 @@ export default function DashboardPage() {
       setLocalTasks(tasksRes.data);
 
       setDashboard(dashRes.data);
+      if (dashRes.data.user) {
+        setUser(dashRes.data.user);
+        localStorage.setItem("user", JSON.stringify(dashRes.data.user));
+      }
       setShortlist(shortlistRes.data);
       setTasks(tasksRes.data);
     } catch (error) {
