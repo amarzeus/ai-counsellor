@@ -13,6 +13,7 @@ import { useStore } from "@/lib/store";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import { AIMessageRenderer } from "@/components/chat/AIMessageRenderer";
 import { UniversityCard } from "@/components/chat/UniversityCard";
+import { VoiceInput } from "@/components/chat/VoiceInput";
 
 // Extended ChatMessage interface to support suggested universities
 interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
@@ -71,7 +72,6 @@ export default function CounsellorPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
 
@@ -124,10 +124,12 @@ export default function CounsellorPage() {
     }
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
+  const shouldSpeakRef = useRef(false);
 
-    const userMessage = input.trim();
+  const handleSend = async (overrideInput?: string) => {
+    const userMessage = overrideInput || input.trim();
+    if (!userMessage || loading) return;
+
     setInput("");
     setLoading(true);
 
@@ -147,9 +149,16 @@ export default function CounsellorPage() {
 
       const assistantMessage = response.data;
 
+      // Automatic Text-to-Speech if triggered by Voice
+      if (shouldSpeakRef.current) {
+        // Strip Markdown for cleaner speech
+        const cleanText = assistantMessage.content.replace(/[*#]/g, '');
+        speakResponse(cleanText);
+        shouldSpeakRef.current = false;
+      }
+
       // If we just started a new session, the backend response should now contain the session_id
       if (!currentSessionId && assistantMessage.session_id) {
-        setCurrentSessionId(assistantMessage.session_id);
         setCurrentSessionId(assistantMessage.session_id);
       }
 
@@ -187,46 +196,22 @@ export default function CounsellorPage() {
     }
   };
 
-  const toggleVoiceInput = () => {
-    if (isListening) {
-      setIsListening(false);
-      return;
-    }
+  // TTS Helper
+  const speakResponse = (text: string) => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel(); // Stop previous
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.volume = 1;
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  };
 
-    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
-      toast.error("Voice input is not supported in this browser.");
-      return;
-    }
-
-    // @ts-ignore
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-
-    recognition.onstart = () => {
-      setIsListening(true);
-      toast.success("Listening...");
-    };
-
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-      setIsListening(false);
-    };
-
-    recognition.onerror = (event: any) => {
-      setIsListening(false);
-      toast.error("Could not capture voice.");
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.start();
+  const handleVoiceInput = (text: string) => {
+    setInput(text);
+    // Auto-send and enable TTS for response
+    shouldSpeakRef.current = true;
+    handleSend(text);
   };
 
   const handleQuickShortlist = async (uniId: number, category: string, isShortlisted: boolean | undefined) => {
@@ -273,9 +258,9 @@ export default function CounsellorPage() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-[#0B1120] flex flex-col overflow-hidden transition-colors duration-300">
+    <div className="h-[calc(100vh-5rem)] bg-gray-50 dark:bg-[#0B1120] flex flex-col overflow-hidden transition-colors duration-300">
 
-      <div className="flex flex-1 overflow-hidden pt-16 w-full">
+      <div className="flex flex-1 overflow-hidden w-full">
         {/* SIDEBAR */}
         <ChatSidebar
           currentSessionId={currentSessionId}
@@ -288,12 +273,12 @@ export default function CounsellorPage() {
           <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 py-2 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full overflow-hidden relative border border-gray-100 dark:border-slate-700 shadow-sm shrink-0">
+                <div className="w-14 h-14 relative shrink-0">
                   <Image
-                    src="/ai-avatar-processed.png"
+                    src="/Avatar.png"
                     alt="AI"
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
                 <div>
@@ -314,12 +299,12 @@ export default function CounsellorPage() {
             <div className="max-w-4xl mx-auto w-full">
               {messages.length === 0 && (
                 <div className="text-center py-10">
-                  <div className="w-16 h-16 mx-auto mb-5 relative rounded-full overflow-hidden shadow-md border border-gray-100 dark:border-slate-700">
+                  <div className="w-16 h-16 mx-auto mb-5 relative">
                     <Image
-                      src="/ai-avatar-processed.png"
+                      src="/Avatar.png"
                       alt="AI"
                       fill
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -378,12 +363,12 @@ export default function CounsellorPage() {
                           {/* 1. Guidance Strip - Section Header Style (Minimal) */}
                           {/* Increased size for clarity */}
                           <div className="flex items-center gap-3 px-1 mb-2">
-                            <div className="w-8 h-8 rounded-full overflow-hidden relative shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
+                            <div className="w-8 h-8 relative shrink-0">
                               <Image
-                                src="/ai-avatar-processed.png"
+                                src="/Avatar.png"
                                 alt="AI"
                                 fill
-                                className="object-cover"
+                                className="object-contain"
                               />
                             </div>
                             <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
@@ -422,12 +407,12 @@ export default function CounsellorPage() {
                       ) : (
                         /* Regular AI message (no universities) - keep bubble style */
                         <div className="flex gap-4">
-                          <div className="w-12 h-12 rounded-full overflow-hidden relative flex-shrink-0 mt-1 border border-gray-100 dark:border-slate-700 shadow-sm ring-1 ring-white dark:ring-slate-800">
+                          <div className="w-12 h-12 relative flex-shrink-0 mt-1">
                             <Image
-                              src="/ai-avatar-processed.png"
+                              src="/Avatar.png"
                               alt="AI"
                               fill
-                              className="object-cover"
+                              className="object-contain"
                             />
                           </div>
                           <div className="flex flex-col max-w-[85%] items-start">
@@ -472,12 +457,12 @@ export default function CounsellorPage() {
 
               {loading && (
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full overflow-hidden relative flex-shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
+                  <div className="w-10 h-10 relative flex-shrink-0">
                     <Image
-                      src="/ai-avatar-processed.png"
+                      src="/Avatar.png"
                       alt="AI"
                       fill
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </div>
                   <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-5 py-3 shadow-sm">
@@ -493,43 +478,37 @@ export default function CounsellorPage() {
             </div>
           </div>
 
-          <div className="flex-shrink-0 border-t border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-3 transition-colors">
+          <div className="flex-shrink-0 px-4 py-6 bg-slate-50 dark:bg-[#0B1120] transition-colors">
             <div className="max-w-4xl mx-auto w-full">
-              <div className="flex gap-2 items-center">
-                <button
-                  onClick={toggleVoiceInput}
-                  className={`p-3 rounded-full transition-all ${isListening
-                    ? "bg-red-100 text-red-600 animate-pulse ring-2 ring-red-400"
-                    : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-400 hover:bg-gray-200"}`}
-                  title="Voice Input"
-                >
-                  {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-                </button>
+              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50">
+                <VoiceInput onInput={handleVoiceInput} disabled={loading} />
 
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={isListening ? "Listening..." : "Ask me anything..."}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-sm"
+                  placeholder="Ask me anything..."
+                  className="flex-1 px-2 py-2 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 text-sm font-medium"
                   disabled={loading}
                 />
+
                 <button
-                  onClick={handleSend}
+                  onClick={() => handleSend()}
                   disabled={!input.trim() || loading}
-                  className="px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95 font-medium"
+                  className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-blue-500/20 active:scale-95"
                 >
                   <Send className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-center text-[10px] text-gray-400 dark:text-slate-600 mt-1.5">
+              <p className="text-center text-[10px] text-slate-400 dark:text-slate-600 mt-3 font-medium">
                 AI Counsellor can make mistakes. Please verify important information.
               </p>
             </div>
           </div>
         </main>
-      </div >
+      </div>
+
     </div >
   );
 }

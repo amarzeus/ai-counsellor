@@ -1,0 +1,1866 @@
+[
+    {
+        "name": "Massachusetts Institute of Technology",
+        "country": "USA",
+        "city": "Cambridge, MA",
+        "qs_ranking": 1,
+        "the_ranking": 3,
+        "official_website": "https://www.mit.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "EECS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 58240,
+                "min_gpa": 3.8,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "AI/ML",
+                    "Systems",
+                    "Theory"
+                ]
+            },
+            {
+                "name": "MBA",
+                "degree_level": "Masters",
+                "department": "Sloan School of Management",
+                "duration_months": 24,
+                "tuition_per_year_usd": 84200,
+                "min_gpa": 3.5,
+                "program_category": "BUSINESS",
+                "program_discipline": "MBA",
+                "requires_work_experience": true,
+                "min_work_experience_years": 3,
+                "gmat_required": true,
+                "gmat_min": 720,
+                "ielts_min": 7.5,
+                "toefl_min": 105,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 17",
+                "specializations": [
+                    "Finance",
+                    "Entrepreneurship",
+                    "Enterprise Management"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Stanford University",
+        "country": "USA",
+        "city": "Stanford, CA",
+        "qs_ranking": 5,
+        "the_ranking": 2,
+        "official_website": "https://www.stanford.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "School of Engineering",
+                "duration_months": 21,
+                "tuition_per_year_usd": 57861,
+                "min_gpa": 3.8,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 1",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Theory"
+                ]
+            },
+            {
+                "name": "MS Mechanical Engineering",
+                "degree_level": "Masters",
+                "department": "School of Engineering",
+                "duration_months": 24,
+                "tuition_per_year_usd": 60000,
+                "min_gpa": 3.6,
+                "program_category": "ENGINEERING",
+                "program_discipline": "Mechanical Engineering",
+                "requires_work_experience": false,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "gre_required": true,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 5",
+                "specializations": [
+                    "Robotics",
+                    "Design"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of California, Los Angeles",
+        "country": "USA",
+        "city": "Los Angeles, CA",
+        "qs_ranking": 29,
+        "the_ranking": 18,
+        "official_website": "https://www.ucla.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 24,
+                "tuition_per_year_usd": 33238,
+                "min_gpa": 3.5,
+                "ielts_min": 7.0,
+                "toefl_min": 87,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 1",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Data Science"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Princeton University",
+        "country": "USA",
+        "city": "Princeton, NJ",
+        "qs_ranking": 17,
+        "the_ranking": 6,
+        "official_website": "https://www.princeton.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSE Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 24,
+                "tuition_per_year_usd": 62400,
+                "min_gpa": 3.8,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "Theory",
+                    "Systems",
+                    "ML"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Yale University",
+        "country": "USA",
+        "city": "New Haven, CT",
+        "qs_ranking": 16,
+        "the_ranking": 10,
+        "official_website": "https://www.yale.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 12,
+                "tuition_per_year_usd": 49500,
+                "min_gpa": 3.7,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 2",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Security"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Carnegie Mellon University",
+        "country": "USA",
+        "city": "Pittsburgh, PA",
+        "qs_ranking": 52,
+        "the_ranking": 24,
+        "official_website": "https://www.cmu.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "SCS",
+                "duration_months": 16,
+                "tuition_per_year_usd": 52816,
+                "min_gpa": 3.5,
+                "ielts_min": 7.5,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 13",
+                "specializations": [
+                    "AI/ML",
+                    "Robotics",
+                    "Systems"
+                ]
+            },
+            {
+                "name": "Master of Information Systems Management (MISM)",
+                "degree_level": "Masters",
+                "department": "Heinz College",
+                "duration_months": 16,
+                "tuition_per_year_usd": 54000,
+                "min_gpa": 3.4,
+                "program_category": "BUSINESS",
+                "program_discipline": "Information Systems",
+                "requires_work_experience": false,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall",
+                    "Spring"
+                ],
+                "application_deadline_fall": "January 10",
+                "specializations": [
+                    "Business Intelligence",
+                    "Data Analytics"
+                ]
+            },
+            {
+                "name": "Master of Computational Data Science (MCDS)",
+                "degree_level": "Masters",
+                "department": "SCS",
+                "duration_months": 16,
+                "tuition_per_year_usd": 58000,
+                "min_gpa": 3.6,
+                "program_category": "STEM",
+                "program_discipline": "Data Science",
+                "requires_work_experience": false,
+                "ielts_min": 7.5,
+                "toefl_min": 100,
+                "gre_required": true,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 12",
+                "specializations": [
+                    "Systems",
+                    "Analytics",
+                    "Human-Centered DS"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of California, Berkeley",
+        "country": "USA",
+        "city": "Berkeley, CA",
+        "qs_ranking": 10,
+        "the_ranking": 9,
+        "official_website": "https://www.berkeley.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS EECS",
+                "degree_level": "Masters",
+                "department": "EECS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 28176,
+                "min_gpa": 3.7,
+                "ielts_min": 7.0,
+                "toefl_min": 90,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 8",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Theory"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Georgia Institute of Technology",
+        "country": "USA",
+        "city": "Atlanta, GA",
+        "qs_ranking": 88,
+        "the_ranking": 33,
+        "official_website": "https://www.gatech.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "College of Computing",
+                "duration_months": 24,
+                "tuition_per_year_usd": 18024,
+                "min_gpa": 3.3,
+                "ielts_min": 7.0,
+                "toefl_min": 90,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "February 1",
+                "specializations": [
+                    "ML",
+                    "Systems",
+                    "HCI"
+                ]
+            },
+            {
+                "name": "MS Analytics",
+                "degree_level": "Masters",
+                "department": "College of Engineering",
+                "duration_months": 12,
+                "tuition_per_year_usd": 40000,
+                "min_gpa": 3.5,
+                "program_category": "STEM",
+                "program_discipline": "Data Science",
+                "requires_work_experience": false,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "gre_required": true,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 1",
+                "specializations": [
+                    "Analytical Tools",
+                    "Business Analytics",
+                    "Computational Data Analytics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Illinois Urbana-Champaign",
+        "country": "USA",
+        "city": "Urbana, IL",
+        "qs_ranking": 64,
+        "the_ranking": 48,
+        "official_website": "https://illinois.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 20,
+                "tuition_per_year_usd": 38568,
+                "min_gpa": 3.2,
+                "ielts_min": 6.5,
+                "toefl_min": 96,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Data"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Michigan",
+        "country": "USA",
+        "city": "Ann Arbor, MI",
+        "qs_ranking": 33,
+        "the_ranking": 23,
+        "official_website": "https://umich.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science & Engineering",
+                "degree_level": "Masters",
+                "department": "CSE",
+                "duration_months": 20,
+                "tuition_per_year_usd": 28512,
+                "min_gpa": 3.5,
+                "ielts_min": 6.5,
+                "toefl_min": 84,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 15",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Theory"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Texas at Austin",
+        "country": "USA",
+        "city": "Austin, TX",
+        "qs_ranking": 58,
+        "the_ranking": 47,
+        "official_website": "https://www.utexas.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 24,
+                "tuition_per_year_usd": 20912,
+                "min_gpa": 3.3,
+                "ielts_min": 6.5,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Graphics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Purdue University",
+        "country": "USA",
+        "city": "West Lafayette, IN",
+        "qs_ranking": 99,
+        "the_ranking": 86,
+        "official_website": "https://www.purdue.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 24,
+                "tuition_per_year_usd": 31104,
+                "min_gpa": 3.2,
+                "ielts_min": 6.5,
+                "toefl_min": 80,
+                "intake_terms": [
+                    "Fall",
+                    "Spring"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "Systems",
+                    "Security",
+                    "ML"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Washington",
+        "country": "USA",
+        "city": "Seattle, WA",
+        "qs_ranking": 63,
+        "the_ranking": 26,
+        "official_website": "https://www.washington.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science & Engineering",
+                "degree_level": "Masters",
+                "department": "Paul G. Allen School",
+                "duration_months": 18,
+                "tuition_per_year_usd": 38796,
+                "min_gpa": 3.5,
+                "ielts_min": 7.0,
+                "toefl_min": 92,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "HCI"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of California, San Diego",
+        "country": "USA",
+        "city": "San Diego, CA",
+        "qs_ranking": 62,
+        "the_ranking": 32,
+        "official_website": "https://ucsd.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "CSE",
+                "duration_months": 24,
+                "tuition_per_year_usd": 26544,
+                "min_gpa": 3.2,
+                "ielts_min": 7.0,
+                "toefl_min": 85,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Bioinformatics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Southern California",
+        "country": "USA",
+        "city": "Los Angeles, CA",
+        "qs_ranking": 116,
+        "the_ranking": 65,
+        "official_website": "https://www.usc.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "Viterbi School",
+                "duration_months": 20,
+                "tuition_per_year_usd": 45378,
+                "min_gpa": 3.2,
+                "ielts_min": 6.5,
+                "toefl_min": 90,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "AI",
+                    "Games",
+                    "Data Science"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "New York University",
+        "country": "USA",
+        "city": "New York, NY",
+        "qs_ranking": 38,
+        "the_ranking": 27,
+        "official_website": "https://www.nyu.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "Courant Institute",
+                "duration_months": 24,
+                "tuition_per_year_usd": 51828,
+                "min_gpa": 3.3,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 12",
+                "specializations": [
+                    "AI",
+                    "Theory",
+                    "Graphics"
+                ]
+            },
+            {
+                "name": "MS Data Science",
+                "degree_level": "Masters",
+                "department": "Center for Data Science",
+                "duration_months": 24,
+                "tuition_per_year_usd": 45000,
+                "min_gpa": 3.6,
+                "program_category": "STEM",
+                "program_discipline": "Data Science",
+                "requires_work_experience": false,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "gre_required": true,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 22",
+                "specializations": [
+                    "Big Data",
+                    "NLP",
+                    "Medical Informatics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Columbia University",
+        "country": "USA",
+        "city": "New York, NY",
+        "qs_ranking": 23,
+        "the_ranking": 17,
+        "official_website": "https://www.columbia.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 18,
+                "tuition_per_year_usd": 58728,
+                "min_gpa": 3.4,
+                "ielts_min": 7.0,
+                "toefl_min": 101,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "ML",
+                    "NLP",
+                    "Vision"
+                ]
+            },
+            {
+                "name": "MS Data Science",
+                "degree_level": "Masters",
+                "department": "Data Science Institute",
+                "duration_months": 18,
+                "tuition_per_year_usd": 62000,
+                "min_gpa": 3.7,
+                "program_category": "STEM",
+                "program_discipline": "Data Science",
+                "requires_work_experience": false,
+                "ielts_min": 7.5,
+                "toefl_min": 100,
+                "gre_required": false,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 15",
+                "specializations": [
+                    "Machine Learning",
+                    "Smart Cities",
+                    "Financial Analytics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Pennsylvania",
+        "country": "USA",
+        "city": "Philadelphia, PA",
+        "qs_ranking": 12,
+        "the_ranking": 13,
+        "official_website": "https://www.upenn.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer & Information Science",
+                "degree_level": "Masters",
+                "department": "CIS",
+                "duration_months": 20,
+                "tuition_per_year_usd": 53166,
+                "min_gpa": 3.5,
+                "ielts_min": 7.5,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 15",
+                "specializations": [
+                    "AI",
+                    "Robotics",
+                    "Theory"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Cornell University",
+        "country": "USA",
+        "city": "Ithaca, NY",
+        "qs_ranking": 13,
+        "the_ranking": 20,
+        "official_website": "https://www.cornell.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "CIS",
+                "duration_months": 20,
+                "tuition_per_year_usd": 34380,
+                "min_gpa": 3.6,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 1",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Graphics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Northeastern University",
+        "country": "USA",
+        "city": "Boston, MA",
+        "qs_ranking": 375,
+        "the_ranking": 168,
+        "official_website": "https://www.northeastern.edu",
+        "is_public": false,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MS Computer Science",
+                "degree_level": "Masters",
+                "department": "Khoury College",
+                "duration_months": 20,
+                "tuition_per_year_usd": 29720,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "Fall",
+                    "Spring"
+                ],
+                "application_deadline_fall": "April 15",
+                "specializations": [
+                    "AI",
+                    "Data",
+                    "Systems"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Leeds",
+        "country": "UK",
+        "city": "Leeds",
+        "qs_ranking": 75,
+        "the_ranking": 129,
+        "official_website": "https://www.leeds.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Advanced Computer Science",
+                "degree_level": "Masters",
+                "department": "School of Computing",
+                "duration_months": 12,
+                "tuition_per_year_usd": 31000,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 88,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "July 31",
+                "specializations": [
+                    "AI",
+                    "Cloud",
+                    "Data"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Oxford",
+        "country": "UK",
+        "city": "Oxford",
+        "qs_ranking": 3,
+        "the_ranking": 1,
+        "official_website": "https://www.ox.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 12,
+                "tuition_per_year_usd": 41560,
+                "min_gpa": 3.7,
+                "ielts_min": 7.5,
+                "toefl_min": 110,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 20",
+                "specializations": [
+                    "AI",
+                    "Theory",
+                    "Verification"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Cambridge",
+        "country": "UK",
+        "city": "Cambridge",
+        "qs_ranking": 2,
+        "the_ranking": 5,
+        "official_website": "https://www.cam.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MPhil Advanced Computer Science",
+                "degree_level": "Masters",
+                "department": "Computer Laboratory",
+                "duration_months": 12,
+                "tuition_per_year_usd": 40250,
+                "min_gpa": 3.7,
+                "ielts_min": 7.5,
+                "toefl_min": 110,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 3",
+                "specializations": [
+                    "AI",
+                    "Systems",
+                    "Security"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Imperial College London",
+        "country": "UK",
+        "city": "London",
+        "qs_ranking": 6,
+        "the_ranking": 8,
+        "official_website": "https://www.imperial.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computing",
+                "degree_level": "Masters",
+                "department": "DoC",
+                "duration_months": 12,
+                "tuition_per_year_usd": 42150,
+                "min_gpa": 3.5,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI/ML",
+                    "Visual Computing"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University College London",
+        "country": "UK",
+        "city": "London",
+        "qs_ranking": 9,
+        "the_ranking": 22,
+        "official_website": "https://www.ucl.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "CS",
+                "duration_months": 12,
+                "tuition_per_year_usd": 37350,
+                "min_gpa": 3.3,
+                "ielts_min": 7.0,
+                "toefl_min": 92,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "HCI",
+                    "Security"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Edinburgh",
+        "country": "UK",
+        "city": "Edinburgh",
+        "qs_ranking": 22,
+        "the_ranking": 30,
+        "official_website": "https://www.ed.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "Informatics",
+                "duration_months": 12,
+                "tuition_per_year_usd": 32180,
+                "min_gpa": 3.3,
+                "ielts_min": 7.0,
+                "toefl_min": 92,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "ML",
+                    "NLP"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Manchester",
+        "country": "UK",
+        "city": "Manchester",
+        "qs_ranking": 32,
+        "the_ranking": 51,
+        "official_website": "https://www.manchester.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "CS",
+                "duration_months": 12,
+                "tuition_per_year_usd": 30850,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 89,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Data",
+                    "Systems"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "King's College London",
+        "country": "UK",
+        "city": "London",
+        "qs_ranking": 40,
+        "the_ranking": 38,
+        "official_website": "https://www.kcl.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "Informatics",
+                "duration_months": 12,
+                "tuition_per_year_usd": 30890,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 87,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Security"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Bristol",
+        "country": "UK",
+        "city": "Bristol",
+        "qs_ranking": 55,
+        "the_ranking": 76,
+        "official_website": "https://www.bristol.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "CS",
+                "duration_months": 12,
+                "tuition_per_year_usd": 29450,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 85,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Robotics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Warwick",
+        "country": "UK",
+        "city": "Coventry",
+        "qs_ranking": 67,
+        "the_ranking": 104,
+        "official_website": "https://warwick.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "DCS",
+                "duration_months": 12,
+                "tuition_per_year_usd": 29800,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 87,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Data",
+                    "Cyber"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Glasgow",
+        "country": "UK",
+        "city": "Glasgow",
+        "qs_ranking": 76,
+        "the_ranking": 89,
+        "official_website": "https://www.gla.ac.uk",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computing Science",
+                "degree_level": "Masters",
+                "department": "Computing Science",
+                "duration_months": 12,
+                "tuition_per_year_usd": 26500,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Data",
+                    "Software"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of McMaster",
+        "country": "Canada",
+        "city": "Hamilton, ON",
+        "qs_ranking": 189,
+        "the_ranking": 103,
+        "official_website": "https://www.mcmaster.ca",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "Computing and Software",
+                "duration_months": 24,
+                "tuition_per_year_usd": 12500,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 88,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "Health",
+                    "Software"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Toronto",
+        "country": "Canada",
+        "city": "Toronto, ON",
+        "qs_ranking": 21,
+        "the_ranking": 21,
+        "official_website": "https://www.utoronto.ca",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 20,
+                "tuition_per_year_usd": 21580,
+                "min_gpa": 3.5,
+                "ielts_min": 7.0,
+                "toefl_min": 93,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "ML",
+                    "Systems"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of British Columbia",
+        "country": "Canada",
+        "city": "Vancouver, BC",
+        "qs_ranking": 34,
+        "the_ranking": 41,
+        "official_website": "https://www.ubc.ca",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 24,
+                "tuition_per_year_usd": 9102,
+                "min_gpa": 3.3,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Graphics",
+                    "HCI"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "McGill University",
+        "country": "Canada",
+        "city": "Montreal, QC",
+        "qs_ranking": 30,
+        "the_ranking": 49,
+        "official_website": "https://www.mcgill.ca",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "SOCS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 8450,
+                "min_gpa": 3.3,
+                "ielts_min": 6.5,
+                "toefl_min": 86,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Theory"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Waterloo",
+        "country": "Canada",
+        "city": "Waterloo, ON",
+        "qs_ranking": 112,
+        "the_ranking": 158,
+        "official_website": "https://uwaterloo.ca",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MMath Computer Science",
+                "degree_level": "Masters",
+                "department": "Cheriton School",
+                "duration_months": 20,
+                "tuition_per_year_usd": 7858,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 90,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Security"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Alberta",
+        "country": "Canada",
+        "city": "Edmonton, AB",
+        "qs_ranking": 111,
+        "the_ranking": 109,
+        "official_website": "https://www.ualberta.ca",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computing Science",
+                "degree_level": "Masters",
+                "department": "CS Department",
+                "duration_months": 24,
+                "tuition_per_year_usd": 6842,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 90,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI/RL",
+                    "ML"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Montreal",
+        "country": "Canada",
+        "city": "Montreal, QC",
+        "qs_ranking": 141,
+        "the_ranking": 111,
+        "official_website": "https://www.umontreal.ca",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "DIRO",
+                "duration_months": 24,
+                "tuition_per_year_usd": 5500,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 85,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "Deep Learning"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Simon Fraser University",
+        "country": "Canada",
+        "city": "Burnaby, BC",
+        "qs_ranking": 318,
+        "the_ranking": 201,
+        "official_website": "https://www.sfu.ca",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computing Science",
+                "degree_level": "Masters",
+                "department": "CS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 7200,
+                "min_gpa": 3.0,
+                "ielts_min": 7.0,
+                "toefl_min": 93,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Graphics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Technical University of Munich",
+        "country": "Germany",
+        "city": "Munich",
+        "qs_ranking": 37,
+        "the_ranking": 30,
+        "official_website": "https://www.tum.de",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Informatics",
+                "degree_level": "Masters",
+                "department": "Informatics",
+                "duration_months": 24,
+                "tuition_per_year_usd": 340,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 88,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Robotics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "RWTH Aachen University",
+        "country": "Germany",
+        "city": "Aachen",
+        "qs_ranking": 92,
+        "the_ranking": 90,
+        "official_website": "https://www.rwth-aachen.de",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "Informatik",
+                "duration_months": 24,
+                "tuition_per_year_usd": 600,
+                "min_gpa": 2.7,
+                "ielts_min": 6.0,
+                "toefl_min": 80,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "Software",
+                    "Data"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Heidelberg University",
+        "country": "Germany",
+        "city": "Heidelberg",
+        "qs_ranking": 47,
+        "the_ranking": 47,
+        "official_website": "https://www.uni-heidelberg.de",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Scientific Computing",
+                "degree_level": "Masters",
+                "department": "IWR",
+                "duration_months": 24,
+                "tuition_per_year_usd": 400,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 90,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "Simulation",
+                    "ML"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Karlsruhe Institute of Technology",
+        "country": "Germany",
+        "city": "Karlsruhe",
+        "qs_ranking": 119,
+        "the_ranking": 189,
+        "official_website": "https://www.kit.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Informatics",
+                "degree_level": "Masters",
+                "department": "Informatik",
+                "duration_months": 24,
+                "tuition_per_year_usd": 400,
+                "min_gpa": 2.7,
+                "ielts_min": 6.0,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "Software",
+                    "Systems"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Technical University of Berlin",
+        "country": "Germany",
+        "city": "Berlin",
+        "qs_ranking": 154,
+        "the_ranking": 140,
+        "official_website": "https://www.tu-berlin.de",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "EECS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 350,
+                "min_gpa": 2.5,
+                "ielts_min": 6.0,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Software"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "LMU Munich",
+        "country": "Germany",
+        "city": "Munich",
+        "qs_ranking": 54,
+        "the_ranking": 38,
+        "official_website": "https://www.lmu.de",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "Informatik",
+                "duration_months": 24,
+                "tuition_per_year_usd": 350,
+                "min_gpa": 2.7,
+                "ielts_min": 6.0,
+                "toefl_min": 80,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Media"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Freiburg",
+        "country": "Germany",
+        "city": "Freiburg",
+        "qs_ranking": 192,
+        "the_ranking": 108,
+        "official_website": "https://uni-freiburg.de",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "MSc Computer Science",
+                "degree_level": "Masters",
+                "department": "Informatik",
+                "duration_months": 24,
+                "tuition_per_year_usd": 400,
+                "min_gpa": 2.5,
+                "ielts_min": 6.0,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "specializations": [
+                    "AI",
+                    "Robotics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Technology Sydney",
+        "country": "Australia",
+        "city": "Sydney, NSW",
+        "qs_ranking": 90,
+        "the_ranking": 148,
+        "official_website": "https://www.uts.edu.au",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Information Technology",
+                "degree_level": "Masters",
+                "department": "FEIT",
+                "duration_months": 24,
+                "tuition_per_year_usd": 32000,
+                "min_gpa": 2.7,
+                "ielts_min": 6.5,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "February"
+                ],
+                "specializations": [
+                    "Analytics"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Melbourne",
+        "country": "Australia",
+        "city": "Melbourne, VIC",
+        "qs_ranking": 14,
+        "the_ranking": 37,
+        "official_website": "https://www.unimelb.edu.au",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Computer Science",
+                "degree_level": "Masters",
+                "department": "CIS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 34880,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "March"
+                ],
+                "specializations": [
+                    "AI",
+                    "Distributed"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Sydney",
+        "country": "Australia",
+        "city": "Sydney, NSW",
+        "qs_ranking": 19,
+        "the_ranking": 60,
+        "official_website": "https://www.sydney.edu.au",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Computer Science",
+                "degree_level": "Masters",
+                "department": "School of CS",
+                "duration_months": 18,
+                "tuition_per_year_usd": 36500,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 85,
+                "intake_terms": [
+                    "March"
+                ],
+                "specializations": [
+                    "AI",
+                    "HCI"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Australian National University",
+        "country": "Australia",
+        "city": "Canberra, ACT",
+        "qs_ranking": 34,
+        "the_ranking": 67,
+        "official_website": "https://www.anu.edu.au",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Computing",
+                "degree_level": "Masters",
+                "department": "CECS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 33600,
+                "min_gpa": 3.0,
+                "ielts_min": 6.5,
+                "toefl_min": 80,
+                "intake_terms": [
+                    "February"
+                ],
+                "specializations": [
+                    "AI",
+                    "Systems"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Queensland",
+        "country": "Australia",
+        "city": "Brisbane, QLD",
+        "qs_ranking": 43,
+        "the_ranking": 70,
+        "official_website": "https://www.uq.edu.au",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Computer Science",
+                "degree_level": "Masters",
+                "department": "EECS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 32850,
+                "min_gpa": 2.7,
+                "ielts_min": 6.5,
+                "toefl_min": 87,
+                "intake_terms": [
+                    "February"
+                ],
+                "specializations": [
+                    "AI",
+                    "Data"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "UNSW Sydney",
+        "country": "Australia",
+        "city": "Sydney, NSW",
+        "qs_ranking": 19,
+        "the_ranking": 84,
+        "official_website": "https://www.unsw.edu.au",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Computer Science",
+                "degree_level": "Masters",
+                "department": "CSE",
+                "duration_months": 24,
+                "tuition_per_year_usd": 33600,
+                "min_gpa": 2.7,
+                "ielts_min": 6.5,
+                "toefl_min": 90,
+                "intake_terms": [
+                    "February"
+                ],
+                "specializations": [
+                    "AI",
+                    "DB"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Monash University",
+        "country": "Australia",
+        "city": "Melbourne, VIC",
+        "qs_ranking": 42,
+        "the_ranking": 54,
+        "official_website": "https://www.monash.edu",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Artificial Intelligence",
+                "degree_level": "Masters",
+                "department": "IT",
+                "duration_months": 24,
+                "tuition_per_year_usd": 33700,
+                "min_gpa": 2.7,
+                "ielts_min": 6.5,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "February"
+                ],
+                "specializations": [
+                    "AI",
+                    "ML"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Adelaide",
+        "country": "Australia",
+        "city": "Adelaide, SA",
+        "qs_ranking": 89,
+        "the_ranking": 111,
+        "official_website": "https://www.adelaide.edu.au",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Computer Science",
+                "degree_level": "Masters",
+                "department": "School of CS",
+                "duration_months": 24,
+                "tuition_per_year_usd": 31500,
+                "min_gpa": 2.7,
+                "ielts_min": 6.0,
+                "toefl_min": 79,
+                "intake_terms": [
+                    "February"
+                ],
+                "specializations": [
+                    "AI",
+                    "Networks"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "University of Western Australia",
+        "country": "Australia",
+        "city": "Perth, WA",
+        "qs_ranking": 72,
+        "the_ranking": 125,
+        "official_website": "https://www.uwa.edu.au",
+        "is_public": true,
+        "verified_at": "2026-01-31T00:00:00",
+        "data_source": "QS 2024",
+        "programs": [
+            {
+                "name": "Master of Information Technology",
+                "degree_level": "Masters",
+                "department": "CSSE",
+                "duration_months": 24,
+                "tuition_per_year_usd": 30500,
+                "min_gpa": 2.7,
+                "ielts_min": 6.5,
+                "toefl_min": 82,
+                "intake_terms": [
+                    "February"
+                ],
+                "specializations": [
+                    "AI",
+                    "Data Science"
+                ]
+            }
+        ]
+    }
+]

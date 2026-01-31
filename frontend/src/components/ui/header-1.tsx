@@ -30,8 +30,8 @@ export function Header() {
 		};
 	}, [open]);
 
-	// Hide header on auth pages - must be AFTER all hooks
-	if (pathname === '/login' || pathname === '/signup') {
+	// Hide header on auth pages and onboarding - must be AFTER all hooks
+	if (pathname === '/login' || pathname === '/signup' || pathname === '/onboarding') {
 		return null;
 	}
 
@@ -44,6 +44,10 @@ export function Header() {
 		{
 			label: 'Dashboard',
 			href: '/dashboard',
+		},
+		{
+			label: 'Universities',
+			href: '/universities',
 		},
 		{
 			label: 'AI Counsellor',

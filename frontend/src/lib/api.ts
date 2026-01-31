@@ -41,6 +41,8 @@ export interface User {
   full_name: string;
   current_stage: 'ONBOARDING' | 'DISCOVERY' | 'LOCKED' | 'APPLICATION';
   onboarding_completed: boolean;
+  subscription_plan?: 'FREE' | 'PREMIUM';
+  subscription_status?: 'ACTIVE' | 'TRIALING' | 'CANCELED' | 'PAST_DUE';
 }
 
 export interface Profile {
@@ -65,12 +67,19 @@ export interface University {
   id: number;
   name: string;
   country: string;
+  city?: string;
   tuition_per_year: number;
+  qs_ranking?: number;
+  the_ranking?: number;
   ranking?: number;
   min_gpa?: number;
   programs?: string[];
   description?: string;
   acceptance_rate?: number;
+  official_website?: string;
+  is_public?: boolean;
+  verified_at?: string;
+  data_source?: string;
   category?: 'DREAM' | 'TARGET' | 'SAFE';
   fit_reason?: string;
   risk_reason?: string;
