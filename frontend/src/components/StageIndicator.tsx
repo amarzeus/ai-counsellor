@@ -17,10 +17,10 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
   const currentIndex = STAGES.findIndex((s) => s.key === currentStage);
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 shadow-xl border border-transparent dark:border-slate-700/50">
-      <div className="flex items-center gap-2 mb-6">
+    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-5 shadow-xl border border-transparent dark:border-slate-700/50">
+      <div className="flex items-center gap-2 mb-4">
         <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
           Your Journey
         </span>
       </div>
@@ -37,7 +37,7 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
             return (
               <div
                 key={stage.key}
-                className={`relative flex items-center gap-4 p-3 rounded-xl transition-all duration-300 ${isCurrent
+                className={`relative flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 ${isCurrent
                   ? "bg-blue-500/20 border border-blue-500/30"
                   : isCompleted
                     ? "bg-emerald-500/10"
@@ -45,7 +45,7 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
                   }`}
               >
                 <div
-                  className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${isCompleted
+                  className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${isCompleted
                     ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
                     : isCurrent
                       ? "bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-4 ring-blue-500/20"
