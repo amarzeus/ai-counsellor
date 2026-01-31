@@ -13,6 +13,7 @@ import { useStore } from "@/lib/store";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import { AIMessageRenderer } from "@/components/chat/AIMessageRenderer";
 import { UniversityCard } from "@/components/chat/UniversityCard";
+import { VoiceInput } from "@/components/chat/VoiceInput";
 
 // Extended ChatMessage interface to support suggested universities
 interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
@@ -71,7 +72,6 @@ export default function CounsellorPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
 
@@ -157,11 +157,8 @@ export default function CounsellorPage() {
         shouldSpeakRef.current = false;
       }
 
-
-
       // If we just started a new session, the backend response should now contain the session_id
       if (!currentSessionId && assistantMessage.session_id) {
-        setCurrentSessionId(assistantMessage.session_id);
         setCurrentSessionId(assistantMessage.session_id);
       }
 
@@ -210,59 +207,11 @@ export default function CounsellorPage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  const toggleVoiceInput = () => {
-    // Premium Gating
-    if (user?.subscription_plan !== "PREMIUM") {
-      toast.error("Voice Mode is a Premium Feature. Upgrade to unlock.", {
-        icon: "💎",
-        duration: 4000
-      });
-      return;
-    }
-
-    if (isListening) {
-      setIsListening(false);
-      return;
-    }
-
-    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
-      toast.error("Voice input is not supported in this browser.");
-      return;
-    }
-
-    // @ts-ignore
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-
-    recognition.onstart = () => {
-      setIsListening(true);
-      toast.success("Listening...", { icon: "🎙️" });
-    };
-
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-      setIsListening(false);
-
-      // Auto-send and enable TTS for response
-      shouldSpeakRef.current = true;
-      handleSend(transcript);
-    };
-
-    recognition.onerror = (event: any) => {
-      setIsListening(false);
-      toast.error("Could not capture voice.");
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.start();
+  const handleVoiceInput = (text: string) => {
+    setInput(text);
+    // Auto-send and enable TTS for response
+    shouldSpeakRef.current = true;
+    handleSend(text);
   };
 
   const handleQuickShortlist = async (uniId: number, category: string, isShortlisted: boolean | undefined) => {
@@ -532,22 +481,14 @@ export default function CounsellorPage() {
           <div className="flex-shrink-0 px-4 py-6 bg-slate-50 dark:bg-[#0B1120] transition-colors">
             <div className="max-w-4xl mx-auto w-full">
               <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50">
-                <button
-                  onClick={toggleVoiceInput}
-                  className={`p-3 rounded-xl transition-all ${isListening
-                    ? "bg-red-50 text-red-600 animate-pulse"
-                    : "text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-600"}`}
-                  title="Voice Input"
-                >
-                  {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-                </button>
+                <VoiceInput onInput={handleVoiceInput} disabled={loading} />
 
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={isListening ? "Listening..." : "Ask me anything..."}
+                  placeholder="Ask me anything..."
                   className="flex-1 px-2 py-2 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 text-sm font-medium"
                   disabled={loading}
                 />
