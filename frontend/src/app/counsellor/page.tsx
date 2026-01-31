@@ -34,10 +34,10 @@ interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
   suggested_next_questions?: string[];
 }
 
-// Helper for static system guidance
-const getSystemGuidance = () => {
-  return "Based on your profile and budget, these universities are strong matches. Review and compare the options below.";
-};
+// REMOVED: Static guidance was causing "same message" issue
+// const getSystemGuidance = () => {
+//   return "Based on your profile and budget, these universities are strong matches. Review and compare the options below.";
+// };
 
 // Helper to extract guidance from AI content (no truncation)
 function extractGuidance(content: string): string {
@@ -73,7 +73,43 @@ export default function CounsellorPage() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
+  const [userIsManuallyScrolling, setUserIsManuallyScrolling] = useState(false);
+
+  // Intelligent Scroll Handler
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+      // distanceToBottom is 0 when fully scrolled down
+      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+
+      // If user is within 50px of bottom, they remain in "Auto Scroll Mode"
+      // If they go up more than 50px, they are "Manually Scrolling"
+      // We use a small buffer (e.g., 20px) to account for browser quirks
+      const isAtBottom = distanceToBottom < 80;
+
+      // Only update state if it actually changed to prevent render loops
+      setUserIsManuallyScrolling(!isAtBottom);
+    }
+  };
+
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior, block: "end" });
+    }
+  };
+
+  // Auto-scroll effect: ONLY scroll if user was ALREADY at the bottom (not manually scrolling)
+  // AND a new message just arrived (not on loading state change to prevent jumps during typing)
+  const prevMessagesLengthRef = useRef(messages.length);
+  useEffect(() => {
+    // Only trigger scroll when messages count actually increases (new message arrived)
+    if (messages.length > prevMessagesLengthRef.current && !userIsManuallyScrolling) {
+      scrollToBottom("smooth");
+    }
+    prevMessagesLengthRef.current = messages.length;
+  }, [messages]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -104,13 +140,14 @@ export default function CounsellorPage() {
     }
   }, [currentSessionId]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  // Removed old simple effect that lacked manual check
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [messages]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  };
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  // };
 
   const fetchHistory = async (sessionId: number) => {
     setLoading(true);
@@ -132,6 +169,10 @@ export default function CounsellorPage() {
 
     setInput("");
     setLoading(true);
+    setUserIsManuallyScrolling(false); // CRITICAL: Reset manual scroll state so it snaps to bottom
+
+    // Tiny timeout to ensure state update processes before scroll (optional safety)
+    setTimeout(() => scrollToBottom("smooth"), 50);
 
     const tempUserMsg: EnrichedChatMessage = {
       id: Date.now(),
@@ -297,7 +338,11 @@ export default function CounsellorPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6 bg-gray-50 dark:bg-[#0B1120]">
+          <div
+            className="flex-1 overflow-y-auto px-4 py-4 space-y-6 bg-gray-50 dark:bg-[#0B1120]"
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+          >
             <div className="max-w-4xl mx-auto w-full">
               {messages.length === 0 && (
                 <div className="text-center py-10">
@@ -374,7 +419,7 @@ export default function CounsellorPage() {
                               />
                             </div>
                             <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-                              {getSystemGuidance()}
+                              {extractGuidance(message.content)}
                             </p>
                           </div>
 

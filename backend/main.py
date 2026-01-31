@@ -1208,13 +1208,38 @@ async def chat_with_counsellor(
         })
     task_list = [{'id': t.id, 'title': t.title, 'status': t.status.value} for t in tasks]
     
+    # Fetch history for Delta Detection
+    recent_history = []
+    if session_id:
+        # Get last 5 messages (excluding current one which is already in DB but not committed/queried effectively yet or we just treat it as current)
+        # Actually we just added current message at line 1170.
+        # We want the PREVIOUS history.
+        history_msgs = db.query(ChatMessage).filter(
+            ChatMessage.session_id == session_id
+        ).order_by(ChatMessage.created_at.desc()).limit(6).all()
+        
+        print(f"[DEBUG] Fetching history for session {session_id}. Found {len(history_msgs)} raw messages.")
+        
+        # Reverse to get chronological order [Oldest -> Newest]
+        # Skip the most recent one if it's the one we just processed (user_message)
+        for m in reversed(history_msgs):
+            if m.id == user_message.id:
+                 continue
+            recent_history.append({
+                "role": m.role,
+                "content": m.content,
+                "created_at": str(m.created_at)
+            })
+        print(f"[DEBUG] Passed {len(recent_history)} history items to AI.")
+
     response = await get_counsellor_response(
         message_data.content,
         user_dict,
         profile_dict,
         uni_list,
         shortlist_data,
-        task_list
+        task_list,
+        history=recent_history
     )
     
     # ============================================================

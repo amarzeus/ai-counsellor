@@ -87,49 +87,49 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-5">
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-8 space-y-5">
             {/* Stats Grid */}
-            <div className="grid sm:grid-cols-3 gap-4">
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-blue-500/30 transition-colors group">
-                <div className="flex items-center gap-2.5 mb-1.5">
+            <div className="grid sm:grid-cols-3 gap-3">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-blue-500/30 transition-colors group">
+                <div className="flex items-center gap-2 mb-1">
                   <div className="p-1 bg-blue-50 dark:bg-blue-900/20 rounded-md group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
-                    <Building2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    <Building2 className="w-3 h-3 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Shortlisted</span>
+                  <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Shortlisted</span>
                 </div>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{dashboard?.shortlisted_count || 0}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{dashboard?.shortlisted_count || 0}</p>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-purple-500/30 transition-colors group">
-                <div className="flex items-center gap-2.5 mb-1.5">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-purple-500/30 transition-colors group">
+                <div className="flex items-center gap-2 mb-1">
                   <div className="p-1 bg-purple-50 dark:bg-purple-900/20 rounded-md group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 transition-colors">
-                    <Lock className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                    <Lock className="w-3 h-3 text-purple-600 dark:text-purple-400" />
                   </div>
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Locked</span>
+                  <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Locked</span>
                 </div>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{dashboard?.locked_count || 0}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{dashboard?.locked_count || 0}</p>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-orange-500/30 transition-colors group">
-                <div className="flex items-center gap-2.5 mb-1.5">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-orange-500/30 transition-colors group">
+                <div className="flex items-center gap-2 mb-1">
                   <div className="p-1 bg-orange-50 dark:bg-orange-900/20 rounded-md group-hover:bg-orange-100 dark:group-hover:bg-orange-900/30 transition-colors">
-                    <Clock className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
+                    <Clock className="w-3 h-3 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Pending</span>
+                  <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pending</span>
                 </div>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{dashboard?.pending_tasks || 0}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">{dashboard?.pending_tasks || 0}</p>
               </div>
             </div>
 
             {/* Profile Strength */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-800">
-              <h3 className="text-base font-semibold mb-3 text-slate-900 dark:text-white tracking-tight">Profile Strength</h3>
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-sm border border-slate-200 dark:border-slate-800">
+              <h3 className="text-sm font-semibold mb-3 text-slate-900 dark:text-white tracking-tight">Profile Strength</h3>
               <div className="grid sm:grid-cols-3 gap-3">
-                <div className="text-center p-3 bg-slate-50 dark:bg-slate-950/50 rounded-lg border border-slate-100 dark:border-slate-800/50">
-                  <GraduationCap className="w-5 h-5 mx-auto mb-1.5 text-blue-600 dark:text-blue-400" />
-                  <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-0.5">Academics</p>
-                  <p className={`text-sm font-bold ${dashboard?.profile_strength?.academics === "Strong"
+                <div className="text-center p-2.5 bg-slate-50 dark:bg-slate-950/50 rounded-lg border border-slate-100 dark:border-slate-800/50">
+                  <GraduationCap className="w-4 h-4 mx-auto mb-1 text-blue-600 dark:text-blue-400" />
+                  <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-0.5">Academics</p>
+                  <p className={`text-xs font-bold ${dashboard?.profile_strength?.academics === "Strong"
                     ? "text-green-600 dark:text-green-400"
                     : dashboard?.profile_strength?.academics === "Weak"
                       ? "text-red-600 dark:text-red-400"
@@ -139,10 +139,10 @@ export default function DashboardPage() {
                   </p>
                 </div>
 
-                <div className="text-center p-3 bg-slate-50 dark:bg-slate-950/50 rounded-lg border border-slate-100 dark:border-slate-800/50">
-                  <Target className="w-5 h-5 mx-auto mb-1.5 text-emerald-600 dark:text-emerald-400" />
-                  <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-0.5">Exams</p>
-                  <p className={`text-sm font-bold ${dashboard?.profile_strength?.exams === "Completed"
+                <div className="text-center p-2.5 bg-slate-50 dark:bg-slate-950/50 rounded-lg border border-slate-100 dark:border-slate-800/50">
+                  <Target className="w-4 h-4 mx-auto mb-1 text-emerald-600 dark:text-emerald-400" />
+                  <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-0.5">Exams</p>
+                  <p className={`text-xs font-bold ${dashboard?.profile_strength?.exams === "Completed"
                     ? "text-emerald-600 dark:text-emerald-400"
                     : dashboard?.profile_strength?.exams === "Not Started"
                       ? "text-red-600 dark:text-red-400"
@@ -152,10 +152,10 @@ export default function DashboardPage() {
                   </p>
                 </div>
 
-                <div className="text-center p-3 bg-slate-50 dark:bg-slate-950/50 rounded-lg border border-slate-100 dark:border-slate-800/50">
-                  <CheckCircle className="w-5 h-5 mx-auto mb-1.5 text-purple-600 dark:text-purple-400" />
-                  <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-0.5">SOP</p>
-                  <p className={`text-sm font-bold ${dashboard?.profile_strength?.sop === "Ready"
+                <div className="text-center p-2.5 bg-slate-50 dark:bg-slate-950/50 rounded-lg border border-slate-100 dark:border-slate-800/50">
+                  <CheckCircle className="w-4 h-4 mx-auto mb-1 text-purple-600 dark:text-purple-400" />
+                  <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-0.5">SOP</p>
+                  <p className={`text-xs font-bold ${dashboard?.profile_strength?.sop === "Ready"
                     ? "text-emerald-600 dark:text-emerald-400"
                     : dashboard?.profile_strength?.sop === "Not Started"
                       ? "text-red-600 dark:text-red-400"
@@ -241,35 +241,35 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="space-y-5">
+          <div className="lg:col-span-4 space-y-5">
             <StageIndicator currentStage={dashboard?.current_stage || "ONBOARDING"} />
 
-            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-800">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-sm border border-slate-200 dark:border-slate-800">
               <h3 className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Quick Actions</h3>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <Link
                   href="/counsellor"
-                  className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+                  className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
                 >
-                  <div className="p-1.5 bg-blue-50 dark:bg-blue-900/20 rounded text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
+                  <div className="p-1 bg-blue-50 dark:bg-blue-900/20 rounded text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
                     <MessageCircle className="w-3.5 h-3.5" />
                   </div>
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Chat with AI</span>
                 </Link>
                 <Link
                   href="/universities"
-                  className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+                  className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
                 >
-                  <div className="p-1.5 bg-purple-50 dark:bg-purple-900/20 rounded text-purple-600 dark:text-purple-400 group-hover:scale-105 transition-transform">
+                  <div className="p-1 bg-purple-50 dark:bg-purple-900/20 rounded text-purple-600 dark:text-purple-400 group-hover:scale-105 transition-transform">
                     <Building2 className="w-3.5 h-3.5" />
                   </div>
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">Browse Universities</span>
                 </Link>
                 <Link
                   href="/tasks"
-                  className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+                  className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
                 >
-                  <div className="p-1.5 bg-green-50 dark:bg-green-900/20 rounded text-green-600 dark:text-green-400 group-hover:scale-105 transition-transform">
+                  <div className="p-1 bg-green-50 dark:bg-green-900/20 rounded text-green-600 dark:text-green-400 group-hover:scale-105 transition-transform">
                     <CheckCircle className="w-3.5 h-3.5" />
                   </div>
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-200 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">View Tasks</span>
@@ -278,24 +278,24 @@ export default function DashboardPage() {
             </div>
 
             {dashboard?.profile && (
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-3.5 shadow-sm border border-slate-200 dark:border-slate-800">
                 <h3 className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Profile Summary</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between items-center py-1.5 border-b border-slate-50 dark:border-slate-800 last:border-0">
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between items-center py-1 border-b border-slate-50 dark:border-slate-800 last:border-0">
                     <span className="text-slate-500 dark:text-slate-400 text-xs">Target Degree</span>
                     <span className="font-semibold text-slate-900 dark:text-white text-xs">{dashboard.profile.intended_degree}</span>
                   </div>
-                  <div className="flex justify-between items-center py-1.5 border-b border-slate-50 dark:border-slate-800 last:border-0">
+                  <div className="flex justify-between items-center py-1 border-b border-slate-50 dark:border-slate-800 last:border-0">
                     <span className="text-slate-500 dark:text-slate-400 text-xs">Field</span>
                     <span className="font-semibold text-slate-900 dark:text-white text-xs">{dashboard.profile.field_of_study}</span>
                   </div>
-                  <div className="flex justify-between items-center py-1.5 border-b border-slate-50 dark:border-slate-800 last:border-0">
+                  <div className="flex justify-between items-center py-1 border-b border-slate-50 dark:border-slate-800 last:border-0">
                     <span className="text-slate-500 dark:text-slate-400 text-xs">Budget</span>
                     <span className="font-semibold text-slate-900 dark:text-white text-xs">
                       ${dashboard.profile.budget_per_year?.toLocaleString()}/yr
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-1.5 border-b border-slate-50 dark:border-slate-800 last:border-0">
+                  <div className="flex justify-between items-center py-1 border-b border-slate-50 dark:border-slate-800 last:border-0">
                     <span className="text-slate-500 dark:text-slate-400 text-xs">GPA</span>
                     <span className="font-semibold text-slate-900 dark:text-white text-xs">{dashboard.profile.gpa}</span>
                   </div>

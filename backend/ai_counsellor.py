@@ -1,10 +1,13 @@
 import json
 import logging
 import asyncio
+import uuid
+import random
 
 from google.genai import types
 
 from gemini_key_manager import key_manager
+from recommendation_engine import detect_intent, filter_programs, check_query_delta, IntentType
 
 logger = logging.getLogger(__name__)
 
@@ -231,16 +234,50 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
     
     return context
 
+    return context
+
+def build_search_context(intent: dict, delta: dict) -> str:
+    s = "### Active Search Constraints\n"
+    s += f"- Intent: {intent.get('intent')}\n"
+    s += f"- Context Change: {delta.get('change_summary')}\n"
+    
+    if intent.get("target_discipline"):
+        s += f"- Field: {intent.get('target_discipline')}\n"
+    if intent.get("target_degree"):
+        s += f"- Degree: {intent.get('target_degree')}\n"
+    if intent.get("max_budget_usd"):
+        s += f"- Max Budget: ${intent.get('max_budget_usd'):,}\n"
+    
+    if intent.get("intent") == "FIELD_SWITCH":
+        s += "\n## CRITICAL INSTRUCTION: FIELD SWITCH DETECTED\n"
+        s += f"User has explicitly switched to {intent.get('target_discipline')}. You must NOT mention previous field programs.\n"
+        s += "Explain WHY the recommendations changed (e.g., 'For Data Science specifically, ...').\n"
+        
+    return s
+
 async def get_counsellor_response(
     message: str,
     user_data: dict,
     profile: dict,
     universities: list,
     shortlisted: list,
-    tasks: list
+    tasks: list,
+    history: list = []
 ) -> dict:
     """Get AI counsellor response with automatic API key rotation."""
     
+    # 0. Fingerprint History for Anti-Repetition
+    # We collect hashes of the last 3 assistant messages to block duplicates
+    past_hashes = set()
+    for h in history:
+        if h.get('role') == 'model' or h.get('role') == 'assistant': # Handle both formats
+             content = h.get('content', '') or ''
+             # Simple hash of the first 50 chars (intro sentence) + length
+             # This blocks the "Based on your profile..." repetition
+             if len(content) > 20: 
+                 intro_hash = f"{content[:50].strip()}_{len(content)}"
+                 past_hashes.add(intro_hash)
+                 
     # Check if any keys are available
     if not key_manager.has_keys():
         return {
@@ -249,16 +286,43 @@ async def get_counsellor_response(
             "suggested_universities": []
         }
     
-    context = build_context(user_data, profile or {}, universities, shortlisted, tasks)
+    # 1. Detect Intent
+    intent = await detect_intent(message, profile or {})
+    logger.info(f"Detected Intent: {intent}")
+    
+    # 2. Check Delta (History Comparison)
+    delta = check_query_delta(intent, history)
+    
+    # 3. Filter Universities based on Intent
+    filtered_universities = filter_programs(universities, intent, profile or {})
+    
+    # 4. Build Context
+    base_context = build_context(user_data, profile or {}, filtered_universities, shortlisted, tasks)
+    search_context = build_search_context(intent, delta)
+    
+    full_context = f"{base_context}\n{search_context}\n"
+    
+    # 5. Anti-Repetition Rules
+    full_context += """
+    ## MANDATORY ANTI-REPETITION RULES
+    1. Do NOT start with "Based on your profile...". Use a direct, fresh opening.
+    2. If this is a FIELD SWITCH, explicitly mention: "Switching focus to [Field]..."
+    3. If 'Available Universities' is empty for this specific field, say so. Do NOT fallback to generic lists.
+    """
     
     full_prompt = f"""{SYSTEM_PROMPT}
 
-{context}
+{full_context}
 
 ## User Message
 {message}
 
 Respond with valid JSON only. Include a helpful message and any actions to take based on the user's stage and request.
+
+## SYSTEM ENTROPY / SALT
+Current Session ID: {str(uuid.uuid4())}
+RNG Seed: {random.randint(1, 10000)}
+Goal: Ensure this response is unique from any previous output.
 """
     
     # Track which keys we've tried (for retry with different key)
@@ -302,6 +366,17 @@ Respond with valid JSON only. Include a helpful message and any actions to take 
                 result["suggested_universities"] = []
             if "suggested_next_questions" not in result:
                 result["suggested_next_questions"] = []
+            
+            # --- FINGERPRINT CHECK ---
+            new_msg = result.get("message", "")
+            new_hash = f"{new_msg[:50].strip()}_{len(new_msg)}"
+            
+            # If intro matches exactly what we said before, REJECT IT (unless it's a generic failure message)
+            if new_hash in past_hashes and len(new_msg) > 20 and attempt < max_attempts - 1:
+                logger.warning(f"DUPLICATE RESPONSE DETECTED via fingerprint: {new_hash}. Retrying...")
+                # Add explicit penalty to prompt for next attempt
+                full_prompt += "\n\nSYSTEM ALERT: You just generated a duplicate response. DO NOT repeat yourself. Write a completely different opening."
+                continue 
                 
             return result
             

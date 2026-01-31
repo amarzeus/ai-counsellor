@@ -17,8 +17,8 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
   const currentIndex = STAGES.findIndex((s) => s.key === currentStage);
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-4 shadow-xl border border-transparent dark:border-slate-700/50">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-3.5 shadow-xl border border-transparent dark:border-slate-700/50">
+      <div className="flex items-center gap-2 mb-2.5">
         <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
         <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
           Your Journey
