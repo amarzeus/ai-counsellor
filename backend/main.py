@@ -1117,7 +1117,16 @@ async def chat_with_counsellor(
         'onboarding_completed': current_user.onboarding_completed
     }
     profile_dict = profile.__dict__ if profile else {}
-    uni_list = [u.__dict__ for u in universities]
+    
+    # helper to serialize uni with programs
+    uni_list = []
+    for u in universities:
+        u_dict = u.__dict__.copy()
+        # Manually serialize programs as they might be lazy loaded or list of objects
+        if hasattr(u, 'programs'):
+            u_dict['programs'] = [p.__dict__ for p in u.programs]
+        uni_list.append(u_dict)
+
     shortlist_data = []
     for s in shortlisted:
         uni = db.query(University).filter(University.id == s.university_id).first()
