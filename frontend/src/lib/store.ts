@@ -43,7 +43,7 @@ export const useStore = create<AppState>((set) => ({
   addChatMessage: (message) => set((state) => ({
     chatMessages: [...state.chatMessages, message]
   })),
-  comparisonList: [] as University[],
+
   addToComparison: (uni: University) => set((state) => {
     if (state.comparisonList.find(u => u.id === uni.id)) return state;
     if (state.comparisonList.length >= 3) return state;

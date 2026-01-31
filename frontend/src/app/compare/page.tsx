@@ -19,13 +19,13 @@ export default function ComparePage() {
 
     if (comparisonList.length === 0) return null;
 
-    const features = [
-        { label: "Tuition / Year", key: "tuition_per_year", format: (val: number) => `$${val.toLocaleString()}` },
-        { label: "Ranking (QS)", key: "qs_ranking", format: (val: number) => `#${val}` },
-        { label: "Acceptance", key: "acceptance_chance", format: (val: string) => val },
-        { label: "Cost Level", key: "cost_level", format: (val: string) => val },
+    const features: { label: string; key: keyof University | "country-city"; format?: (val: any, uni: University) => React.ReactNode }[] = [
+        { label: "Tuition / Year", key: "tuition_per_year", format: (val: any) => `$${(val as number).toLocaleString()}` },
+        { label: "Ranking (QS)", key: "qs_ranking", format: (val: any) => `#${val}` },
+        { label: "Acceptance", key: "acceptance_chance", format: (val: any) => val },
+        { label: "Cost Level", key: "cost_level", format: (val: any) => val },
         { label: "Location", key: "country-city", format: (_: any, uni: University) => `${uni.city || ''}, ${uni.country}` },
-        { label: "Type", key: "is_public", format: (val: boolean) => val ? "Public" : "Private" },
+        { label: "Type", key: "is_public", format: (val: any) => val ? "Public" : "Private" },
     ];
 
     return (
@@ -79,9 +79,10 @@ export default function ComparePage() {
                                     {comparisonList.map((uni) => {
                                         let val;
                                         if (feature.key === "country-city") {
-                                            val = feature.format(null, uni);
+                                            if (feature.format) {
+                                                val = feature.format(null, uni);
+                                            }
                                         } else {
-                                            // @ts-ignore
                                             val = uni[feature.key];
                                             if (feature.format && val !== undefined) val = feature.format(val, uni);
                                         }
