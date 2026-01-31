@@ -10,6 +10,12 @@ export function Footer() {
                     </p>
                 </div>
                 <nav className="flex gap-4 sm:gap-6">
+                    <Link className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground hover:text-primary transition-colors" href="/faq">
+                        FAQ
+                    </Link>
+                    <Link className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground hover:text-primary transition-colors" href="/contact">
+                        Contact Us
+                    </Link>
                     <Link className="text-sm font-medium hover:underline underline-offset-4 text-muted-foreground hover:text-primary transition-colors" href="/privacy-policy">
                         Privacy Policy
                     </Link>
