@@ -5,7 +5,7 @@ from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from sqlalchemy import func, text
+from sqlalchemy import func, text, String
 
 from database import engine, get_db, Base
 from schemas import (
@@ -585,11 +585,14 @@ def compare_universities(
                 "id": p.id,
                 "name": p.name,
                 "degree_level": p.degree_level,
+                "program_category": p.program_category,
                 "tuition_per_year_usd": p.tuition_per_year_usd,
                 "min_gpa": p.min_gpa,
                 "ielts_min": p.ielts_min,
                 "toefl_min": p.toefl_min,
                 "gre_required": p.gre_required,
+                "gmat_required": p.gmat_required,
+                "requires_work_experience": p.requires_work_experience,
                 "intake_terms": p.intake_terms,
                 "application_deadline_fall": p.application_deadline_fall,
                 "specializations": p.specializations,
@@ -644,6 +647,8 @@ def get_university_detail(
             "name": p.name,
             "degree_level": p.degree_level,
             "department": p.department,
+            "program_category": p.program_category,
+            "program_discipline": p.program_discipline,
             "duration_months": p.duration_months,
             "tuition_per_year_usd": p.tuition_per_year_usd,
             "min_gpa": p.min_gpa,
@@ -652,6 +657,11 @@ def get_university_detail(
             "toefl_min": p.toefl_min,
             "gre_required": p.gre_required,
             "gre_min": p.gre_min,
+            "gmat_required": p.gmat_required,
+            "gmat_min": p.gmat_min,
+            "requires_work_experience": p.requires_work_experience,
+            "min_work_experience_years": p.min_work_experience_years,
+            "portfolio_required": p.portfolio_required,
             "intake_terms": p.intake_terms,
             "application_deadline_fall": p.application_deadline_fall,
             "application_deadline_spring": p.application_deadline_spring,

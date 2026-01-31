@@ -34,6 +34,14 @@ class UniversityCategory(str, Enum):
     TARGET = "TARGET"
     SAFE = "SAFE"
 
+class ProgramCategory(str, Enum):
+    STEM = "STEM"
+    ENGINEERING = "ENGINEERING"
+    BUSINESS = "BUSINESS"
+    DESIGN = "DESIGN"
+    SOCIAL_SCIENCE = "SOCIAL_SCIENCE"
+    OTHER = "OTHER"
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
@@ -105,17 +113,37 @@ class ProgramResponse(BaseModel):
     name: str
     degree_level: str
     department: Optional[str] = None
+    
+    # Taxonomy
+    program_category: Optional[ProgramCategory] = None
+    program_discipline: Optional[str] = None
+    
+    # Duration & Cost
     duration_months: Optional[int] = None
     tuition_per_year_usd: int
+    
+    # Admission Requirements
     min_gpa: Optional[float] = None
     gpa_scale: Optional[float] = 4.0
+    
+    # Test Requirements
     ielts_min: Optional[float] = None
     toefl_min: Optional[int] = None
     gre_required: bool = False
     gre_min: Optional[int] = None
+    gmat_required: bool = False
+    gmat_min: Optional[int] = None
+    
+    # Experience & Portfolio
+    requires_work_experience: bool = False
+    min_work_experience_years: Optional[int] = 0
+    portfolio_required: bool = False
+    
+    # Deadlines & Intakes
     intake_terms: Optional[List[str]] = None
     application_deadline_fall: Optional[str] = None
     application_deadline_spring: Optional[str] = None
+    
     specializations: Optional[List[str]] = None
     program_url: Optional[str] = None
     

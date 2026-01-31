@@ -257,6 +257,29 @@
                     "Business Intelligence",
                     "Data Analytics"
                 ]
+            },
+            {
+                "name": "Master of Computational Data Science (MCDS)",
+                "degree_level": "Masters",
+                "department": "SCS",
+                "duration_months": 16,
+                "tuition_per_year_usd": 58000,
+                "min_gpa": 3.6,
+                "program_category": "STEM",
+                "program_discipline": "Data Science",
+                "requires_work_experience": false,
+                "ielts_min": 7.5,
+                "toefl_min": 100,
+                "gre_required": true,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 12",
+                "specializations": [
+                    "Systems",
+                    "Analytics",
+                    "Human-Centered DS"
+                ]
             }
         ]
     },
@@ -320,6 +343,29 @@
                     "ML",
                     "Systems",
                     "HCI"
+                ]
+            },
+            {
+                "name": "MS Analytics",
+                "degree_level": "Masters",
+                "department": "College of Engineering",
+                "duration_months": 12,
+                "tuition_per_year_usd": 40000,
+                "min_gpa": 3.5,
+                "program_category": "STEM",
+                "program_discipline": "Data Science",
+                "requires_work_experience": false,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "gre_required": true,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 1",
+                "specializations": [
+                    "Analytical Tools",
+                    "Business Analytics",
+                    "Computational Data Analytics"
                 ]
             }
         ]
@@ -578,6 +624,29 @@
                     "Theory",
                     "Graphics"
                 ]
+            },
+            {
+                "name": "MS Data Science",
+                "degree_level": "Masters",
+                "department": "Center for Data Science",
+                "duration_months": 24,
+                "tuition_per_year_usd": 45000,
+                "min_gpa": 3.6,
+                "program_category": "STEM",
+                "program_discipline": "Data Science",
+                "requires_work_experience": false,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "gre_required": true,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 22",
+                "specializations": [
+                    "Big Data",
+                    "NLP",
+                    "Medical Informatics"
+                ]
             }
         ]
     },
@@ -609,6 +678,29 @@
                     "ML",
                     "NLP",
                     "Vision"
+                ]
+            },
+            {
+                "name": "MS Data Science",
+                "degree_level": "Masters",
+                "department": "Data Science Institute",
+                "duration_months": 18,
+                "tuition_per_year_usd": 62000,
+                "min_gpa": 3.7,
+                "program_category": "STEM",
+                "program_discipline": "Data Science",
+                "requires_work_experience": false,
+                "ielts_min": 7.5,
+                "toefl_min": 100,
+                "gre_required": false,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 15",
+                "specializations": [
+                    "Machine Learning",
+                    "Smart Cities",
+                    "Financial Analytics"
                 ]
             }
         ]
