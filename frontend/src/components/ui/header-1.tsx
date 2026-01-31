@@ -56,7 +56,7 @@ export function Header() {
 	] : [
 		{
 			label: 'How it Works',
-			href: '/#how-it-works',
+			href: '/how-it-works',
 		},
 		{
 			label: 'Pricing',

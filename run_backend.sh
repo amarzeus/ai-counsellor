@@ -1,3 +1,3 @@
 #!/bin/bash
 cd backend
-python main.py
+./venv/bin/python main.py
