@@ -475,10 +475,26 @@ def get_universities(
     require_stage_minimum(current_user, UserStage.DISCOVERY, "browse universities")
     
     query = db.query(University)
+    
     if country:
         query = query.filter(University.country == country)
     if max_tuition:
         query = query.filter(University.tuition_per_year <= max_tuition)
+        
+    # Program-based filters
+    if degree_level or field:
+        query = query.join(Program)
+        if degree_level:
+            query = query.filter(Program.degree_level == degree_level)
+        if field:
+            # Case-insensitive partial match for program name or department
+            search = f"%{field}%"
+            query = query.filter(
+                (Program.name.ilike(search)) | 
+                (Program.specializations.cast(String).ilike(search))
+            )
+        # Distinct to avoid duplicates if multiple programs match
+        query = query.distinct()
     
     universities = query.all()
     
