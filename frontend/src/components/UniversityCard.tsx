@@ -2,18 +2,7 @@
 
 import { Star, Target, Shield, DollarSign, TrendingUp, Plus, Check, AlertCircle, CheckCircle, Info } from "lucide-react";
 
-interface University {
-  id: number;
-  name: string;
-  country: string;
-  tuition_per_year?: number;
-  ranking?: number;
-  category?: string;
-  cost_level?: string;
-  acceptance_chance?: string;
-  fit_reason?: string;
-  risk_reason?: string;
-}
+import { University } from "@/lib/api";
 
 interface UniversityCardProps {
   university: University;
@@ -111,20 +100,34 @@ export default function UniversityCard({
           )}
         </div>
 
-        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 mb-4">
+        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 mb-4 flex-wrap">
           {university.tuition_per_year && (
-            <div className="flex items-center gap-1.5">
-              <DollarSign className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">
+              <DollarSign className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               <span className="font-medium dark:text-slate-300">
                 ${(university.tuition_per_year / 1000).toFixed(0)}k
               </span>
               <span className="text-slate-400 dark:text-slate-500">/yr</span>
             </div>
           )}
-          {university.ranking && (
-            <div className="flex items-center gap-1.5">
-              <TrendingUp className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-              <span className="font-medium dark:text-slate-300">#{university.ranking}</span>
+          {(university.qs_ranking || university.ranking) && (
+            <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">
+              <TrendingUp className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+              <span className="font-medium dark:text-slate-300">QS #{university.qs_ranking || university.ranking}</span>
+            </div>
+          )}
+          {university.verified_at && (
+            <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded group/verified relative cursor-help">
+              <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+              <span className="text-xs font-medium text-green-700 dark:text-green-400">Verified</span>
+
+              {/* Tooltip */}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-lg opacity-0 invisible group-hover/verified:opacity-100 group-hover/verified:visible transition-all whitespace-nowrap z-10 shadow-xl">
+                Verified: {new Date(university.verified_at).toLocaleDateString()}
+                <br />
+                Source: {university.data_source || "Official"}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
+              </div>
             </div>
           )}
         </div>
@@ -163,8 +166,8 @@ export default function UniversityCard({
           onClick={onShortlist}
           disabled={isShortlisted}
           className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${isShortlisted
-              ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
-              : "bg-slate-900 dark:bg-blue-600 text-white hover:bg-slate-800 dark:hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-slate-900/20 dark:shadow-blue-900/20"
+            ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
+            : "bg-slate-900 dark:bg-blue-600 text-white hover:bg-slate-800 dark:hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-slate-900/20 dark:shadow-blue-900/20"
             }`}
         >
           {isShortlisted ? (
