@@ -13,7 +13,7 @@ interface VoiceInputProps {
 export function VoiceInput({ onInput, disabled }: VoiceInputProps) {
     const { user } = useStore();
     const [isListening, setIsListening] = useState(false);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const recognitionRef = useRef<any>(null);
 
     const toggleVoiceInput = () => {
@@ -53,14 +53,14 @@ export function VoiceInput({ onInput, disabled }: VoiceInputProps) {
             toast.success("Listening...", { icon: "🎙️" });
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         recognitionRef.current.onresult = (event: any) => {
             const transcript = event.results[0][0].transcript;
             onInput(transcript);
             setIsListening(false);
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         recognitionRef.current.onerror = (event: any) => {
             setIsListening(false);
             // toast.error("Could not capture voice.");

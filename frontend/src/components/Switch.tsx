@@ -10,8 +10,9 @@ const Switch = () => {
 
   // Avoid hydration mismatch by rendering only after mount
   useEffect(() => {
-    setMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    setMounted(true);
+
   }, []);
 
   if (!mounted) {

@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
       await authApi.forgotPassword(email);
       setSubmitted(true);
       toast.success("Password reset instructions sent!");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to send reset email");
     } finally {

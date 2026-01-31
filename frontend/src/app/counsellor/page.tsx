@@ -206,7 +206,7 @@ export default function CounsellorPage() {
       setMessages((prev) => [...prev.slice(0, -1), tempUserMsg, assistantMessage]);
 
       if (response.data.actions_taken && response.data.actions_taken.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         response.data.actions_taken.forEach((action: any) => {
           if (action.type === "shortlist_university") {
             toast.success("University added to your shortlist!");
@@ -215,7 +215,7 @@ export default function CounsellorPage() {
           }
         });
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
     } catch (error: any) {
       toast.error("Failed to send message");
       setMessages((prev) => prev.slice(0, -1));
@@ -468,7 +468,7 @@ export default function CounsellorPage() {
 
                               {message.actions_taken && message.actions_taken.length > 0 && (
                                 <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700 space-y-1.5">
-                                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                  { }
                                   {message.actions_taken.map((action: any, idx: number) => (
                                     <div
                                       key={idx}

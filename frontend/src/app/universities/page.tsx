@@ -70,7 +70,7 @@ export default function UniversitiesPage() {
       });
       setShortlist((prev) => [...prev, response.data]);
       toast.success(`${university.name} added to shortlist!`);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to shortlist");
     }
@@ -95,7 +95,7 @@ export default function UniversitiesPage() {
         setUser(storedUser);
       }
       toast.success(response.data.message);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to lock university");
       throw error;
@@ -118,7 +118,7 @@ export default function UniversitiesPage() {
         localStorage.setItem("user", JSON.stringify(storedUser));
         setUser(storedUser);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to unlock");
     }
@@ -129,7 +129,7 @@ export default function UniversitiesPage() {
       await shortlistApi.removeByUniversityId(shortlistItem.university_id);
       setShortlist((prev) => prev.filter((s) => s.id !== shortlistItem.id));
       toast.success("Removed from shortlist");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to remove");
     }
@@ -140,7 +140,7 @@ export default function UniversitiesPage() {
       await shortlistApi.removeByUniversityId(universityId);
       setShortlist((prev) => prev.filter((s) => s.university_id !== universityId));
       toast.success("Removed from shortlist");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to remove");
     }
@@ -165,7 +165,7 @@ export default function UniversitiesPage() {
       openDrawer(item);
     } else {
       // Create mock shortlist item for viewing
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const mockItem: any = {
         id: -1,
         university_id: uni.id,
