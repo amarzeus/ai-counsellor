@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useStore } from '@/lib/store';
 import { useRouter, usePathname } from 'next/navigation';
-import { User, LogOut, Settings } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 import Switch from '@/components/Switch';
 
 export function Header() {
@@ -71,31 +71,32 @@ export function Header() {
 	return (
 		<header
 			className={cn('sticky top-0 z-50 w-full border-b border-transparent transition-all duration-300', {
-				'bg-background/95 supports-[backdrop-filter]:bg-background/50 border-border backdrop-blur-lg':
+				'bg-white/70 dark:bg-slate-900/70 border-gray-200 dark:border-gray-800 backdrop-blur-md shadow-sm':
 					scrolled,
 			})}
 		>
 			<nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6">
 				<div className="flex items-center">
-					<Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
+					<Link href="/" className="flex items-center hover:scale-[1.02] transition-transform duration-300">
 						<Image
 							src="/logo.png?v=6"
 							alt="AI Counsellor"
-							width={180}
-							height={60}
-							className="h-16 w-auto object-contain"
+							width={200}
+							height={66}
+							className="h-[4.5rem] w-auto object-contain"
 							unoptimized
 						/>
 					</Link>
 				</div>
-				<div className="hidden items-center gap-6 md:flex">
+				<div className="hidden items-center gap-8 md:flex">
 					{links.map((link) => (
 						<Link
 							key={link.label}
 							href={link.href}
-							className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+							className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors relative group"
 						>
 							{link.label}
+							<span className="absolute left-0 bottom-[-4px] w-0 h-[2px] bg-blue-600 transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100" />
 						</Link>
 					))}
 					<div className="flex items-center gap-4 ml-4">
@@ -104,21 +105,21 @@ export function Header() {
 							<div className="flex items-center gap-4">
 								<Link
 									href="/profile"
-									className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+									className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
 								>
 									<User className="size-4" />
 									<span>{user.full_name}</span>
 								</Link>
-								<Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground hover:text-destructive">
+								<Button variant="ghost" size="sm" onClick={handleLogout} className="text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10">
 									<LogOut className="size-4" />
 								</Button>
 							</div>
 						) : (
 							<>
-								<Link href="/login" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
+								<Link href="/login" className={buttonVariants({ variant: 'ghost', size: 'sm', className: "text-gray-600 hover:text-blue-600 hover:bg-blue-50 dark:text-gray-300 dark:hover:bg-slate-800" })}>
 									Login
 								</Link>
-								<Link href="/signup" className={buttonVariants({ size: 'sm' })}>
+								<Link href="/signup" className={buttonVariants({ size: 'sm', className: "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg hover:-translate-y-[1px] transition-all duration-200" })}>
 									Get Started
 								</Link>
 							</>
