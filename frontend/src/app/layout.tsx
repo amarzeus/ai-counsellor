@@ -14,6 +14,11 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "AI Counsellor - Study Abroad Guidance",
   description: "Plan your study-abroad journey with a guided AI counsellor",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
