@@ -84,16 +84,73 @@ class University(Base):
     __tablename__ = "universities"
     
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False, unique=True)
     country = Column(String(100), nullable=False)
-    tuition_per_year = Column(Integer, nullable=False)
-    ranking = Column(Integer)
-    min_gpa = Column(Float)
-    programs = Column(JSON)
+    city = Column(String(100))
+    
+    # Rankings from verified sources
+    qs_ranking = Column(Integer)        # QS World University Rankings
+    the_ranking = Column(Integer)       # Times Higher Education
+    us_news_ranking = Column(Integer)   # US News Rankings
+    
+    # Legacy field for backward compatibility (computed from programs)
+    ranking = Column(Integer)           # Keep for backward compat, use qs_ranking
+    
+    # Institution details
+    official_website = Column(String(512))
+    is_public = Column(Boolean, default=True)
     description = Column(Text)
+    
+    # Legacy fields for backward compatibility
+    tuition_per_year = Column(Integer)  # Will be computed from programs avg
+    min_gpa = Column(Float)             # Will be min from programs
+    programs_json = Column("programs", JSON)  # Legacy, renamed to avoid conflict
     acceptance_rate = Column(Float)
     
+    # Metadata for data verification
+    verified_at = Column(DateTime(timezone=True))
+    data_source = Column(String(255))
+    
+    # Relationships
+    programs = relationship("Program", back_populates="university", cascade="all, delete-orphan")
     shortlisted_by = relationship("ShortlistedUniversity", back_populates="university")
+
+
+class Program(Base):
+    __tablename__ = "programs"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    university_id = Column(Integer, ForeignKey("universities.id"), nullable=False)
+    
+    name = Column(String(255), nullable=False)           # e.g., "MS Computer Science"
+    degree_level = Column(String(50), nullable=False)    # Masters, PhD, Bachelors
+    department = Column(String(255))                      # e.g., "School of Engineering"
+    
+    duration_months = Column(Integer)                     # Program duration
+    tuition_per_year_usd = Column(Integer, nullable=False)
+    
+    # Admission requirements
+    min_gpa = Column(Float)
+    gpa_scale = Column(Float, default=4.0)               # GPA scale (4.0 or 10.0)
+    ielts_min = Column(Float)
+    toefl_min = Column(Integer)
+    gre_required = Column(Boolean, default=False)
+    gre_min = Column(Integer)                            # If required
+    
+    # Intakes
+    intake_terms = Column(JSON)  # ["Fall", "Spring"]
+    application_deadline_fall = Column(String(50))       # e.g., "December 15"
+    application_deadline_spring = Column(String(50))
+    
+    # Additional
+    specializations = Column(JSON)  # ["AI/ML", "Systems", "Theory"]
+    program_url = Column(String(512))
+    
+    # Metadata
+    verified_at = Column(DateTime(timezone=True))
+    
+    # Relationships
+    university = relationship("University", back_populates="programs")
 
 class ShortlistedUniversity(Base):
     __tablename__ = "shortlisted_universities"

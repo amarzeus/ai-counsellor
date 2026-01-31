@@ -46,6 +46,10 @@ export function Header() {
 			href: '/dashboard',
 		},
 		{
+			label: 'Universities',
+			href: '/universities',
+		},
+		{
 			label: 'AI Counsellor',
 			href: '/counsellor',
 		},

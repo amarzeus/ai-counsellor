@@ -100,16 +100,54 @@ class ProfileResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class ProgramResponse(BaseModel):
+    id: int
+    name: str
+    degree_level: str
+    department: Optional[str] = None
+    duration_months: Optional[int] = None
+    tuition_per_year_usd: int
+    min_gpa: Optional[float] = None
+    gpa_scale: Optional[float] = 4.0
+    ielts_min: Optional[float] = None
+    toefl_min: Optional[int] = None
+    gre_required: bool = False
+    gre_min: Optional[int] = None
+    intake_terms: Optional[List[str]] = None
+    application_deadline_fall: Optional[str] = None
+    application_deadline_spring: Optional[str] = None
+    specializations: Optional[List[str]] = None
+    program_url: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
 class UniversityResponse(BaseModel):
     id: int
     name: str
     country: str
-    tuition_per_year: int
-    ranking: Optional[int] = None
+    city: Optional[str] = None
+    tuition_per_year: Optional[int] = None
+    
+    # Rankings
+    qs_ranking: Optional[int] = None
+    the_ranking: Optional[int] = None
+    us_news_ranking: Optional[int] = None
+    ranking: Optional[int] = None  # Legacy, for backward compat
+    
+    # Details
+    official_website: Optional[str] = None
+    is_public: Optional[bool] = True
     min_gpa: Optional[float] = None
-    programs: Optional[List[str]] = None
+    programs: Optional[List[str]] = None  # Legacy field
     description: Optional[str] = None
     acceptance_rate: Optional[float] = None
+    
+    # Data verification
+    verified_at: Optional[datetime] = None
+    data_source: Optional[str] = None
+    
+    # AI-computed categorization
     category: Optional[UniversityCategory] = None
     fit_reason: Optional[str] = None
     risk_reason: Optional[str] = None
@@ -118,6 +156,35 @@ class UniversityResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+class UniversityDetailResponse(BaseModel):
+    """Extended university response with full program details"""
+    id: int
+    name: str
+    country: str
+    city: Optional[str] = None
+    qs_ranking: Optional[int] = None
+    the_ranking: Optional[int] = None
+    us_news_ranking: Optional[int] = None
+    official_website: Optional[str] = None
+    is_public: Optional[bool] = True
+    description: Optional[str] = None
+    verified_at: Optional[datetime] = None
+    data_source: Optional[str] = None
+    
+    # Full program details
+    programs: List[ProgramResponse] = []
+    
+    # AI categorization
+    category: Optional[UniversityCategory] = None
+    fit_reason: Optional[str] = None
+    risk_reason: Optional[str] = None
+    cost_level: Optional[str] = None
+    acceptance_chance: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
 
 class ShortlistCreate(BaseModel):
     university_id: int

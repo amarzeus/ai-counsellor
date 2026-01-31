@@ -127,7 +127,7 @@ def categorize_university(university: dict, user_profile: dict) -> tuple:
         risk = "Competitive admission with moderate acceptance chances"
         fit = f"Good match - your profile meets requirements and budget"
     
-    acceptance_rate = university.get('acceptance_rate', 0.5)
+    acceptance_rate = university.get('acceptance_rate') or 0.5  # Default to 0.5 if None
     if acceptance_rate < 0.1:
         acceptance_chance = 'Low'
     elif acceptance_rate < 0.4:

@@ -288,12 +288,12 @@ export default function CounsellorPage() {
           <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 py-2 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full overflow-hidden relative border border-gray-100 dark:border-slate-700 shadow-sm shrink-0">
+                <div className="w-14 h-14 rounded-full overflow-hidden relative shadow-sm shrink-0">
                   <Image
-                    src="/ai-avatar-processed.png"
+                    src="/Avatar.png"
                     alt="AI"
                     fill
-                    className="object-cover"
+                    className="object-cover scale-110"
                   />
                 </div>
                 <div>
@@ -314,12 +314,12 @@ export default function CounsellorPage() {
             <div className="max-w-4xl mx-auto w-full">
               {messages.length === 0 && (
                 <div className="text-center py-10">
-                  <div className="w-16 h-16 mx-auto mb-5 relative rounded-full overflow-hidden shadow-md border border-gray-100 dark:border-slate-700">
+                  <div className="w-16 h-16 mx-auto mb-5 relative rounded-full overflow-hidden shadow-md">
                     <Image
-                      src="/ai-avatar-processed.png"
+                      src="/Avatar.png"
                       alt="AI"
                       fill
-                      className="object-cover"
+                      className="object-cover scale-110"
                     />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -378,12 +378,12 @@ export default function CounsellorPage() {
                           {/* 1. Guidance Strip - Section Header Style (Minimal) */}
                           {/* Increased size for clarity */}
                           <div className="flex items-center gap-3 px-1 mb-2">
-                            <div className="w-8 h-8 rounded-full overflow-hidden relative shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
+                            <div className="w-8 h-8 rounded-full overflow-hidden relative shrink-0 shadow-sm">
                               <Image
-                                src="/ai-avatar-processed.png"
+                                src="/Avatar.png"
                                 alt="AI"
                                 fill
-                                className="object-cover"
+                                className="object-cover scale-110"
                               />
                             </div>
                             <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
@@ -422,12 +422,12 @@ export default function CounsellorPage() {
                       ) : (
                         /* Regular AI message (no universities) - keep bubble style */
                         <div className="flex gap-4">
-                          <div className="w-12 h-12 rounded-full overflow-hidden relative flex-shrink-0 mt-1 border border-gray-100 dark:border-slate-700 shadow-sm ring-1 ring-white dark:ring-slate-800">
+                          <div className="w-12 h-12 rounded-full overflow-hidden relative flex-shrink-0 mt-1 shadow-sm">
                             <Image
-                              src="/ai-avatar-processed.png"
+                              src="/Avatar.png"
                               alt="AI"
                               fill
-                              className="object-cover"
+                              className="object-cover scale-110"
                             />
                           </div>
                           <div className="flex flex-col max-w-[85%] items-start">
@@ -472,12 +472,12 @@ export default function CounsellorPage() {
 
               {loading && (
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full overflow-hidden relative flex-shrink-0 border border-gray-100 dark:border-slate-700 shadow-sm">
+                  <div className="w-10 h-10 rounded-full overflow-hidden relative flex-shrink-0 shadow-sm">
                     <Image
-                      src="/ai-avatar-processed.png"
+                      src="/Avatar.png"
                       alt="AI"
                       fill
-                      className="object-cover"
+                      className="object-cover scale-110"
                     />
                   </div>
                   <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-5 py-3 shadow-sm">
