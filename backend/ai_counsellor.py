@@ -177,15 +177,34 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
         context += f"- {t.get('title', 'Unknown')} ({t.get('status', 'Unknown')})\n"
     
     context += f"\n### Available Universities (READ-ONLY SOURCE)\n"
+    
+    # Calculate user specs
+    user_work_exp = profile.get('work_experience_years', 0)
+    user_gmat = profile.get('gre_gmat_status') == 'COMPLETED' # Simple check from status
+    
     for uni in universities[:15]:  # Increased context window
         cat, fit, risk, acc, cost = categorize_university(uni, profile)
         
-        # Format programs
+        # Format programs with eligibility check
         programs_str = ""
         programs = uni.get('programs', [])
-        if programs:
-            for p in programs[:2]: # Top 2 programs only to save context
-                programs_str += f"\n  - {p.get('name')} ({p.get('degree_level')}): ${p.get('tuition_per_year_usd', 0):,}/yr, Min GPA: {p.get('min_gpa', 'N/A')}, GRE: {'Yes' if p.get('gre_required') else 'No'}, Deadlines: {p.get('application_deadline_fall', 'Unknown')}"
+        
+        eligible_programs = []
+        for p in programs[:3]: # Top 3 programs
+            # Eligibility Validation
+            reasons = []
+            if p.get('requires_work_experience') and user_work_exp < p.get('min_work_experience_years', 0):
+                reasons.append(f"Requires {p.get('min_work_experience_years')}y Work Exp (User: {user_work_exp}y)")
+            
+            if p.get('gmat_required') and not user_gmat:
+                reasons.append("Requires GMAT")
+            
+            tags = f"Category: {p.get('program_category', 'STEM')}"
+            
+            if reasons:
+                programs_str += f"\n  - [INELIGIBLE] {p.get('name')} ({p.get('degree_level')}): {', '.join(reasons)}"
+            else:
+                programs_str += f"\n  - {p.get('name')} ({p.get('degree_level')}): ${p.get('tuition_per_year_usd', 0):,}/yr, Min GPA: {p.get('min_gpa', 'N/A')}, {tags}"
         
         context += f"- [ID: {uni['id']}] {uni['name']} ({uni['country']}, {uni.get('city', 'Unknown')})\n"
         context += f"  Rank: #{uni.get('qs_ranking', 'NR')} (QS), Status: {'Public' if uni.get('is_public') else 'Private'}\n"

@@ -3,10 +3,22 @@ import os
 from datetime import datetime
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine, Base
-from models import University, Program
+from models import University, Program, ProgramCategory
 
 # Initialize DB
 Base.metadata.create_all(bind=engine)
+
+def infer_category(name):
+    name_lower = name.lower()
+    if "business" in name_lower or "mba" in name_lower or "management" in name_lower:
+        return ProgramCategory.BUSINESS
+    if "engineering" in name_lower or "civil" in name_lower or "mechanical" in name_lower:
+        return ProgramCategory.ENGINEERING
+    if "design" in name_lower or "arts" in name_lower:
+        return ProgramCategory.DESIGN
+    if "computer" in name_lower or "data" in name_lower or "cyber" in name_lower or "science" in name_lower:
+        return ProgramCategory.STEM
+    return ProgramCategory.STEM # Default to STEM
 
 def seed_data():
     db = SessionLocal()
@@ -44,14 +56,14 @@ def seed_data():
 
         uni_defaults = {
             "country": uni_data["country"],
-            "city": uni_data["city"],
-            "qs_ranking": uni_data["qs_ranking"],
-            "the_ranking": uni_data["the_ranking"],
-            "official_website": uni_data["official_website"],
-            "is_public": uni_data["is_public"],
+            "city": uni_data.get("city"),
+            "qs_ranking": uni_data.get("qs_ranking"),
+            "the_ranking": uni_data.get("the_ranking"),
+            "official_website": uni_data.get("official_website"),
+            "is_public": uni_data.get("is_public", False),
             "description": uni_data.get("description"),
-            "verified_at": datetime.fromisoformat(uni_data["verified_at"]),
-            "data_source": uni_data["data_source"],
+            "verified_at": datetime.fromisoformat(uni_data["verified_at"]) if uni_data.get("verified_at") else None,
+            "data_source": uni_data.get("data_source"),
             # Legacy fields population
             "tuition_per_year": avg_tuition,
             "min_gpa": min_gpa
@@ -71,12 +83,18 @@ def seed_data():
             db.refresh(uni_obj)
             count_new += 1
         
-        # Handle programs
-        # Strategy: Clear existing programs and re-add to ensure data consistency
-        # In a real heavy production update, we might do diffing, but for seed this is safer
+        # Handle programs checks
         db.query(Program).filter(Program.university_id == uni_obj.id).delete()
         
         for prog_data in uni_data["programs"]:
+             # Infer category if not explicit
+            category_val = prog_data.get("program_category")
+            if not category_val:
+                category_val = infer_category(prog_data["name"])
+            
+            # Infer discipline if not explicit
+            discipline_val = prog_data.get("program_discipline", prog_data["name"])
+
             new_prog = Program(
                 university_id=uni_obj.id,
                 name=prog_data["name"],
@@ -89,6 +107,16 @@ def seed_data():
                 toefl_min=prog_data.get("toefl_min"),
                 gre_required=prog_data.get("gre_required", False),
                 gre_min=prog_data.get("gre_min"),
+                
+                # New Fields
+                program_category=category_val,
+                program_discipline=discipline_val,
+                requires_work_experience=prog_data.get("requires_work_experience", False),
+                min_work_experience_years=prog_data.get("min_work_experience_years", 0),
+                gmat_required=prog_data.get("gmat_required", False),
+                gmat_min=prog_data.get("gmat_min"),
+                portfolio_required=prog_data.get("portfolio_required", False),
+                
                 intake_terms=prog_data.get("intake_terms"),
                 application_deadline_fall=prog_data.get("application_deadline_fall"),
                 specializations=prog_data.get("specializations")

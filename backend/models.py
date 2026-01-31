@@ -116,34 +116,58 @@ class University(Base):
     shortlisted_by = relationship("ShortlistedUniversity", back_populates="university")
 
 
+class ProgramCategory(str, enum.Enum):
+    STEM = "STEM"
+    ENGINEERING = "ENGINEERING"
+    BUSINESS = "BUSINESS"
+    DESIGN = "DESIGN"
+    SOCIAL_SCIENCE = "SOCIAL_SCIENCE"
+    OTHER = "OTHER"
+
 class Program(Base):
     __tablename__ = "programs"
     
     id = Column(Integer, primary_key=True, index=True)
     university_id = Column(Integer, ForeignKey("universities.id"), nullable=False)
     
-    name = Column(String(255), nullable=False)           # e.g., "MS Computer Science"
-    degree_level = Column(String(50), nullable=False, index=True)    # Masters, PhD, Bachelors
-    department = Column(String(255))                      # e.g., "School of Engineering"
+    # Core Info
+    name = Column(String(255), nullable=False)           
+    degree_level = Column(String(50), nullable=False, index=True)
+    department = Column(String(255))
     
-    duration_months = Column(Integer)                     # Program duration
+    # Taxonomy (STRICT)
+    program_category = Column(Enum(ProgramCategory), nullable=False, index=True, default=ProgramCategory.STEM)
+    program_discipline = Column(String(100), nullable=False, index=True, default="Computer Science")
+    
+    # Duration & Cost
+    duration_months = Column(Integer)
+    duration_years = Column(Float)
     tuition_per_year_usd = Column(Integer, nullable=False, index=True)
     
     # Admission requirements
     min_gpa = Column(Float, index=True)
-    gpa_scale = Column(Float, default=4.0)               # GPA scale (4.0 or 10.0)
+    gpa_scale = Column(Float, default=4.0)
+    
+    # Standardized Tests
     ielts_min = Column(Float)
     toefl_min = Column(Integer)
     gre_required = Column(Boolean, default=False)
-    gre_min = Column(Integer)                            # If required
+    gre_min = Column(Integer)
+    gmat_required = Column(Boolean, default=False)
+    gmat_min = Column(Integer)
+    
+    # Specialized Requirements
+    requires_work_experience = Column(Boolean, default=False)
+    min_work_experience_years = Column(Integer, default=0)
+    portfolio_required = Column(Boolean, default=False)
     
     # Intakes
     intake_terms = Column(JSON)  # ["Fall", "Spring"]
-    application_deadline_fall = Column(String(50))       # e.g., "December 15"
+    application_deadline_fall = Column(String(50))
     application_deadline_spring = Column(String(50))
     
     # Additional
-    specializations = Column(JSON)  # ["AI/ML", "Systems", "Theory"]
+    specializations = Column(JSON)
     program_url = Column(String(512))
     
     # Metadata

@@ -28,6 +28,31 @@
                     "Systems",
                     "Theory"
                 ]
+            },
+            {
+                "name": "MBA",
+                "degree_level": "Masters",
+                "department": "Sloan School of Management",
+                "duration_months": 24,
+                "tuition_per_year_usd": 84200,
+                "min_gpa": 3.5,
+                "program_category": "BUSINESS",
+                "program_discipline": "MBA",
+                "requires_work_experience": true,
+                "min_work_experience_years": 3,
+                "gmat_required": true,
+                "gmat_min": 720,
+                "ielts_min": 7.5,
+                "toefl_min": 105,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "January 17",
+                "specializations": [
+                    "Finance",
+                    "Entrepreneurship",
+                    "Enterprise Management"
+                ]
             }
         ]
     },
@@ -59,6 +84,28 @@
                     "AI",
                     "Systems",
                     "Theory"
+                ]
+            },
+            {
+                "name": "MS Mechanical Engineering",
+                "degree_level": "Masters",
+                "department": "School of Engineering",
+                "duration_months": 24,
+                "tuition_per_year_usd": 60000,
+                "min_gpa": 3.6,
+                "program_category": "ENGINEERING",
+                "program_discipline": "Mechanical Engineering",
+                "requires_work_experience": false,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "gre_required": true,
+                "intake_terms": [
+                    "Fall"
+                ],
+                "application_deadline_fall": "December 5",
+                "specializations": [
+                    "Robotics",
+                    "Design"
                 ]
             }
         ]
@@ -187,6 +234,28 @@
                     "AI/ML",
                     "Robotics",
                     "Systems"
+                ]
+            },
+            {
+                "name": "Master of Information Systems Management (MISM)",
+                "degree_level": "Masters",
+                "department": "Heinz College",
+                "duration_months": 16,
+                "tuition_per_year_usd": 54000,
+                "min_gpa": 3.4,
+                "program_category": "BUSINESS",
+                "program_discipline": "Information Systems",
+                "requires_work_experience": false,
+                "ielts_min": 7.0,
+                "toefl_min": 100,
+                "intake_terms": [
+                    "Fall",
+                    "Spring"
+                ],
+                "application_deadline_fall": "January 10",
+                "specializations": [
+                    "Business Intelligence",
+                    "Data Analytics"
                 ]
             }
         ]
