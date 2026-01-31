@@ -24,48 +24,71 @@ export default function PricingPage() {
 
         setIsLoading(true);
         try {
-            const res = await fetch("http://localhost:8000/api/subscriptions/create", {
+            // 1. Create Order
+            const res = await fetch("http://localhost:8000/api/subscriptions/create-order", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ plan_id: isYearly ? "plan_yearly" : "plan_monthly" })
+                body: JSON.stringify({
+                    amount: isYearly ? 22800 : 2900, // $228 vs $29 (in cents)
+                    currency: "USD"
+                })
             });
 
-            if (!res.ok) throw new Error("Failed to create subscription");
+            if (!res.ok) throw new Error("Failed to create order");
             const data = await res.json();
 
             if (data.mock) {
-                // Mock Success
+                // Mock Success Flow
+                await fetch("http://localhost:8000/api/subscriptions/verify-payment", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        razorpay_order_id: data.order_id,
+                        razorpay_payment_id: "pay_mock_123",
+                        razorpay_signature: "sig_mock_123"
+                    })
+                });
                 alert("Trial Activated (Mock Mode)");
                 router.push("/dashboard");
                 return;
             }
 
-            // Real Razorpay
+            // 2. Open Razorpay Checkout
             const options = {
                 key: data.key_id,
-                subscription_id: data.subscription_id,
+                amount: data.amount,
+                currency: data.currency,
                 name: "AI Counsellor Premium",
-                description: "7-Day Free Trial",
+                description: isYearly ? "Yearly Subscription" : "Monthly Subscription",
                 image: "/logo.png",
+                order_id: data.order_id, // This is a Order ID.
                 handler: async function (response: any) {
-                    // Verify on success
-                    await fetch("http://localhost:8000/api/subscriptions/verify", {
+                    // 3. Verify Payment
+                    const verifyRes = await fetch("http://localhost:8000/api/subscriptions/verify-payment", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${token}`
                         },
                         body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_subscription_id: response.razorpay_subscription_id,
                             razorpay_signature: response.razorpay_signature
                         })
                     });
-                    alert("Subscription Activated!");
-                    router.push("/dashboard");
+
+                    if (verifyRes.ok) {
+                        alert("Subscription Activated!");
+                        router.push("/dashboard");
+                    } else {
+                        alert("Payment verification failed.");
+                    }
                 },
                 prefill: {
                     name: user.full_name,
