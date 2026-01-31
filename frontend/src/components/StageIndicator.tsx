@@ -17,90 +17,80 @@ export default function StageIndicator({ currentStage }: StageIndicatorProps) {
   const currentIndex = STAGES.findIndex((s) => s.key === currentStage);
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-3.5 shadow-xl border border-transparent dark:border-slate-700/50">
-      <div className="flex items-center gap-2 mb-2.5">
-        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+    <div className="bg-white dark:bg-slate-900 rounded-lg p-4 shadow-sm border border-slate-200 dark:border-slate-800">
+      <div className="flex items-center gap-1.5 mb-3">
+        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
           Your Journey
         </span>
       </div>
 
-      <div className="relative">
+      <div className="space-y-1.5">
+        {STAGES.map((stage, idx) => {
+          const isCompleted = idx < currentIndex;
+          const isCurrent = idx === currentIndex;
+          const isFuture = idx > currentIndex;
 
-
-        <div className="space-y-4">
-          {STAGES.map((stage, idx) => {
-            const isCompleted = idx < currentIndex;
-            const isCurrent = idx === currentIndex;
-            const isFuture = idx > currentIndex;
-
-            return (
+          return (
+            <div
+              key={stage.key}
+              className={`flex items-center gap-3 p-2 rounded-lg transition-all ${isCurrent
+                ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800"
+                : isCompleted
+                  ? "bg-emerald-50 dark:bg-emerald-900/10"
+                  : "opacity-50"
+                }`}
+            >
               <div
-                key={stage.key}
-                className={`relative flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 ${isCurrent
-                  ? "bg-blue-500/20 border border-blue-500/30"
-                  : isCompleted
-                    ? "bg-emerald-500/10"
-                    : "opacity-50"
+                className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[10px] ${isCompleted
+                  ? "bg-emerald-500 text-white"
+                  : isCurrent
+                    ? "bg-blue-500 text-white ring-2 ring-blue-200 dark:ring-blue-800"
+                    : "bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
                   }`}
               >
-                <div
-                  className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${isCompleted
-                    ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
-                    : isCurrent
-                      ? "bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-4 ring-blue-500/20"
-                      : "bg-slate-700 text-slate-500"
-                    }`}
-                >
-                  {isCompleted ? (
-                    <Check className="w-4 h-4" strokeWidth={3} />
-                  ) : isFuture ? (
-                    <Lock className="w-3.5 h-3.5" />
-                  ) : (
-                    <span>{idx + 1}</span>
-                  )}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`font-semibold text-sm ${isCurrent
-                        ? "text-white"
-                        : isCompleted
-                          ? "text-emerald-400"
-                          : "text-slate-500"
-                        }`}
-                    >
-                      {stage.label}
-                    </span>
-                    {isCurrent && (
-                      <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold uppercase rounded-full">
-                        <MapPin className="w-2.5 h-2.5" />
-                        You are here
-                      </span>
-                    )}
-                  </div>
-                  <p
-                    className={`text-xs mt-0.5 ${isCurrent
-                      ? "text-blue-200"
-                      : isCompleted
-                        ? "text-slate-400"
-                        : "text-slate-600"
-                      }`}
-                  >
-                    {stage.description}
-                  </p>
-                </div>
-
-                {isFuture && (
-                  <div className="text-[10px] text-slate-500 uppercase font-medium">
-                    Locked
-                  </div>
+                {isCompleted ? (
+                  <Check className="w-3 h-3" strokeWidth={3} />
+                ) : isFuture ? (
+                  <Lock className="w-2.5 h-2.5" />
+                ) : (
+                  <span>{idx + 1}</span>
                 )}
               </div>
-            );
-          })}
-        </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`font-semibold text-sm ${isCurrent
+                      ? "text-blue-700 dark:text-blue-300"
+                      : isCompleted
+                        ? "text-emerald-700 dark:text-emerald-400"
+                        : "text-slate-500 dark:text-slate-500"
+                      }`}
+                  >
+                    {stage.label}
+                  </span>
+                  {isCurrent && (
+                    <span className="px-1.5 py-0.5 bg-blue-500 text-white text-[8px] font-bold uppercase rounded">
+                      Here
+                    </span>
+                  )}
+                </div>
+                {(isCurrent || isCompleted) && (
+                  <p className={`text-xs ${isCurrent ? "text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400"}`}>
+                    {stage.description}
+                  </p>
+                )}
+              </div>
+
+              {isFuture && (
+                <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-medium">
+                  Locked
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
