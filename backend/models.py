@@ -85,7 +85,7 @@ class University(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, unique=True)
-    country = Column(String(100), nullable=False)
+    country = Column(String(100), nullable=False, index=True)
     city = Column(String(100))
     
     # Rankings from verified sources
@@ -123,14 +123,14 @@ class Program(Base):
     university_id = Column(Integer, ForeignKey("universities.id"), nullable=False)
     
     name = Column(String(255), nullable=False)           # e.g., "MS Computer Science"
-    degree_level = Column(String(50), nullable=False)    # Masters, PhD, Bachelors
+    degree_level = Column(String(50), nullable=False, index=True)    # Masters, PhD, Bachelors
     department = Column(String(255))                      # e.g., "School of Engineering"
     
     duration_months = Column(Integer)                     # Program duration
-    tuition_per_year_usd = Column(Integer, nullable=False)
+    tuition_per_year_usd = Column(Integer, nullable=False, index=True)
     
     # Admission requirements
-    min_gpa = Column(Float)
+    min_gpa = Column(Float, index=True)
     gpa_scale = Column(Float, default=4.0)               # GPA scale (4.0 or 10.0)
     ielts_min = Column(Float)
     toefl_min = Column(Integer)
