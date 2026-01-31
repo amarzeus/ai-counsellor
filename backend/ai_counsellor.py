@@ -7,7 +7,7 @@ import random
 from google.genai import types
 
 from gemini_key_manager import key_manager
-from recommendation_engine import detect_intent, filter_programs, check_query_delta, IntentType
+from recommendation_engine import detect_intent, filter_programs, check_query_delta
 
 logger = logging.getLogger(__name__)
 

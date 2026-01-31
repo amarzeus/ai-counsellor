@@ -1,13 +1,12 @@
 import sys
 import asyncio
-# Need to add backend path to sys.path to import modules
-sys.path.append("/home/amar/Documents/Developer/ai-counsellor/backend")
-
 from dotenv import load_dotenv
+
+sys.path.append("/home/amar/Documents/Developer/ai-counsellor/backend")
 load_dotenv()
 
-from recommendation_engine import detect_intent, filter_programs, IntentType
-from real_universities_data import UNIVERSITIES_DATA
+from recommendation_engine import detect_intent, filter_programs  # noqa: E402
+from real_universities_data import UNIVERSITIES_DATA  # noqa: E402
 
 async def verify_logic():
     print("--- Test 1: User asks for 'Computer Science' ---")

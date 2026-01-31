@@ -1272,11 +1272,13 @@ async def chat_with_counsellor(
                 continue
                 
             # FEATURE GATE: Shortlist Limit (Free Plan)
-            # plan = 'FREE' # DISABLED
+            plan = 'FREE' 
             current_count = db.query(ShortlistedUniversity).filter(ShortlistedUniversity.user_id == current_user.id).count()
             
-            if plan == 'FREE' and current_count >= 3:
-                actions_blocked.append({'type': action_type, 'reason': 'Shortlist limit (3) reached on Free Plan. Upgrade to add more.', 'code': 'PLAN_LIMIT'})
+            # Since payment is removed, we just check count but don't strictly enforce upgraded plans
+            # If we wanted to enforce it:
+            if plan == 'FREE' and current_count >= 100: # Increased limit effectively removing it
+                actions_blocked.append({'type': action_type, 'reason': 'Shortlist limit reached.', 'code': 'PLAN_LIMIT'})
                 continue
             
             existing = db.query(ShortlistedUniversity).filter(

@@ -1,7 +1,7 @@
 import json
 import logging
 import hashlib
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from enum import Enum
 from gemini_key_manager import key_manager
 from google.genai import types
@@ -69,15 +69,18 @@ async def detect_intent(message: str, user_profile: dict) -> Dict[str, Any]:
         data = json.loads(response.text)
         
         # Sanitize data types
-        if data.get("max_budget_usd") == "null": data["max_budget_usd"] = None
-        if data.get("target_discipline") == "null": data["target_discipline"] = None
-        if data.get("target_degree") == "null": data["target_degree"] = None
+        if data.get("max_budget_usd") == "null":
+            data["max_budget_usd"] = None
+        if data.get("target_discipline") == "null":
+            data["target_discipline"] = None
+        if data.get("target_degree") == "null":
+            data["target_degree"] = None
         
         # Ensure max_budget is int if present
         if data.get("max_budget_usd"):
             try:
                 data["max_budget_usd"] = int(data["max_budget_usd"])
-            except:
+            except (ValueError, TypeError):
                 data["max_budget_usd"] = None
                 
         # Validate intent
@@ -166,10 +169,12 @@ def filter_programs(universities: List[Dict], intent: Dict, user_profile: Dict) 
                 match = target_discipline in prog_name or target_discipline in prog_disc
                 
                 if is_strict_discipline:
-                    if not match: continue # Strict rejection
+                    if not match:
+                        continue # Strict rejection
                 else:
                     # Soft preference? For now, let's stick to strict if we have a target
-                    if not match: continue
+                    if not match:
+                        continue
 
             # Degree Level Match
             if target_degree:
