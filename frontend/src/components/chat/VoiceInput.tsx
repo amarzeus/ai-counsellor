@@ -17,14 +17,14 @@ export function VoiceInput({ onInput, disabled }: VoiceInputProps) {
     const recognitionRef = useRef<any>(null);
 
     const toggleVoiceInput = () => {
-        // Premium Gating
-        if (user?.subscription_plan !== "PREMIUM") {
-            toast.error("Voice Mode is a Premium Feature. Upgrade to unlock.", {
-                icon: "💎",
-                duration: 4000
-            });
-            return;
-        }
+        // Premium Gating - DISABLED: Payment system deactivated
+        // if (user?.subscription_plan !== "PREMIUM") {
+        //     toast.error("Voice Mode is a Premium Feature. Upgrade to unlock.", {
+        //         icon: "💎",
+        //         duration: 4000
+        //     });
+        //     return;
+        // }
 
         if (isListening) {
             stopListening();

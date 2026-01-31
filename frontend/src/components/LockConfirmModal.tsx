@@ -99,7 +99,7 @@ export default function LockConfirmModal({
                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   </div>
                   <p className="text-sm text-slate-600 dark:text-slate-300">
-                    You <strong>won&apos;t be able to add</strong> more universities
+                    You can <strong>unlock later</strong> if you change your mind
                   </p>
                 </div>
               </div>

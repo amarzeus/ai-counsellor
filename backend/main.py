@@ -17,13 +17,13 @@ from schemas import (
     DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest
 )
 from real_universities_data import UNIVERSITIES_DATA
-from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus, SubscriptionPlan
+from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 # from universities_data import UNIVERSITIES # Replaced by real_universities_data
 from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
-import subscriptions
+# import subscriptions  # DISABLED: Payment system deactivated
 
 Base.metadata.create_all(bind=engine)
 
@@ -47,7 +47,7 @@ app.add_middleware(
 )
 
 app.include_router(google_router)
-app.include_router(subscriptions.router)
+# app.include_router(subscriptions.router)  # DISABLED: Payment system deactivated
 
 @app.get("/")
 def root():
@@ -750,14 +750,14 @@ def add_to_shortlist(
         ShortlistedUniversity.university_id == data.university_id
     ).first()
     
-    # FREE PLAN LIMIT: Max 3 Shortlists
-    if current_user.subscription_plan == SubscriptionPlan.FREE:
-        count = db.query(ShortlistedUniversity).filter(ShortlistedUniversity.user_id == current_user.id).count()
-        if count >= 3:
-             raise HTTPException(
-                status_code=403, 
-                detail="Free plan limit reached (Max 3 universities). Upgrade to Premium for unlimited shortlisting."
-            )
+    # FREE PLAN LIMIT: DISABLED - Payment system deactivated
+    # if current_user.subscription_plan == SubscriptionPlan.FREE:
+    #     count = db.query(ShortlistedUniversity).filter(ShortlistedUniversity.user_id == current_user.id).count()
+    #     if count >= 3:
+    #          raise HTTPException(
+    #             status_code=403, 
+    #             detail="Free plan limit reached (Max 3 universities). Upgrade to Premium for unlimited shortlisting."
+    #         )
     
     if existing:
         raise HTTPException(status_code=400, detail="University already shortlisted")
@@ -839,12 +839,12 @@ def lock_university(
     # GUARD: Stage 1 users cannot lock
     require_stage_minimum(current_user, UserStage.DISCOVERY, "lock universities")
     
-    # GUARD: Free users cannot lock
-    if current_user.subscription_plan == SubscriptionPlan.FREE:
-        raise HTTPException(
-            status_code=403, 
-            detail="Locking universities is a Premium feature. Upgrade to unlock roadmaps & tasks."
-        )
+    # GUARD: DISABLED - Payment system deactivated, all users can lock
+    # if current_user.subscription_plan == SubscriptionPlan.FREE:
+    #     raise HTTPException(
+    #         status_code=403, 
+    #         detail="Locking universities is a Premium feature. Upgrade to unlock roadmaps & tasks."
+    #     )
 
     # GUARD: Must have shortlist to lock
     require_shortlist_exists(db, current_user)
@@ -1183,7 +1183,7 @@ async def chat_with_counsellor(
         'email': current_user.email,
         'current_stage': current_user.current_stage.value,
         'onboarding_completed': current_user.onboarding_completed,
-        'subscription_plan': current_user.subscription_plan.value if hasattr(current_user.subscription_plan, 'value') else str(current_user.subscription_plan)
+        # 'subscription_plan': 'FREE' # DISABLED
     }
     profile_dict = profile.__dict__ if profile else {}
     
@@ -1272,7 +1272,7 @@ async def chat_with_counsellor(
                 continue
                 
             # FEATURE GATE: Shortlist Limit (Free Plan)
-            plan = str(current_user.subscription_plan.value) if hasattr(current_user.subscription_plan, 'value') else str(current_user.subscription_plan)
+            # plan = 'FREE' # DISABLED
             current_count = db.query(ShortlistedUniversity).filter(ShortlistedUniversity.user_id == current_user.id).count()
             
             if plan == 'FREE' and current_count >= 3:

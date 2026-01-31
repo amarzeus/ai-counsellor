@@ -1,6 +1,6 @@
 "use client";
 
-import { X, ExternalLink, Lock, MapPin, DollarSign, GraduationCap, Award, CheckCircle, Trash2, TrendingUp, AlertTriangle, Info, Globe } from "lucide-react";
+import { X, ExternalLink, Lock, MapPin, DollarSign, GraduationCap, Award, CheckCircle, Trash2, TrendingUp, AlertTriangle, Info, Globe, Target } from "lucide-react";
 import { Shortlist } from "@/lib/api";
 
 interface UniversityDrawerProps {
@@ -10,6 +10,7 @@ interface UniversityDrawerProps {
     onLock?: (id: number) => void;
     onUnlock?: (id: number) => void;
     onRemove?: (id: number) => void;
+    onShortlist?: (university: any) => void;
 }
 
 export default function UniversityDrawer({
@@ -18,7 +19,8 @@ export default function UniversityDrawer({
     onClose,
     onLock,
     onUnlock,
-    onRemove
+    onRemove,
+    onShortlist
 }: UniversityDrawerProps) {
     if (!university || !isOpen) return null;
 
@@ -256,7 +258,16 @@ export default function UniversityDrawer({
 
                 {/* Footer Actions */}
                 <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 space-y-3">
-                    {is_locked ? (
+                    {/* Mock Shortlist Item (Not actually shortlisted) */}
+                    {university.id === -1 ? (
+                        <button
+                            onClick={() => onShortlist?.(uni)}
+                            className="w-full py-3 px-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition shadow-sm flex items-center justify-center gap-2"
+                        >
+                            <Target className="w-4 h-4" />
+                            Add to Shortlist
+                        </button>
+                    ) : is_locked ? (
                         <div className="flex items-center gap-3">
                             <div className="flex-1 flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
                                 <Lock className="w-4 h-4" />

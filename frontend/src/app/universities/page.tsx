@@ -163,6 +163,17 @@ export default function UniversitiesPage() {
     const item = getShortlistItem(uni.id);
     if (item) {
       openDrawer(item);
+    } else {
+      // Create mock shortlist item for viewing
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const mockItem: any = {
+        id: -1,
+        university_id: uni.id,
+        university: uni,
+        category: uni.category || "TARGET",
+        is_locked: false,
+      };
+      openDrawer(mockItem);
     }
   };
 
@@ -306,7 +317,7 @@ export default function UniversitiesPage() {
                 index={uni.id}
                 isShortlisted={isShortlisted(uni.id)}
                 onShortlist={() => isShortlisted(uni.id) ? handleRemoveByUniversityId(uni.id) : handleShortlist(uni)}
-                onClick={isShortlisted(uni.id) ? () => openDrawerForUniversity(uni) : undefined}
+                onClick={() => openDrawerForUniversity(uni)}
               />
             ))}
           </div>
@@ -439,6 +450,7 @@ export default function UniversitiesPage() {
         onLock={handleDrawerLock}
         onUnlock={handleDrawerUnlock}
         onRemove={handleDrawerRemove}
+        onShortlist={handleShortlist}
       />
     </div>
   );

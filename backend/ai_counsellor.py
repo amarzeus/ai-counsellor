@@ -29,10 +29,7 @@ You are NOT a chatbot. You ARE a decision-making counsellor, stage-aware guide, 
 1. **Be Proactive**: Guide the user based on their stage.
 2. **Be Strict but Mentor-like**: If a user tries to jump ahead, refuse politey and explain why.
 3. **Be Data-Driven**: Use "Fit Reason" and "Risk Reason" heavily.
-4. **Be Feature-Gated**: Respect the user's subscription plan.
-   - If FREE plan: You CANNOT recommend [PREMIUM_LOCKED] programs. Explain they are available on Premium.
-   - If FREE plan: You CANNOT lock universities (Response: "Locking is a Premium feature.").
-   - If FREE plan: You limit Shortlists to 3 (but the API enforces this, you just warn).
+
 
 ## Context You Have
 - **User Profile**: Academics, goals, budget, exams.
@@ -160,7 +157,7 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
 ### User Info
 - Name: {user_data.get('full_name', 'Unknown')}
 - Current Stage: {user_data.get('current_stage', 'ONBOARDING')}
-- Subscription Plan: {user_data.get('subscription_plan', 'FREE')}
+
 - Onboarding Completed: {user_data.get('onboarding_completed', False)}
 
 ### Profile
@@ -213,13 +210,13 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
             
             tags = f"Category: {p.get('program_category', 'STEM')}"
             
-            # Premium Gating Logic
-            user_plan = user_data.get('subscription_plan', 'FREE')
-            is_tier_2 = p.get('program_category') in ['BUSINESS', 'MBA', 'MANAGEMENT'] or p.get('program_discipline') in ['MBA', 'Management']
+            # Premium Gating Logic - DISABLED
+            # user_plan = user_data.get('subscription_plan', 'FREE')
+            # is_tier_2 = p.get('program_category') in ['BUSINESS', 'MBA', 'MANAGEMENT'] or p.get('program_discipline') in ['MBA', 'Management']
 
-            if is_tier_2 and user_plan == 'FREE':
-                programs_str += f"\n  - [PREMIUM_LOCKED] {p.get('name')} (Tier 2)"
-                continue
+            # if is_tier_2 and user_plan == 'FREE':
+            #     programs_str += f"\n  - [PREMIUM_LOCKED] {p.get('name')} (Tier 2)"
+            #     continue
             
             if reasons:
                 programs_str += f"\n  - [INELIGIBLE] {p.get('name')} ({p.get('degree_level')}): {', '.join(reasons)}"
