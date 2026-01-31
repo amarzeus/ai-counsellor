@@ -135,6 +135,20 @@ export default function UniversitiesPage() {
     }
   };
 
+  const handleRemoveByUniversityId = async (universityId: number) => {
+    if (!confirm("Remove this university from your shortlist?")) {
+      return;
+    }
+    try {
+      await shortlistApi.removeByUniversityId(universityId);
+      setShortlist((prev) => prev.filter((s) => s.university_id !== universityId));
+      toast.success("Removed from shortlist");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to remove");
+    }
+  };
+
   const isShortlisted = (uniId: number) => {
     return shortlist.some((s) => s.university_id === uniId);
   };
@@ -242,7 +256,7 @@ export default function UniversitiesPage() {
                 university={uni}
                 index={uni.id}
                 isShortlisted={isShortlisted(uni.id)}
-                onShortlist={() => isShortlisted(uni.id) ? handleRemove(shortlist.find(s => s.university_id === uni.id)!) : handleShortlist(uni)}
+                onShortlist={() => isShortlisted(uni.id) ? handleRemoveByUniversityId(uni.id) : handleShortlist(uni)}
               />
             ))}
           </div>

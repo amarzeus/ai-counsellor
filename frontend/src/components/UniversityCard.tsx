@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Target, Shield, DollarSign, TrendingUp, Plus, Check, AlertCircle, CheckCircle, Info } from "lucide-react";
+import { Star, Target, Shield, DollarSign, TrendingUp, Plus, Check, AlertCircle, CheckCircle, X } from "lucide-react";
 
 import { University } from "@/lib/api";
 
@@ -63,19 +63,19 @@ export default function UniversityCard({
 
   const getCostColor = (cost?: string) => {
     switch (cost) {
-      case "Low": return "text-green-600 bg-green-50";
-      case "Medium": return "text-yellow-600 bg-yellow-50";
-      case "High": return "text-red-600 bg-red-50";
-      default: return "text-gray-600 bg-gray-50";
+      case "Low": return "text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400";
+      case "Medium": return "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400";
+      case "High": return "text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400";
+      default: return "text-gray-600 bg-gray-50 dark:bg-gray-900/20 dark:text-gray-400";
     }
   };
 
   const getAcceptanceColor = (chance?: string) => {
     switch (chance) {
-      case "High": return "text-green-600 bg-green-50";
-      case "Medium": return "text-yellow-600 bg-yellow-50";
-      case "Low": return "text-red-600 bg-red-50";
-      default: return "text-gray-600 bg-gray-50";
+      case "High": return "text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400";
+      case "Medium": return "text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-400";
+      case "Low": return "text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400";
+      default: return "text-gray-600 bg-gray-50 dark:bg-gray-900/20 dark:text-gray-400";
     }
   };
 
@@ -166,16 +166,15 @@ export default function UniversityCard({
 
         <button
           onClick={onShortlist}
-          disabled={isShortlisted}
           className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${isShortlisted
-            ? "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
+            ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 hover:bg-red-100 dark:hover:bg-red-900/30"
             : "bg-slate-900 dark:bg-blue-600 text-white hover:bg-slate-800 dark:hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-slate-900/20 dark:shadow-blue-900/20"
             }`}
         >
           {isShortlisted ? (
             <>
-              <Check className="w-4 h-4" />
-              Added to Shortlist
+              <X className="w-4 h-4" />
+              Remove from Shortlist
             </>
           ) : (
             <>
