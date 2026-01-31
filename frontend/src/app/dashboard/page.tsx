@@ -77,7 +77,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] transition-colors duration-300">
 
-      <main className="max-w-7xl mx-auto px-6 pt-20 pb-6">
+      <main className="max-w-7xl mx-auto px-6 pt-6 pb-6">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-1.5">
             Welcome back, {dashboard?.user.full_name?.split(" ")[0]}
