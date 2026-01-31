@@ -125,7 +125,7 @@ export default function PricingPage() {
                 {/* Cards Container */}
                 <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {/* Free Plan */}
-                    <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
                         <div className="flex items-center gap-3 mb-4">
                             <Shield className="w-6 h-6 text-slate-400" />
                             <h3 className="text-xl font-bold">Free Plan</h3>
@@ -155,7 +155,7 @@ export default function PricingPage() {
                     </div>
 
                     {/* Premium Plan */}
-                    <div className="bg-white dark:bg-slate-900 backdrop-blur-xl rounded-3xl p-8 border-2 border-blue-500 dark:border-blue-500 shadow-2xl relative overflow-hidden transform md:-translate-y-4">
+                    <div className="bg-white dark:bg-slate-900 backdrop-blur-xl rounded-2xl p-8 border-2 border-blue-500 dark:border-blue-500 shadow-2xl relative overflow-hidden transform md:-translate-y-4">
 
                         <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-bl-xl">
                             MOST POPULAR

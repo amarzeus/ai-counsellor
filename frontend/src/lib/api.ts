@@ -41,6 +41,8 @@ export interface User {
   full_name: string;
   current_stage: 'ONBOARDING' | 'DISCOVERY' | 'LOCKED' | 'APPLICATION';
   onboarding_completed: boolean;
+  subscription_plan?: 'FREE' | 'PREMIUM';
+  subscription_status?: 'ACTIVE' | 'TRIALING' | 'CANCELED' | 'PAST_DUE';
 }
 
 export interface Profile {

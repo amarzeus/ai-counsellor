@@ -30,8 +30,8 @@ export function Header() {
 		};
 	}, [open]);
 
-	// Hide header on auth pages - must be AFTER all hooks
-	if (pathname === '/login' || pathname === '/signup') {
+	// Hide header on auth pages and onboarding - must be AFTER all hooks
+	if (pathname === '/login' || pathname === '/signup' || pathname === '/onboarding') {
 		return null;
 	}
 

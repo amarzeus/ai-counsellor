@@ -8,12 +8,14 @@ interface UniversityCardProps {
   university: University;
   isShortlisted: boolean;
   onShortlist: () => void;
+  index?: number;
 }
 
 export default function UniversityCard({
   university,
   isShortlisted,
   onShortlist,
+  index = 0,
 }: UniversityCardProps) {
   const getCategoryConfig = (category?: string) => {
     switch (category) {

@@ -18,9 +18,9 @@ from schemas import (
     ChatSessionCreate, ChatSessionUpdate, ChatSessionResponse,
     DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest
 )
-from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus
+from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus, SubscriptionPlan
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
-from universities_data import UNIVERSITIES
+# from universities_data import UNIVERSITIES # Replaced by real_universities_data
 from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
@@ -97,13 +97,26 @@ def delete_all_user_sessions(
     db.commit()
     return {"message": f"Deleted {deleted_count} sessions", "deleted": deleted_count}
 
+from real_universities_data import UNIVERSITIES_DATA
+
 def seed_universities(db: Session):
     # Ensure all universities in code exist in DB
-    for uni_data in UNIVERSITIES:
+    for uni_data in UNIVERSITIES_DATA:
         existing = db.query(University).filter(University.name == uni_data["name"]).first()
         if not existing:
+            # Separate programs data from university data
+            programs_data = uni_data.pop("programs", [])
+            
+            # Create University
             uni = University(**uni_data)
             db.add(uni)
+            db.flush() # Flush to get uni.id
+            
+            # Create Programs
+            for prog_data in programs_data:
+                program = Program(university_id=uni.id, **prog_data)
+                db.add(program)
+                
     db.commit()
 
 def seed_demo_users(db: Session):
@@ -470,6 +483,7 @@ def get_universities(
     country: Optional[str] = None,
     max_tuition: Optional[int] = None,
     degree_level: Optional[str] = None,
+    field: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -729,6 +743,15 @@ def add_to_shortlist(
         ShortlistedUniversity.university_id == data.university_id
     ).first()
     
+    # FREE PLAN LIMIT: Max 3 Shortlists
+    if current_user.subscription_plan == SubscriptionPlan.FREE:
+        count = db.query(ShortlistedUniversity).filter(ShortlistedUniversity.user_id == current_user.id).count()
+        if count >= 3:
+             raise HTTPException(
+                status_code=403, 
+                detail="Free plan limit reached (Max 3 universities). Upgrade to Premium for unlimited shortlisting."
+            )
+    
     if existing:
         raise HTTPException(status_code=400, detail="University already shortlisted")
     
@@ -742,10 +765,38 @@ def add_to_shortlist(
     db.refresh(shortlist)
     
     uni = db.query(University).filter(University.id == data.university_id).first()
+    
+    # Manually construct UniversityResponse to avoid Pydantic validation error
+    # triggered by 'programs' relationship (ORM objects) vs schema 'programs' (List[str])
+    uni_response = UniversityResponse(
+        id=uni.id,
+        name=uni.name,
+        country=uni.country,
+        city=uni.city,
+        tuition_per_year=uni.tuition_per_year,
+        qs_ranking=uni.qs_ranking,
+        the_ranking=uni.the_ranking,
+        us_news_ranking=uni.us_news_ranking,
+        ranking=uni.ranking,
+        official_website=uni.official_website,
+        is_public=uni.is_public,
+        min_gpa=uni.min_gpa,
+        programs=uni.programs_json,  # Use legacy JSON field
+        description=uni.description,
+        acceptance_rate=uni.acceptance_rate,
+        verified_at=uni.verified_at,
+        data_source=uni.data_source,
+        category=None, # Re-calculated if needed, or left simple
+        fit_reason=None,
+        risk_reason=None,
+        cost_level=None,
+        acceptance_chance=None
+    )
+
     return ShortlistResponse(
         id=shortlist.id,
         university_id=shortlist.university_id,
-        university=UniversityResponse.model_validate(uni),
+        university=uni_response,
         category=shortlist.category,
         is_locked=shortlist.is_locked,
         locked_at=shortlist.locked_at
@@ -780,6 +831,14 @@ def lock_university(
 ):
     # GUARD: Stage 1 users cannot lock
     require_stage_minimum(current_user, UserStage.DISCOVERY, "lock universities")
+    
+    # GUARD: Free users cannot lock
+    if current_user.subscription_plan == SubscriptionPlan.FREE:
+        raise HTTPException(
+            status_code=403, 
+            detail="Locking universities is a Premium feature. Upgrade to unlock roadmaps & tasks."
+        )
+
     # GUARD: Must have shortlist to lock
     require_shortlist_exists(db, current_user)
     

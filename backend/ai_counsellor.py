@@ -187,7 +187,7 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
     user_work_exp = profile.get('work_experience_years', 0)
     user_gmat = profile.get('gre_gmat_status') == 'COMPLETED' # Simple check from status
     
-    for uni in universities[:15]:  # Increased context window
+    for uni in universities[:100]:  # Increased context window to cover full seed data
         cat, fit, risk, acc, cost = categorize_university(uni, profile)
         
         # Format programs with eligibility check
