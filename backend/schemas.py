@@ -306,3 +306,39 @@ class SOPReviewResponse(BaseModel):
     grammar_mistakes: List[str]
     improved_snippet: Optional[str] = None
     ai_feedback: str
+
+class ColdEmailRequest(BaseModel):
+    professor_name: str
+    university_name: str
+    research_area: str
+    paper_title: Optional[str] = None
+    tone: str = "Formal" # Formal, Enthusiastic, Concise
+
+class ColdEmailResponse(BaseModel):
+    subject_line: str
+    email_body: str
+    tips: List[str]
+
+class ColdEmailPolishRequest(BaseModel):
+    email_body: str
+    tone: str # Professional, Soft, Casual, Confident, Humble, Academic
+    is_selection: bool = False
+
+class SavedEmailCreate(BaseModel):
+    subject_line: str
+    email_body: str
+    professor_name: str
+    university_name: str
+    research_area: str
+
+class SavedEmailResponse(BaseModel):
+    id: int
+    subject_line: str
+    email_body: str
+    professor_name: str
+    university_name: str
+    research_area: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True

@@ -223,4 +223,51 @@ export const sopApi = {
     api.post<SOPReviewResponse>('/api/sop/review', data),
 };
 
+export interface ColdEmailRequest {
+  professor_name: string;
+  university_name: string;
+  research_area: string;
+  paper_title?: string;
+  tone: string;
+}
+
+export interface ColdEmailResponse {
+  subject_line: string;
+  email_body: string;
+  tips: string[];
+}
+
+export interface ColdEmailPolishRequest {
+  email_body: string;
+  tone: string;
+  is_selection?: boolean;
+}
+
+export interface SavedEmail {
+  id: number;
+  subject_line: string;
+  email_body: string;
+  professor_name: string;
+  university_name: string;
+  research_area: string;
+  created_at: string;
+}
+
+export const toolsApi = {
+  generateColdEmail: (data: ColdEmailRequest) =>
+    api.post<ColdEmailResponse>('/api/tools/cold-email', data),
+
+  polishColdEmail: (data: ColdEmailPolishRequest) =>
+    api.post<any>('/api/tools/cold-email/polish', data),
+
+  getSavedEmails: () =>
+    api.get<SavedEmail[]>('/api/emails'),
+
+  saveEmail: (data: any) =>
+    api.post<SavedEmail>('/api/emails', data),
+
+  deleteSavedEmail: (id: number) =>
+    api.delete(`/api/emails/${id}`),
+};
+
 export default api;

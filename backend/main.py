@@ -15,13 +15,15 @@ from schemas import (
     ChatMessageCreate, ChatMessageResponse,
     ChatSessionCreate, ChatSessionUpdate, ChatSessionResponse,
     DashboardResponse, ForgotPasswordRequest, ResetPasswordRequest,
-    SOPReviewRequest, SOPReviewResponse
+    SOPReviewRequest, SOPReviewResponse,
+    ColdEmailRequest, ColdEmailResponse, ColdEmailPolishRequest,
+    SavedEmailCreate, SavedEmailResponse
 )
 from real_universities_data import UNIVERSITIES_DATA
-from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus
+from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus, SavedEmail
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 # from universities_data import UNIVERSITIES # Replaced by real_universities_data
-from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university, analyze_sop, generate_application_checklist
+from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university, analyze_sop, generate_application_checklist, generate_cold_email_content, polish_cold_email_content
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
 from datetime import datetime, timedelta
@@ -1659,6 +1661,125 @@ def get_dashboard_timeline(
     timeline_data.sort(key=lambda x: x["days_left"])
     
     return timeline_data
+
+def get_profile_summary_text(profile: UserProfile):
+    """Helper to build a detailed text summary of the user profile."""
+    if not profile: return "No profile data."
+    
+    summary = (
+        f"Education: {profile.current_education_level or 'Undergraduate'} in {profile.degree_major or 'Unknown'} "
+        f"(Graduating {profile.graduation_year or 'Soon'}).\n"
+        f"Academic Standing: GPA {profile.gpa or 'N/A'} ({profile.profile_strength or 'Good'} profile).\n"
+        f"Goal: {profile.intended_degree or 'Masters'} in {profile.field_of_study or 'General Field'} "
+        f"(Targeting {profile.target_intake_year or 'Next Intake'}).\n"
+    )
+    
+    if profile.work_experience_years and profile.work_experience_years > 0:
+        summary += f"Experience: {profile.work_experience_years} years of work experience.\n"
+
+    # Add exam status if completed
+    exams = []
+    if profile.ielts_toefl_status == "COMPLETED": exams.append("English Proficiency Cleared")
+    if profile.gre_gmat_status == "COMPLETED": exams.append("GRE/GMAT Cleared")
+    if exams:
+        summary += f"Exams: {', '.join(exams)}.\n"
+        
+    return summary
+
+@app.post("/api/tools/cold-email", response_model=ColdEmailResponse)
+async def create_cold_email(
+    request: ColdEmailRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Generate a cold email draft for a professor."""
+    
+    # 1. Construct Profile Summary
+    profile = current_user.profile
+    if not profile:
+        raise HTTPException(status_code=400, detail="Profile incomplete")
+        
+    profile_summary = get_profile_summary_text(current_user.profile)
+    
+    # 2. Call AI
+    result = await generate_cold_email_content(
+        profile_summary=profile_summary,
+        professor_name=request.professor_name,
+        university_name=request.university_name,
+        research_area=request.research_area,
+        paper_title=request.paper_title,
+        tone=request.tone
+    )
+    
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to generate email")
+        
+    return result
+
+@app.post("/api/tools/cold-email/polish")
+async def polish_cold_email(
+    request: ColdEmailPolishRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Polish an existing email draft."""
+    
+    profile_summary = get_profile_summary_text(current_user.profile) if current_user.profile else ""
+    
+    result = await polish_cold_email_content(
+        email_body=request.email_body,
+        tone=request.tone,
+        profile_summary=profile_summary,
+        is_selection=request.is_selection
+    )
+    
+    if not result:
+        raise HTTPException(status_code=500, detail="Failed to polish email")
+        
+    return result
+
+@app.get("/api/emails", response_model=List[SavedEmailResponse])
+async def get_saved_emails(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get all saved email drafts for the current user."""
+    emails = db.query(SavedEmail).filter(SavedEmail.user_id == current_user.id).order_by(SavedEmail.created_at.desc()).all()
+    return emails
+
+@app.post("/api/emails", response_model=SavedEmailResponse)
+async def save_email(
+    email: SavedEmailCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Save an email draft."""
+    db_email = SavedEmail(
+        user_id=current_user.id,
+        subject_line=email.subject_line,
+        email_body=email.email_body,
+        professor_name=email.professor_name,
+        university_name=email.university_name,
+        research_area=email.research_area
+    )
+    db.add(db_email)
+    db.commit()
+    db.refresh(db_email)
+    return db_email
+
+@app.delete("/api/emails/{email_id}")
+async def delete_saved_email(
+    email_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Delete a saved email draft."""
+    email = db.query(SavedEmail).filter(SavedEmail.id == email_id, SavedEmail.user_id == current_user.id).first()
+    if not email:
+        raise HTTPException(status_code=404, detail="Email not found")
+        
+    db.delete(email)
+    db.commit()
+    return {"message": "Email deleted"}
 
 if __name__ == "__main__":
     import uvicorn

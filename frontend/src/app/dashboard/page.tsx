@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   GraduationCap, Target, CheckCircle, Clock,
   MessageCircle, Building2, Lock, ArrowRight, ListTodo,
-  Pencil, DollarSign, MapPin, Award, Lightbulb, ChevronRight
+  Pencil, DollarSign, MapPin, Award, Lightbulb, ChevronRight, Mail
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -323,6 +323,13 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2.5">
                       <ListTodo className="w-4 h-4 text-slate-400 group-hover:text-green-500 transition-colors" />
                       <span className="text-sm font-medium text-slate-700 dark:text-slate-200">View Tasks</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition-colors" />
+                  </Link>
+                  <Link href="/tools/cold-email" className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                    <div className="flex items-center gap-2.5">
+                      <Mail className="w-4 h-4 text-slate-400 group-hover:text-pink-500 transition-colors" />
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Email Architect</span>
                     </div>
                     <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition-colors" />
                   </Link>

@@ -547,3 +547,175 @@ Generate the 5-7 most important application tasks/documents for this specific ta
     except Exception as e:
         logger.error(f"Checklist Generation Error: {str(e)}")
         return []
+
+async def generate_cold_email_content(profile_summary: str, professor_name: str, university_name: str, research_area: str, paper_title: str = None, tone: str = "Formal"):
+    """Generate cold email draft using Gemini."""
+    
+    if not key_manager.has_keys():
+        return None
+
+    client, key_index = key_manager.create_client()
+    
+    system_prompt = """You are an expert academic mentor helping a student write a cold email to a professor for a research assistantship.
+Your goal is to write a high-conversion email.
+
+## Intelligence Instructions (CRITICAL)
+- **Use Student Details**: You MUST explicitly mention their specific background (Degree, Major, Graduation Year, GPA, Work Experience) to build credibility.
+- **Connect Context**: If they have work experience, say "My x years of experience in...". If they have cleared exams, mention it.
+- **Dates**: Use their Graduation Year and Target Intake to propose a logical start date.
+
+## Persona Instructions
+Adopt the requested "Writing Style / Persona" strictly:
+- **Professional**: Standard academic tone. Respectful, clear, and direct.
+- **Soft**: Use indirect language ("I was wondering", "I would be grateful"). Very polite and deferential.
+- **Casual**: Conversational but respectful. Less rigid structure. ("Hi Professor", "Best,").
+- **Confident**: Highlight achievements boldly. Propose specific value. ("I am confident I can contribute...").
+- **Humble**: Emphasize willingness to learn. Acknowledge the professor's expertise.
+- **Academic**: Use sophisticated vocabulary. Focus heavily on checking the specific research details.
+
+Output JSON:
+{
+    "subject_line": "Subject...",
+    "email_body": "Dear Professor...",
+    "tips": ["Tip 1", "Tip 2"]
+}
+"""
+
+    user_prompt = f"""
+Student Profile: {profile_summary}
+Target Professor: {professor_name} ({university_name})
+Research Area: {research_area}
+Specific Paper Mentioned: {paper_title if paper_title else "None"}
+Writing Persona: {tone}
+
+Draft the email now. Use the profile details intelligently.
+"""
+
+    try:
+        response = client.models.generate_content(
+            model=key_manager.get_model_name(),
+            contents=system_prompt + "\n\n" + user_prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
+        response_text = response.text or "{}"
+        return json.loads(response_text)
+            
+    except Exception as e:
+        logger.error(f"Cold Email Generation Error: {str(e)}")
+        return None
+
+async def polish_cold_email_content(email_body: str, tone: str, profile_summary: str = "", is_selection: bool = False):
+    """Refine existing email body using Gemini with a specific persona."""
+    
+    if not key_manager.has_keys():
+        return None
+
+    client, key_index = key_manager.create_client()
+    
+    system_prompt = """You are an expert editor for academic correspondence.
+Your task is to REWRITE the provided text to match the requested persona EXACTLY.
+"""
+    if is_selection:
+        system_prompt += "\nNOTE: The input is a specific selection (sentence/fragment). Refine ONLY this text. Do NOT add salutations, headers, or signatures. Return only the polished text.\n"
+    else:
+        system_prompt += "\nNOTE: The input is an email draft. Ensure proper structure (Salutation -> Body -> Sign-off).\n"
+
+    system_prompt += """
+Do not change the core meaning or facts, BUT YOU MUST ENSURE CONSISTENCY WITH THE STUDENT'S PROFILE.
+
+## Intelligence Instructions
+- Check the "Student Profile" provided.
+- If the original draft misses key strengths (like High GPA, Work Exp, or specific Degree info), seamlessly weave them in during the polish if appropriate.
+- Ensure the tone matches the requested persona.
+
+## Polishing Personas
+- **Professional**: Eliminate slang, ensure perfect grammar, standard academic closing.
+- **Soft**: Soften requests. Use phrases like "If you have a moment", "I would be grateful".
+- **Casual**: Make it sound like a friendly conversation. "Hi [Name]", "Best,".
+- **Confident**: Use strong verbs. Remove "I think" or "I believe". Be assertive.
+- **Humble**: Show deep respect. Emphasize learning.
+- **Academic**: Use higher-level vocabulary.
+
+Output JSON:
+{
+    "polished_body": "Rewrite version...",
+    "changes_made": ["Changed 'hey' to 'Dear'", "Added work experience context"]
+}
+"""
+
+    user_prompt = f"""
+Student Profile:
+{profile_summary or "No profile details provided."}
+
+Original Draft:
+{email_body}
+
+Target Persona: {tone}
+
+Polish this email now. Use the profile to enhance it.
+"""
+
+    try:
+        response = client.models.generate_content(
+            model=key_manager.get_model_name(),
+            contents=system_prompt + "\n\n" + user_prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
+        response_text = response.text or "{}"
+        return json.loads(response_text)
+            
+    except Exception as e:
+        logger.error(f"Cold Email Polishing Error: {str(e)}")
+        return None
+
+    client, key_index = key_manager.create_client()
+    
+    system_prompt = """You are an expert editor for academic correspondence.
+Your task is to REWRITE the provided email draft to match the requested persona EXACTLY.
+Do not change the core meaning or facts. improve flow, vocabulary, and tone.
+
+## Polishing Personas
+- **Professional**: Eliminate slang, ensure perfect grammar, standard academic closing.
+- **Soft**: Soften requests. Use phrases like "If you have a moment", "I would appreciate".
+- **Casual**: Make it sound like a friendly conversation. "Hi [Name]", "Best,".
+- **Confident**: Use strong verbs. Remove "I think" or "I believe". Be assertive.
+- **Humble**: Show deep respect. Emphasize learning.
+- **Academic**: Use higher-level vocabulary.
+
+Output JSON:
+{
+    "polished_body": "Rewrite version...",
+    "changes_made": ["Changed 'hey' to 'Dear'", "Softened the request"]
+}
+"""
+
+    user_prompt = f"""
+Original Draft:
+{email_body}
+
+Target Persona: {tone}
+
+Polish this email now.
+"""
+
+    try:
+        response = client.models.generate_content(
+            model=key_manager.get_model_name(),
+            contents=system_prompt + "\n\n" + user_prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
+        response_text = response.text or "{}"
+        return json.loads(response_text)
+            
+    except Exception as e:
+        logger.error(f"Cold Email Polishing Error: {str(e)}")
+        return None
