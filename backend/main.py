@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,7 +27,6 @@ from ai_counsellor import get_counsellor_response, analyze_profile_strength, cat
 from report_generator import StrategyReportGenerator
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
-from datetime import datetime, timedelta
 # import subscriptions  # DISABLED: Payment system deactivated
 
 Base.metadata.create_all(bind=engine)
@@ -1620,7 +1619,7 @@ def get_dashboard_timeline(
     # Get locked universities
     locked_shortlist = db.query(ShortlistedUniversity).filter(
         ShortlistedUniversity.user_id == current_user.id,
-        ShortlistedUniversity.is_locked == True
+        ShortlistedUniversity.is_locked.is_(True)
     ).all()
 
     timeline_data = []
@@ -1698,7 +1697,8 @@ def get_dashboard_timeline(
 
 def get_profile_summary_text(profile: UserProfile):
     """Helper to build a detailed text summary of the user profile."""
-    if not profile: return "No profile data."
+    if not profile:
+        return "No profile data."
     
     summary = (
         f"Education: {profile.current_education_level or 'Undergraduate'} in {profile.degree_major or 'Unknown'} "
@@ -1713,8 +1713,10 @@ def get_profile_summary_text(profile: UserProfile):
 
     # Add exam status if completed
     exams = []
-    if profile.ielts_toefl_status == "COMPLETED": exams.append("English Proficiency Cleared")
-    if profile.gre_gmat_status == "COMPLETED": exams.append("GRE/GMAT Cleared")
+    if profile.ielts_toefl_status == "COMPLETED":
+        exams.append("English Proficiency Cleared")
+    if profile.gre_gmat_status == "COMPLETED":
+        exams.append("GRE/GMAT Cleared")
     if exams:
         summary += f"Exams: {', '.join(exams)}.\n"
         

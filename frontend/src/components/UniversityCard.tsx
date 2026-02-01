@@ -10,7 +10,7 @@ interface UniversityCardProps {
   university: University;
   isShortlisted: boolean;
   onShortlist: () => void;
-  onShortlist: () => void;
+
   onClick?: () => void;
   index?: number;
   isLocked?: boolean;

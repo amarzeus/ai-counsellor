@@ -1,6 +1,5 @@
 from fpdf import FPDF
 from models import User, University, UserProfile
-import io
 from datetime import datetime
 
 class PDF(FPDF):
