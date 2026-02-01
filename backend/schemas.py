@@ -58,12 +58,22 @@ class ResetPasswordRequest(BaseModel):
     token: str
     password: str
 
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+
+class ChangePasswordRequest(BaseModel):
+    current_password: Optional[str] = None
+    new_password: str
+
 class UserResponse(BaseModel):
     id: int
     email: str
     full_name: str
-    current_stage: UserStage
     onboarding_completed: bool
+    current_stage: UserStage
+    google_id: Optional[str] = None
+    has_password: bool = False
     
     class Config:
         from_attributes = True

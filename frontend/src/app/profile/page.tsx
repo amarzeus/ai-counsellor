@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap, Save, ArrowLeft } from "lucide-react";
+import { GraduationCap, Save, ArrowLeft, Target, Wallet, FileText, Globe } from "lucide-react";
 import toast from "react-hot-toast";
 import { profileApi, Profile } from "@/lib/api";
 import { useStore } from "@/lib/store";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 const COUNTRIES = ["USA", "UK", "Canada", "Germany", "Australia", "Netherlands", "Singapore", "Switzerland"];
 const EDUCATION_LEVELS = ["High School", "Bachelor's", "Master's", "PhD"];
@@ -115,7 +116,7 @@ export default function ProfilePage() {
     try {
       const response = await profileApi.update(formData);
       setProfile(response.data);
-      toast.success("Profile updated! University recommendations will be recalculated.");
+      toast.success("Profile updated! Recommendations recalculated.");
       router.push("/dashboard");
 
     } catch (error: any) {
@@ -127,268 +128,280 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] transition-colors duration-300 pb-20">
 
-      <main className="max-w-3xl mx-auto px-4 pt-20 pb-8">
-        <div className="flex items-center gap-4 mb-6">
-          <Link
-            href="/dashboard"
-            className="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-slate-400" />
-          </Link>
+      <main className="max-w-6xl mx-auto px-6 py-6 transition-all duration-300">
+
+        {/* Header - Compact */}
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Edit Profile</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Update your profile to get better university recommendations
-            </p>
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard" className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors">
+                <ArrowLeft className="w-5 h-5" />
+              </Link>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Your Profile</h1>
+              <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300 text-[10px] font-bold border border-blue-100 dark:border-blue-800 uppercase tracking-widest">
+                Verified
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/50 rounded-xl p-4 mb-6 transition-colors">
-          <p className="text-yellow-800 dark:text-yellow-200 text-sm">
-            <strong>Note:</strong> Changing your profile will recalculate university recommendations and may affect acceptance chances.
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 space-y-8 transition-colors">
-          <section>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              Academic Background
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Current Education Level
-                </label>
-                <select
-                  value={formData.current_education_level}
-                  onChange={(e) => updateField("current_education_level", e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select...</option>
-                  {EDUCATION_LEVELS.map((level) => (
-                    <option key={level} value={level}>{level}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Current Degree/Major
-                </label>
-                <input
-                  type="text"
-                  value={formData.degree_major}
-                  onChange={(e) => updateField("degree_major", e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., Computer Science"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Graduation Year
-                </label>
-                <input
-                  type="number"
-                  value={formData.graduation_year}
-                  onChange={(e) => updateField("graduation_year", parseInt(e.target.value))}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  GPA (out of 4.0)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="4"
-                  value={formData.gpa}
-                  onChange={(e) => updateField("gpa", parseFloat(e.target.value))}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Study Goals</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Intended Degree
-                </label>
-                <select
-                  value={formData.intended_degree}
-                  onChange={(e) => updateField("intended_degree", e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select...</option>
-                  {DEGREES.map((degree) => (
-                    <option key={degree} value={degree}>{degree}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Field of Study
-                </label>
-                <select
-                  value={formData.field_of_study}
-                  onChange={(e) => updateField("field_of_study", e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select...</option>
-                  {FIELDS.map((field) => (
-                    <option key={field} value={field}>{field}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Preferred Countries
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {COUNTRIES.map((country) => (
-                    <button
-                      key={country}
-                      type="button"
-                      onClick={() => toggleCountry(country)}
-                      className={`px-4 py-2 rounded-full text-sm transition-colors ${formData.preferred_countries.includes(country)
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700"
-                        }`}
-                    >
-                      {country}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Target Intake Year
-                </label>
-                <input
-                  type="number"
-                  value={formData.target_intake_year}
-                  onChange={(e) => updateField("target_intake_year", parseInt(e.target.value))}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Budget & Funding</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Budget Per Year (USD)
-                </label>
-                <input
-                  type="range"
-                  min="10000"
-                  max="80000"
-                  step="5000"
-                  value={formData.budget_per_year}
-                  onChange={(e) => updateField("budget_per_year", parseInt(e.target.value))}
-                  className="w-full accent-blue-600 dark:accent-blue-500"
-                />
-                <div className="text-center text-xl font-bold text-blue-600 dark:text-blue-400 mt-2">
-                  ${formData.budget_per_year.toLocaleString()}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  Funding Plan
-                </label>
-                <select
-                  value={formData.funding_plan}
-                  onChange={(e) => updateField("funding_plan", e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select...</option>
-                  {FUNDING_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Exam & Readiness</h2>
-            <div className="grid sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  IELTS/TOEFL Status
-                </label>
-                <select
-                  value={formData.ielts_toefl_status}
-                  onChange={(e) => updateField("ielts_toefl_status", e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  {EXAM_STATUS.map((status) => (
-                    <option key={status.value} value={status.value}>{status.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  GRE/GMAT Status
-                </label>
-                <select
-                  value={formData.gre_gmat_status}
-                  onChange={(e) => updateField("gre_gmat_status", e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  {EXAM_STATUS.map((status) => (
-                    <option key={status.value} value={status.value}>{status.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                  SOP Status
-                </label>
-                <select
-                  value={formData.sop_status}
-                  onChange={(e) => updateField("sop_status", e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  {SOP_STATUS.map((status) => (
-                    <option key={status.value} value={status.value}>{status.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </section>
-
-          <div className="flex gap-4 pt-4 border-t border-gray-200 dark:border-slate-800">
+          <div className="flex items-center gap-2">
             <Link
               href="/dashboard"
-              className="flex-1 py-3 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-white font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition text-center"
+              className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
             >
               Cancel
             </Link>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 py-3 bg-blue-600 dark:bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 dark:hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all flex items-center gap-2 disabled:opacity-50"
             >
-              <Save className="w-5 h-5" />
-              {saving ? "Saving..." : "Save Changes"}
+              {saving ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Saving
+                </>
+              ) : (
+                <>
+                  <Save className="w-3 h-3" />
+                  Save Changes
+                </>
+              )}
             </button>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+
+          {/* Left Column */}
+          <div className="space-y-6">
+
+            {/* Academic Background */}
+            <section className="bg-white dark:bg-[#151b2b] rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-5">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2 uppercase tracking-wide">
+                <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                Academic Background
+              </h2>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Current Level</label>
+                  <select
+                    value={formData.current_education_level}
+                    onChange={(e) => updateField("current_education_level", e.target.value)}
+                    className="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer hover:bg-white dark:hover:bg-slate-800"
+                  >
+                    <option value="">Select...</option>
+                    {EDUCATION_LEVELS.map((level) => (<option key={level} value={level}>{level}</option>))}
+                  </select>
+                </div>
+
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">GPA (4.0 Scale)</label>
+                  <input
+                    type="number" step="0.1" min="0" max="4"
+                    value={formData.gpa}
+                    onChange={(e) => updateField("gpa", parseFloat(e.target.value))}
+                    className="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400 focus:bg-white dark:focus:bg-slate-800"
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Major / Degree</label>
+                  <input
+                    type="text"
+                    value={formData.degree_major}
+                    onChange={(e) => updateField("degree_major", e.target.value)}
+                    className="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400 focus:bg-white dark:focus:bg-slate-800"
+                    placeholder="e.g., Computer Science"
+                  />
+                </div>
+
+                <div className="col-span-2 sm:col-span-1">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Grad Year</label>
+                  <input
+                    type="number"
+                    value={formData.graduation_year}
+                    onChange={(e) => updateField("graduation_year", parseInt(e.target.value))}
+                    className="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all focus:bg-white dark:focus:bg-slate-800"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Readiness / Exams */}
+            <section className="bg-white dark:bg-[#151b2b] rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-5">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2 uppercase tracking-wide">
+                <div className="p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600">
+                  <FileText className="w-4 h-4" />
+                </div>
+                Exam & Documents
+              </h2>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-800 group hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">IELTS / TOEFL</span>
+                  <select
+                    value={formData.ielts_toefl_status}
+                    onChange={(e) => updateField("ielts_toefl_status", e.target.value)}
+                    className="text-xs py-1 px-2 rounded-md border-0 bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  >
+                    {EXAM_STATUS.map((s) => (<option key={s.value} value={s.value}>{s.label}</option>))}
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-800 group hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">GRE / GMAT</span>
+                  <select
+                    value={formData.gre_gmat_status}
+                    onChange={(e) => updateField("gre_gmat_status", e.target.value)}
+                    className="text-xs py-1 px-2 rounded-md border-0 bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  >
+                    {EXAM_STATUS.map((s) => (<option key={s.value} value={s.value}>{s.label}</option>))}
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-800 group hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">SOP Status</span>
+                  <select
+                    value={formData.sop_status}
+                    onChange={(e) => updateField("sop_status", e.target.value)}
+                    className="text-xs py-1 px-2 rounded-md border-0 bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  >
+                    {SOP_STATUS.map((s) => (<option key={s.value} value={s.value}>{s.label}</option>))}
+                  </select>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-6">
+
+            {/* Study Goals */}
+            <section className="bg-white dark:bg-[#151b2b] rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-5">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2 uppercase tracking-wide">
+                <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg text-emerald-600">
+                  <Target className="w-4 h-4" />
+                </div>
+                Study Goals
+              </h2>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Target Degree</label>
+                  <select
+                    value={formData.intended_degree}
+                    onChange={(e) => updateField("intended_degree", e.target.value)}
+                    className="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer hover:bg-white dark:hover:bg-slate-800"
+                  >
+                    <option value="">Select...</option>
+                    {DEGREES.map((d) => (<option key={d} value={d}>{d}</option>))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Field of Study</label>
+                  <select
+                    value={formData.field_of_study}
+                    onChange={(e) => updateField("field_of_study", e.target.value)}
+                    className="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer hover:bg-white dark:hover:bg-slate-800"
+                  >
+                    <option value="">Select...</option>
+                    {FIELDS.map((f) => (<option key={f} value={f}>{f}</option>))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Target Intake</label>
+                  <input
+                    type="number"
+                    value={formData.target_intake_year}
+                    onChange={(e) => updateField("target_intake_year", parseInt(e.target.value))}
+                    className="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all focus:bg-white dark:focus:bg-slate-800"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Country & Budget */}
+            <section className="bg-white dark:bg-[#151b2b] rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-5">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2 uppercase tracking-wide">
+                <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-600">
+                  <Wallet className="w-4 h-4" />
+                </div>
+                Budget & Preferences
+              </h2>
+
+              <div className="space-y-5">
+
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Annual Budget</label>
+                    <span className="text-sm font-bold text-blue-600 dark:text-blue-400">${formData.budget_per_year.toLocaleString()}</span>
+                  </div>
+                  <input
+                    type="range" min="10000" max="80000" step="5000"
+                    value={formData.budget_per_year}
+                    onChange={(e) => updateField("budget_per_year", parseInt(e.target.value))}
+                    className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                    <span>$10k</span>
+                    <span>$80k+</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Funding Plan</label>
+                  <select
+                    value={formData.funding_plan}
+                    onChange={(e) => updateField("funding_plan", e.target.value)}
+                    className="w-full p-2 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer hover:bg-white dark:hover:bg-slate-800"
+                  >
+                    <option value="">Select...</option>
+                    {FUNDING_OPTIONS.map((o) => (<option key={o.value} value={o.value}>{o.label}</option>))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <Globe className="w-3 h-3" /> Preferred Countries
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {COUNTRIES.map((country) => (
+                      <button
+                        key={country}
+                        type="button"
+                        onClick={() => toggleCountry(country)}
+                        className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide transition-all border ${formData.preferred_countries.includes(country)
+                          ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20"
+                          : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                          }`}
+                      >
+                        {country}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+          </div>
+
         </div>
       </main>
     </div>

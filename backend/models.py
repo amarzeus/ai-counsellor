@@ -70,6 +70,10 @@ class User(Base):
     tasks = relationship("Task", back_populates="user")
     chat_sessions = relationship("ChatSession", back_populates="user")
 
+    @property
+    def has_password(self) -> bool:
+        return bool(self.password_hash)
+
 class UserProfile(Base):
     __tablename__ = "user_profiles"
     

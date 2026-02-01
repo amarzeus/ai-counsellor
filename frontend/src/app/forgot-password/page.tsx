@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
       await authApi.forgotPassword(email);
       setSubmitted(true);
       toast.success("Password reset instructions sent!");
-       
+
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to send reset email");
     } finally {
@@ -29,6 +29,7 @@ export default function ForgotPasswordPage() {
   };
 
   if (submitted) {
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
         <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md text-center">
@@ -40,6 +41,8 @@ export default function ForgotPasswordPage() {
             We&apos;ve sent password reset instructions to <strong>{email}</strong>.
             Please check your inbox and follow the link to reset your password.
           </p>
+
+
           <p className="text-sm text-gray-500 mb-6">
             Didn&apos;t receive the email? Check your spam folder or try again.
           </p>

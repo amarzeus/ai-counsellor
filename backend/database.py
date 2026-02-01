@@ -11,11 +11,12 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 # Debug: Print loaded DATABASE_URL
 print(f"[DEBUG] Loaded DATABASE_URL: {DATABASE_URL}")
 
-# AGGRESSIVE FALLBACK: If we are running locally (no REPLIT_DEV_DOMAIN) and the URL is postgres,
-# we default to SQLite because the user likely doesn't have a local Postgres instance running.
-is_local_env = os.environ.get("REPLIT_DEV_DOMAIN") is None
-if is_local_env:
-    print("[DEBUG] Local environment detected. Forcing SQLite.")
+# AGGRESSIVE FALLBACK: If we are running locally (no REPLIT_DEV_DOMAIN) and no legacy 
+# DATABASE_URL is set, we default to SQLite. We only force SQLite if 
+# DATABASE_URL is not already pointing to a real postgres instance.
+is_replit = os.environ.get("REPLIT_DEV_DOMAIN") is not None
+if not is_replit and (not DATABASE_URL or "postgres" not in DATABASE_URL):
+    print("[DEBUG] Local non-Postgres environment detected. Using SQLite.")
     DATABASE_URL = "sqlite:///./ai_counsellor.db"
 
 if not DATABASE_URL:

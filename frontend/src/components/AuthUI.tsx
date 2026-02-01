@@ -5,6 +5,7 @@ import * as React from "react";
 import Image from "next/image";
 import { useState, useId, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Slot } from "@radix-ui/react-slot";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -250,6 +251,13 @@ function SignInForm() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
+
+                <div className="flex justify-end">
+                    <Link href="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline">
+                        Forgot your password?
+                    </Link>
+                </div>
+
                 <Button type="submit" variant="outline" className="mt-2" disabled={loading}>
                     {loading ? "Signing in..." : "Sign In"}
                 </Button>

@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useStore } from '@/lib/store';
 import { useRouter, usePathname } from 'next/navigation';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, Settings } from 'lucide-react';
 import Switch from '@/components/Switch';
 
 export function Header() {
@@ -57,6 +57,7 @@ export function Header() {
 			label: 'Tasks',
 			href: '/tasks',
 		},
+
 		...(user.current_stage === 'LOCKED' || user.current_stage === 'APPLICATION' ? [{
 			label: 'SOP Review',
 			href: '/sop-review',
@@ -82,7 +83,7 @@ export function Header() {
 		>
 			<nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6">
 				<div className="flex items-center">
-					<Link href="/" className="flex items-center hover:scale-[1.02] transition-transform duration-300">
+					<Link href={user ? "/dashboard" : "/"} className="flex items-center hover:scale-[1.02] transition-transform duration-300">
 						<Image
 							src="/logo.png?v=6"
 							alt="AI Counsellor"
@@ -114,6 +115,13 @@ export function Header() {
 								>
 									<User className="size-4" />
 									<span>{user.full_name}</span>
+								</Link>
+								<Link
+									href="/settings"
+									className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors rounded-lg"
+									title="Account Settings"
+								>
+									<Settings className="size-4" />
 								</Link>
 								<Button variant="ghost" size="sm" onClick={handleLogout} className="text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10">
 									<LogOut className="size-4" />
@@ -171,6 +179,14 @@ export function Header() {
 							>
 								<User className="size-4" />
 								<span>{user.full_name}</span>
+							</Link>
+							<Link
+								href="/settings"
+								onClick={() => setOpen(false)}
+								className={buttonVariants({ variant: 'ghost', className: 'justify-start gap-2' })}
+							>
+								<Settings className="size-4" />
+								<span>Settings</span>
 							</Link>
 							<Button variant="outline" onClick={() => { setOpen(false); handleLogout(); }} className="w-full justify-start gap-2 text-destructive hover:text-destructive">
 								<LogOut className="size-4" />

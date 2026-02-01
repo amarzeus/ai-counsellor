@@ -41,8 +41,8 @@ export interface User {
   full_name: string;
   current_stage: 'ONBOARDING' | 'DISCOVERY' | 'LOCKED' | 'APPLICATION';
   onboarding_completed: boolean;
-  // subscription_plan?: 'FREE' | 'PREMIUM';
-  // subscription_status?: 'ACTIVE' | 'TRIALING' | 'CANCELED' | 'PAST_DUE';
+  google_id?: string;
+  has_password: boolean;
 }
 
 export interface Profile {
@@ -141,7 +141,14 @@ export const authApi = {
   forgotPassword: (email: string) =>
     api.post('/api/auth/forgot-password', { email }),
   resetPassword: (token: string, password: string) =>
-    api.post('/api/auth/reset-password', { token, password }),
+    api.post<{ message: string }>('/api/auth/reset-password', { token, password }),
+  changePassword: (data: any) =>
+    api.post('/api/auth/change-password', data),
+};
+
+export const userApi = {
+  updateMe: (data: Partial<User>) => api.put<User>('/api/user/update', data),
+  deleteAccount: () => api.delete('/api/user/delete'),
 };
 
 export const profileApi = {

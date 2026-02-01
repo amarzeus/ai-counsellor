@@ -9,6 +9,7 @@ from sqlalchemy import text, String
 from database import engine, get_db, Base
 from schemas import (
     UserCreate, UserLogin, UserResponse, TokenResponse,
+    UserUpdate, ChangePasswordRequest,
     ProfileUpdate, ProfileResponse,
     UniversityResponse, ShortlistCreate, ShortlistResponse,
     TaskCreate, TaskUpdate, TaskResponse,
@@ -384,16 +385,104 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 def get_me(current_user: User = Depends(get_current_user)):
     return UserResponse.model_validate(current_user)
 
+@app.put("/api/user/update", response_model=UserResponse)
+def update_user(
+    user_data: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if user_data.full_name is not None:
+        current_user.full_name = user_data.full_name
+    if user_data.email is not None:
+        # Check if email is already taken
+        if user_data.email != current_user.email:
+            existing_user = db.query(User).filter(User.email == user_data.email).first()
+            if existing_user:
+                raise HTTPException(status_code=400, detail="Email already in use")
+            current_user.email = user_data.email
+            
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+@app.post("/api/auth/change-password")
+def change_password(
+    request: ChangePasswordRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    from auth import verify_password, get_password_hash
+    
+    # 1. Verify current password if it exists
+    if current_user.password_hash:
+        if not request.current_password:
+             raise HTTPException(status_code=400, detail="Current password is required")
+        if not verify_password(request.current_password, current_user.password_hash):
+            raise HTTPException(status_code=400, detail="Incorrect current password")
+    
+    # 2. Hash and update new password
+    current_user.password_hash = get_password_hash(request.new_password)
+    db.commit()
+    
+    return {"message": "Password updated successfully"}
+
+@app.delete("/api/user/delete")
+def delete_account(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # In a real app, you might want to soft-delete or archive
+    # Here, we'll perform a hard delete of user and related data
+    db.delete(current_user)
+    db.commit()
+    return {"message": "Account deleted successfully"}
+
 @app.post("/api/auth/forgot-password")
 def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == request.email).first()
     if not user:
+        # Don't reveal user existence, but for debug/demo we might want to log it
+        print(f"Forgot PW: Email {request.email} not found")
         return {"message": "If an account exists with this email, you will receive password reset instructions."}
+    
+    # Generate reset token (valid for 30 mins)
+    access_token_expires = timedelta(minutes=30)
+    reset_token = create_access_token(
+        data={"sub": str(user.id), "type": "reset"},
+        expires_delta=access_token_expires
+    )
+    
+    # Send email (real)
+    from email_service import send_reset_email
+    send_reset_email(user.email, reset_token)
+    
     return {"message": "If an account exists with this email, you will receive password reset instructions."}
 
 @app.post("/api/auth/reset-password")
 def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
-    raise HTTPException(status_code=400, detail="Password reset functionality requires email configuration. Please contact support.")
+    from jose import jwt, JWTError
+    from auth import SECRET_KEY, ALGORITHM, get_password_hash
+    
+    try:
+        payload = jwt.decode(request.token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("sub")
+        token_type = payload.get("type")
+        
+        if user_id is None or token_type != "reset":
+             raise HTTPException(status_code=400, detail="Invalid token")
+             
+    except JWTError:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+        
+    user = db.query(User).filter(User.id == int(user_id)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    # Update password
+    user.password_hash = get_password_hash(request.password)
+    db.commit()
+    
+    return {"message": "Password reset successfully. You can now login with your new password."}
 
 @app.get("/api/profile", response_model=ProfileResponse)
 def get_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
