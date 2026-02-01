@@ -1,10 +1,10 @@
 import sys
 import os
 
-# Add current dir to path
+# Add current dir to path to ensure imports work when run directly
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from real_universities_data import UNIVERSITIES_DATA
+from real_universities_data import UNIVERSITIES_DATA  # noqa: E402
 
 def check_data():
     errors = []
