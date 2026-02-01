@@ -229,6 +229,12 @@ def run_migrations():
             ("ALTER TABLE chat_messages ADD COLUMN actions_taken JSON", "actions_taken"),
             # NEW: Add missing columns to universities table for Render parity
             ("ALTER TABLE universities ADD COLUMN city VARCHAR(100)", "universities.city"),
+            ("ALTER TABLE universities ADD COLUMN qs_ranking INTEGER", "universities.qs_ranking"),
+            ("ALTER TABLE universities ADD COLUMN the_ranking INTEGER", "universities.the_ranking"),
+            ("ALTER TABLE universities ADD COLUMN us_news_ranking INTEGER", "universities.us_news_ranking"),
+            ("ALTER TABLE universities ADD COLUMN official_website VARCHAR(512)", "universities.official_website"),
+            ("ALTER TABLE universities ADD COLUMN verified_at TIMESTAMP", "universities.verified_at"),
+            ("ALTER TABLE universities ADD COLUMN data_source VARCHAR(255)", "universities.data_source"),
             ("ALTER TABLE universities ADD COLUMN programs JSON", "universities.programs"),
         ]
         
