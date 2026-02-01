@@ -244,6 +244,8 @@ def run_migrations():
             # User Model Updates
             ("ALTER TABLE users ADD COLUMN current_stage VARCHAR(50) DEFAULT 'ONBOARDING'", "users.current_stage"),
             ("ALTER TABLE users ADD COLUMN onboarding_completed BOOLEAN DEFAULT FALSE", "users.onboarding_completed"),
+            # Add missing work_experience_years to user_profiles
+            ("ALTER TABLE user_profiles ADD COLUMN work_experience_years INTEGER DEFAULT 0", "user_profiles.work_experience_years"),
         ]
 
         if dialect == "postgresql":
