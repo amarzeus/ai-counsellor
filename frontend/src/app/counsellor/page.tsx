@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Send, User, Loader2, CheckCircle, Building2, Mic, MicOff, ArrowRight, Trash2, MapPin, DollarSign, GraduationCap } from "lucide-react";
+import { Send, User, Loader2, CheckCircle, Building2, Mic, MicOff, ArrowRight, Trash2, MapPin, DollarSign, GraduationCap, Volume2, VolumeX, StopCircle, Menu } from "lucide-react";
 import toast from "react-hot-toast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -76,6 +76,9 @@ export default function CounsellorPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentSessionId, setCurrentSessionId] = useState<number | null>(null);
   const [userIsManuallyScrolling, setUserIsManuallyScrolling] = useState(false);
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Intelligent Scroll Handler
   const handleScroll = () => {
@@ -190,10 +193,10 @@ export default function CounsellorPage() {
 
       const assistantMessage = response.data;
 
-      // Automatic Text-to-Speech if triggered by Voice
-      if (shouldSpeakRef.current) {
+      // Automatic Text-to-Speech if triggered by Voice OR Voice Mode is ON
+      if (shouldSpeakRef.current || isVoiceEnabled) {
         // Strip Markdown for cleaner speech
-        const cleanText = assistantMessage.content.replace(/[*#]/g, '');
+        const cleanText = assistantMessage.content.replace(/[*#_`]/g, '');
         speakResponse(cleanText);
         shouldSpeakRef.current = false;
       }
@@ -240,15 +243,39 @@ export default function CounsellorPage() {
   };
 
   // TTS Helper
+  const stopSpeaking = () => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  };
+
   const speakResponse = (text: string) => {
     if (!("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel(); // Stop previous
+
+    // Stop any current speech
+    window.speechSynthesis.cancel();
+
+    // Create new utterance
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.volume = 1;
-    utterance.rate = 1;
+    utterance.rate = 1.1; // Slightly faster for better flow
     utterance.pitch = 1;
+
+    // Event handlers
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
     window.speechSynthesis.speak(utterance);
   };
+
+  // Stop speaking when user navigates away or unmounts
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
 
   const handleVoiceInput = (text: string) => {
     setInput(text);
@@ -307,16 +334,32 @@ export default function CounsellorPage() {
         {/* SIDEBAR */}
         <ChatSidebar
           currentSessionId={currentSessionId}
-          onSessionSelect={setCurrentSessionId}
-          onNewChat={() => setCurrentSessionId(null)}
+          onSessionSelect={(id) => {
+            setCurrentSessionId(id);
+            setIsSidebarOpen(false);
+          }}
+          onNewChat={() => {
+            setCurrentSessionId(null);
+            setIsSidebarOpen(false);
+          }}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
         />
 
         {/* CHAT AREA */}
         <main className="flex-1 flex flex-col h-full relative w-full overflow-x-hidden">
-          <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 py-2 transition-colors">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 relative shrink-0">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-4 py-2 transition-colors h-14 flex items-center">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3">
+                {/* Sidebar Toggle (Mobile) */}
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="md:hidden p-1.5 -ml-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+
+                <div className="w-10 h-10 relative shrink-0">
                   <Image
                     src="/Avatar.png"
                     alt="AI"
@@ -325,16 +368,27 @@ export default function CounsellorPage() {
                   />
                 </div>
                 <div>
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h1 className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">
                     {currentSessionId ? "Chat Session" : "New Chat"}
                   </h1>
-                  <p className="text-xs text-gray-500 dark:text-slate-400">
-                    AI Counsellor & Guide
+                  <p className="text-[10px] text-gray-500 dark:text-slate-400 leading-tight">
+                    AI Counsel
                   </p>
                 </div>
               </div>
 
-              {/* Trash icon removed or disabled as per session logic */}
+              {/* Header Actions */}
+              <div className="flex items-center gap-2">
+                {isSpeaking && (
+                  <button
+                    onClick={stopSpeaking}
+                    className="p-1.5 text-red-500 bg-red-50 dark:bg-red-900/20 rounded-full hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors animate-pulse"
+                    title="Stop Speaking"
+                  >
+                    <StopCircle className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
