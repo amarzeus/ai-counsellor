@@ -96,7 +96,7 @@ export default function ProfilePage() {
     }
   };
 
-   
+
   const updateField = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -117,7 +117,7 @@ export default function ProfilePage() {
       setProfile(response.data);
       toast.success("Profile updated! University recommendations will be recalculated.");
       router.push("/dashboard");
-       
+
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to update profile");
     } finally {
