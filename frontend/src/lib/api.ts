@@ -157,6 +157,8 @@ export const dashboardApi = {
 export const universityApi = {
   getAll: (params?: { country?: string; max_tuition?: number }) =>
     api.get<University[]>('/api/universities', { params }),
+  getReport: (id: number) =>
+    api.get(`/api/universities/${id}/report`, { responseType: 'blob' }),
 };
 
 export interface LockResponse {

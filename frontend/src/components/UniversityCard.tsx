@@ -1,15 +1,19 @@
 "use client";
 
-import { Star, Target, Shield, DollarSign, TrendingUp, Plus, Check, AlertCircle, CheckCircle, X } from "lucide-react";
+import { Star, Target, Shield, DollarSign, TrendingUp, Plus, Check, AlertCircle, CheckCircle, X, FileText, Loader2 } from "lucide-react";
 
-import { University } from "@/lib/api";
+import { University, universityApi } from "@/lib/api";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface UniversityCardProps {
   university: University;
   isShortlisted: boolean;
   onShortlist: () => void;
+  onShortlist: () => void;
   onClick?: () => void;
   index?: number;
+  isLocked?: boolean;
 }
 
 export default function UniversityCard({
@@ -18,9 +22,32 @@ export default function UniversityCard({
   onShortlist,
   onClick,
   index = 0,
+  isLocked = false,
   isSelectedForComparison = false,
   onToggleComparison,
 }: UniversityCardProps & { isSelectedForComparison?: boolean; onToggleComparison?: () => void }) {
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadReport = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDownloading(true);
+    try {
+      const response = await universityApi.getReport(university.id);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Strategy_Report_${university.name}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("Report downloaded successfully!");
+    } catch (error) {
+      toast.error("Failed to download report.");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const getCategoryConfig = (category?: string) => {
     switch (category) {
       case "DREAM":
@@ -184,6 +211,26 @@ export default function UniversityCard({
               </div>
             )}
           </div>
+        )}
+
+        {isLocked && (
+          <button
+            onClick={handleDownloadReport}
+            disabled={downloading}
+            className="w-full mb-3 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors"
+          >
+            {downloading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Generating Report...
+              </>
+            ) : (
+              <>
+                <FileText className="w-4 h-4" />
+                Download Strategy Report
+              </>
+            )}
+          </button>
         )}
 
         <button

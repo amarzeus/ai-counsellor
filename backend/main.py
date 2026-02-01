@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import List, Optional
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text, String
@@ -24,6 +24,7 @@ from models import User, UserProfile, University, Program, ShortlistedUniversity
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 # from universities_data import UNIVERSITIES # Replaced by real_universities_data
 from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university, analyze_sop, generate_application_checklist, generate_cold_email_content, polish_cold_email_content
+from report_generator import StrategyReportGenerator
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
 from datetime import datetime, timedelta
@@ -77,6 +78,33 @@ def root():
         "frontend": "https://ai-counsellor-plum.vercel.app",
         "github": "https://github.com/amarzeus/ai-counsellor"
     }
+
+@app.get("/api/universities/{university_id}/report")
+def download_strategy_report(
+    university_id: int, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
+):
+    # 1. Fetch University
+    university = db.query(University).filter(University.id == university_id).first()
+    if not university:
+        raise HTTPException(status_code=404, detail="University not found")
+
+    # 2. Check if user has this university (optional, but good for context)
+    # We allow generating reports even if not shortlisted to encourage exploration
+    
+    # 3. Generate Report
+    if not current_user.profile:
+        raise HTTPException(status_code=400, detail="Profile incomplete")
+
+    report_gen = StrategyReportGenerator(current_user, university, current_user.profile)
+    pdf_bytes = report_gen.generate()
+    
+    # 4. Return as Stream
+    headers = {
+        'Content-Disposition': f'attachment; filename="Strategy_Report_{university.name}.pdf"'
+    }
+    return Response(content=pdf_bytes, media_type="application/pdf", headers=headers)
 
 @app.get("/health")
 def health_check():

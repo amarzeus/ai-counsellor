@@ -379,6 +379,7 @@ export default function UniversitiesPage() {
                 onClick={() => openDrawerForUniversity(uni)}
                 isSelectedForComparison={!!comparisonList.find(u => u.id === uni.id)}
                 onToggleComparison={() => toggleComparison(uni)}
+                isLocked={getShortlistItem(uni.id)?.is_locked}
               />
             ))}
           </div>

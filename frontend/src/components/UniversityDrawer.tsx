@@ -1,7 +1,9 @@
 "use client";
 
-import { X, ExternalLink, Lock, MapPin, DollarSign, GraduationCap, Award, CheckCircle, Trash2, TrendingUp, AlertTriangle, Info, Globe, Target } from "lucide-react";
-import { Shortlist } from "@/lib/api";
+import { X, ExternalLink, Lock, MapPin, DollarSign, GraduationCap, Award, CheckCircle, Trash2, TrendingUp, AlertTriangle, Info, Globe, Target, FileText, Loader2 } from "lucide-react";
+import { Shortlist, universityApi } from "@/lib/api";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
 interface UniversityDrawerProps {
     university: Shortlist | null;
@@ -22,9 +24,30 @@ export default function UniversityDrawer({
     onRemove,
     onShortlist
 }: UniversityDrawerProps) {
+    const [downloading, setDownloading] = useState(false);
+
     if (!university || !isOpen) return null;
 
     const { university: uni, category, is_locked } = university;
+
+    const handleDownloadReport = async () => {
+        setDownloading(true);
+        try {
+            const response = await universityApi.getReport(uni.id);
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Strategy_Report_${uni.name}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            toast.success("Report downloaded successfully!");
+        } catch (error) {
+            toast.error("Failed to download report.");
+        } finally {
+            setDownloading(false);
+        }
+    };
 
     const categoryColors = {
         DREAM: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
@@ -281,6 +304,18 @@ export default function UniversityDrawer({
                                     Unlock
                                 </button>
                             )}
+                            <button
+                                onClick={handleDownloadReport}
+                                disabled={downloading}
+                                className="px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-lg text-sm font-medium hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors flex items-center gap-2"
+                            >
+                                {downloading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <FileText className="w-4 h-4" />
+                                )}
+                                Strategy Report
+                            </button>
                         </div>
                     ) : (
                         <>
