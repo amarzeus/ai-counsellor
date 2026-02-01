@@ -314,8 +314,8 @@ export default function UniversitiesPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] transition-colors duration-300">
 
-      <main className="max-w-7xl mx-auto px-6 pt-24 pb-12">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-8 gap-4">
+      <main className="max-w-7xl mx-auto px-6 pt-6 pb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-6 gap-4">
           <div>
             <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Universities</h1>
             <p className="text-lg text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
@@ -346,7 +346,7 @@ export default function UniversitiesPage() {
         </div>
 
         {activeTab === "all" && (
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="relative max-w-xs">
               <select
                 value={countryFilter}
@@ -368,7 +368,7 @@ export default function UniversitiesPage() {
         )}
 
         {activeTab === "all" ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUniversities.map((uni) => (
               <UniversityCard
                 key={uni.id}

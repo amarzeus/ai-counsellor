@@ -112,9 +112,9 @@ export default function UniversityCard({
 
   return (
     <div className="group bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:border-slate-200 dark:hover:border-slate-700 transition-all duration-300 overflow-hidden">
-      <div className="p-6">
+      <div className="p-5">
         <div
-          className={`flex items-start justify-between gap-4 mb-4 ${onClick ? 'cursor-pointer' : ''}`}
+          className={`flex items-start justify-between gap-3 mb-3 ${onClick ? 'cursor-pointer' : ''}`}
           onClick={onClick}
         >
           <div className="flex-1 min-w-0">
@@ -137,7 +137,7 @@ export default function UniversityCard({
         </div>
 
         {onToggleComparison && (
-          <div className="mb-4 flex items-center gap-2">
+          <div className="mb-3 flex items-center gap-2">
             <input
               type="checkbox"
               checked={isSelectedForComparison}
@@ -151,7 +151,7 @@ export default function UniversityCard({
           </div>
         )}
 
-        <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 mb-4 flex-wrap">
+        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 mb-3 flex-wrap">
           {university.tuition_per_year && (
             <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">
               <DollarSign className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
@@ -183,7 +183,7 @@ export default function UniversityCard({
           )}
         </div>
 
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-3">
           {university.cost_level && (
             <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${getCostColor(university.cost_level)}`}>
               {university.cost_level} Cost
@@ -197,7 +197,7 @@ export default function UniversityCard({
         </div>
 
         {(university.fit_reason || university.risk_reason) && (
-          <div className="space-y-2 mb-4 text-xs">
+          <div className="grid grid-cols-1 gap-1.5 mb-4 text-xs">
             {university.fit_reason && (
               <div className="flex items-start gap-2 p-2 bg-green-50 dark:bg-green-900/30 rounded-lg">
                 <CheckCircle className="w-3.5 h-3.5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
@@ -217,7 +217,7 @@ export default function UniversityCard({
           <button
             onClick={handleDownloadReport}
             disabled={downloading}
-            className="w-full mb-3 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors"
+            className="w-full mb-2 py-2 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors"
           >
             {downloading ? (
               <>
@@ -235,7 +235,7 @@ export default function UniversityCard({
 
         <button
           onClick={onShortlist}
-          className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${isShortlisted
+          className={`w-full py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200 ${isShortlisted
             ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 hover:bg-red-100 dark:hover:bg-red-900/30"
             : "bg-slate-900 dark:bg-blue-600 text-white hover:bg-slate-800 dark:hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-slate-900/20 dark:shadow-blue-900/20"
             }`}
