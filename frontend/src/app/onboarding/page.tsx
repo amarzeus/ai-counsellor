@@ -57,7 +57,7 @@ export default function OnboardingPage() {
     }
   }, [router]);
 
-   
+
   const updateField = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -103,7 +103,7 @@ export default function OnboardingPage() {
 
       toast.success("Profile complete! Welcome to your dashboard.");
       router.push("/dashboard");
-       
+
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to complete onboarding");
     } finally {
@@ -187,7 +187,7 @@ export default function OnboardingPage() {
                         onClick={() => updateField("current_education_level", level)}
                         className={`p-3 rounded-lg border text-left text-sm md:text-base ${formData.current_education_level === level
                           ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200 hover:border-gray-300 text-gray-900 bg-white"
                           }`}
                       >
                         {level}
@@ -259,7 +259,7 @@ export default function OnboardingPage() {
                         onClick={() => updateField("intended_degree", degree)}
                         className={`p-3 rounded-lg border text-left text-sm md:text-base ${formData.intended_degree === degree
                           ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200 hover:border-gray-300 text-gray-900 bg-white"
                           }`}
                       >
                         {degree}
@@ -279,7 +279,7 @@ export default function OnboardingPage() {
                         onClick={() => updateField("field_of_study", field)}
                         className={`p-3 rounded-lg border text-left text-sm md:text-base ${formData.field_of_study === field
                           ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200 hover:border-gray-300 text-gray-900 bg-white"
                           }`}
                       >
                         {field}
@@ -299,7 +299,7 @@ export default function OnboardingPage() {
                         onClick={() => toggleCountry(country)}
                         className={`px-4 py-2 rounded-full text-sm ${formData.preferred_countries.includes(country)
                           ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          : "bg-gray-100 text-gray-900 hover:bg-gray-200"
                           }`}
                       >
                         {country}
@@ -359,7 +359,7 @@ export default function OnboardingPage() {
                         onClick={() => updateField("funding_plan", option.value)}
                         className={`w-full p-4 rounded-lg border text-left ${formData.funding_plan === option.value
                           ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200 hover:border-gray-300 text-gray-900 bg-white"
                           }`}
                       >
                         {option.label}

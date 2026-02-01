@@ -83,7 +83,7 @@ export function Typewriter({
         delay,
         displayText,
         text,
-         
+
     ]);
 
     return (
@@ -213,7 +213,7 @@ function SignInForm() {
             } else {
                 router.push("/dashboard");
             }
-             
+
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Login failed");
         } finally {
@@ -284,7 +284,7 @@ function SignUpForm() {
 
             toast.success("Account created! Let's set up your profile.");
             router.push("/onboarding");
-             
+
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Signup failed");
         } finally {
@@ -422,6 +422,16 @@ export function AuthUI({ signInContent = {}, signUpContent = {}, defaultView = "
     // This is tricky because switching routes might simply re-mount, but if it stays mounted we might want to respect prop changes.
     // However, usually navigating from /login to /signup causes a remount.
     // Let's rely on initial state for now.
+
+    // Check if user is already logged in
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            // Optional: Validate token validity via API?
+            // For now, simple presence check to redirect "back" attempts
+            window.location.href = "/dashboard";
+        }
+    }, [defaultView]);
 
     const finalSignInContent = {
         image: { ...defaultSignInContent.image, ...signInContent.image },

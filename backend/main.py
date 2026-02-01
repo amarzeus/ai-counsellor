@@ -21,9 +21,10 @@ from real_universities_data import UNIVERSITIES_DATA
 from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 # from universities_data import UNIVERSITIES # Replaced by real_universities_data
-from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university, analyze_sop
+from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university, analyze_sop, generate_application_checklist
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
+from datetime import datetime, timedelta
 # import subscriptions  # DISABLED: Payment system deactivated
 
 Base.metadata.create_all(bind=engine)
@@ -832,7 +833,7 @@ def remove_shortlist_by_university(
     return {"message": "Removed from shortlist"}
 
 @app.post("/api/shortlist/{shortlist_id}/lock")
-def lock_university(
+async def lock_university(
     shortlist_id: int,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -840,13 +841,6 @@ def lock_university(
     # GUARD: Stage 1 users cannot lock
     require_stage_minimum(current_user, UserStage.DISCOVERY, "lock universities")
     
-    # GUARD: DISABLED - Payment system deactivated, all users can lock
-    # if current_user.subscription_plan == SubscriptionPlan.FREE:
-    #     raise HTTPException(
-    #         status_code=403, 
-    #         detail="Locking universities is a Premium feature. Upgrade to unlock roadmaps & tasks."
-    #     )
-
     # GUARD: Must have shortlist to lock
     require_shortlist_exists(db, current_user)
     
@@ -865,23 +859,42 @@ def lock_university(
         current_user.current_stage = UserStage.APPLICATION
     
     uni = db.query(University).filter(University.id == shortlist.university_id).first()
-    default_tasks = [
-        Task(user_id=current_user.id, shortlisted_university_id=shortlist.id, 
-             title=f"Research {uni.name} admission requirements", priority=1),
-        Task(user_id=current_user.id, shortlisted_university_id=shortlist.id,
-             title=f"Prepare SOP for {uni.name}", priority=2),
-        Task(user_id=current_user.id, shortlisted_university_id=shortlist.id,
-             title=f"Gather required documents for {uni.name}", priority=3),
-        Task(user_id=current_user.id, shortlisted_university_id=shortlist.id,
-             title=f"Check application deadline for {uni.name}", priority=1),
-    ]
     
-    for task in default_tasks:
-        db.add(task)
+    # --- INTELLIGENT CHECKLIST GENERATION ---
+    generated_checklist = await generate_application_checklist(
+        university_name=uni.name, 
+        country=uni.country
+    )
+    
+    if generated_checklist:
+        # Use AI Tasks
+        for item in generated_checklist:
+            task = Task(
+                user_id=current_user.id,
+                shortlisted_university_id=shortlist.id,
+                title=item.get("title", "Application Task"),
+                description=item.get("description", ""),
+                priority=item.get("priority", 2)
+            )
+            db.add(task)
+    else:
+        # Fallback to Static Tasks
+        default_tasks = [
+            Task(user_id=current_user.id, shortlisted_university_id=shortlist.id, 
+                 title=f"Research {uni.name} admission requirements", priority=1),
+            Task(user_id=current_user.id, shortlisted_university_id=shortlist.id,
+                 title=f"Prepare SOP for {uni.name}", priority=2),
+            Task(user_id=current_user.id, shortlisted_university_id=shortlist.id,
+                 title=f"Gather required documents for {uni.name}", priority=3),
+            Task(user_id=current_user.id, shortlisted_university_id=shortlist.id,
+                 title=f"Check application deadline for {uni.name}", priority=1),
+        ]
+        for task in default_tasks:
+            db.add(task)
     
     db.commit()
     
-    return {"message": "University locked successfully. You are now in the Application stage.", "stage": current_user.current_stage.value}
+    return {"message": "University locked successfully. Intelligent Tasks Generated.", "stage": current_user.current_stage.value}
 
 @app.post("/api/shortlist/{shortlist_id}/unlock")
 def unlock_university(
@@ -1554,6 +1567,98 @@ async def review_sop(
     )
     
     return SOPReviewResponse(**analysis)
+
+
+@app.get("/api/dashboard/timeline")
+def get_dashboard_timeline(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Fetch timeline data for LOCKED universities.
+    Matches user's intended degree/major to Programs to find specific deadlines.
+    """
+    if not current_user.profile:
+        return []
+
+    # Get locked universities
+    locked_shortlist = db.query(ShortlistedUniversity).filter(
+        ShortlistedUniversity.user_id == current_user.id,
+        ShortlistedUniversity.is_locked == True
+    ).all()
+
+    timeline_data = []
+    
+    # Target Intake Year (default to next year if not set)
+    target_year = current_user.profile.target_intake_year or (datetime.now().year + 1)
+    
+    for item in locked_shortlist:
+        uni = item.university
+        
+        # Heuristic to find the best matching program
+        candidates = db.query(Program).filter(Program.university_id == uni.id).all()
+        
+        best_program = None
+        user_level = current_user.profile.intended_degree or "Master's"
+        user_field = current_user.profile.field_of_study or "Computer Science"
+        
+        # Filter by level first
+        level_matches = [p for p in candidates if p.degree_level and user_level.lower() in p.degree_level.lower()]
+        
+        # If matches found, try to find discipline match
+        matching_pool = level_matches if level_matches else candidates
+        
+        for p in matching_pool:
+            if p.name and user_field.lower() in p.name.lower():
+                best_program = p
+                break
+        
+        # Fallback
+        if not best_program and matching_pool:
+            best_program = matching_pool[0]
+            
+        deadline_str = "Jan 15" # Default fallback
+        if best_program and best_program.application_deadline_fall:
+            deadline_str = best_program.application_deadline_fall
+            
+        # Parse Deadline Logic
+        try:
+            # Simple parsing for "Month DD" format
+            deadline_date = datetime.strptime(f"{deadline_str} {target_year}", "%b %d %Y")
+            
+            # Logic: If deadline is Late (Sep-Dec), it's for previous year (e.g. Dec 2024 for Fall 2025)
+            # Logic: If deadline is Early (Jan-Aug), it's for same year (e.g. Jan 2025 for Fall 2025)
+            if deadline_date.month >= 9:
+                deadline_date = deadline_date.replace(year=target_year - 1)
+            
+            # Calculate days left
+            delta = deadline_date - datetime.now()
+            days_left = delta.days
+            
+            status = "SAFE"
+            if days_left < 30:
+                status = "URGENT" 
+            elif days_left < 60:
+                status = "WARNING"
+            
+        except Exception:
+            days_left = 90
+            status = "safe"
+            deadline_date = datetime.now() + timedelta(days=90)
+
+        timeline_data.append({
+            "university_name": uni.name,
+            "program_name": best_program.name if best_program else "General Application",
+            "deadline_date": deadline_date.isoformat(),
+            "deadline_display": deadline_str,
+            "days_left": days_left,
+            "status": status,
+        })
+        
+    # Sort by nearest deadline
+    timeline_data.sort(key=lambda x: x["days_left"])
+    
+    return timeline_data
 
 if __name__ == "__main__":
     import uvicorn

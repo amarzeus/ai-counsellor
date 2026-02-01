@@ -166,18 +166,31 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+
+  input,
+  textarea,
+  select {
+    @apply text-gray-900 bg-white border-gray-300 placeholder:text-gray-500;
+  }
+
+  .dark input,
+  .dark textarea,
+  .dark select {
+    @apply text-white bg-gray-800 border-gray-700 placeholder:text-gray-400;
+  }
 }
+
 /* AI Message Structured Formatting */
 .ai-message-content {
   font-size: 0.875rem;
   line-height: 1.625;
 }
 
-.ai-message-content > *:first-child {
+.ai-message-content>*:first-child {
   margin-top: 0;
 }
 
-.ai-message-content > *:last-child {
+.ai-message-content>*:last-child {
   margin-bottom: 0;
 }
 

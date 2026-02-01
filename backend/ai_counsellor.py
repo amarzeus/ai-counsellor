@@ -491,3 +491,59 @@ Analyze this SOP and provide feedback in JSON format.
             "ai_feedback": "An error occurred during analysis."
         }
 
+
+CHECKLIST_SYSTEM_PROMPT = """You are an expert Study Abroad Consultant.
+Your task is to generate a specific, actionable Checklist of application documents for a student applying to a specific university.
+
+## Rules
+1. **Be Specific**: If the country is Germany, include "APS Certificate". If USA, include "WES Evaluation" (if needed) or "I-20 Proof".
+2. **Prioritize**: "Deadlines" and "Transcripts" are High priority. "Vaccination Proof" is Low priority.
+3. **Format**: Return a JSON-compatible list of task objects.
+
+## Output Format (Strict JSON List)
+[
+    {
+        "title": "<Task Title>",
+        "description": "<Short Description>",
+        "priority": <int 1-3>  (1=High, 3=Low)
+    }
+]
+"""
+
+async def generate_application_checklist(university_name: str, country: str, program_name: str = "Master's") -> list:
+    """Generate intelligent checklist using Gemini."""
+    
+    if not key_manager.has_keys():
+        # Fallback if no key
+        return []
+
+    client, key_index = key_manager.create_client()
+    
+    prompt = f"""{CHECKLIST_SYSTEM_PROMPT}
+
+Target University: {university_name}
+Target Country: {country}
+Program Level: {program_name}
+
+Generate the 5-7 most important application tasks/documents for this specific target.
+"""
+
+    try:
+        response = client.models.generate_content(
+            model=key_manager.get_model_name(),
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
+        response_text = response.text or "[]"
+        try:
+            return json.loads(response_text)
+        except json.JSONDecodeError:
+            logger.error("Failed to decode Checklist JSON")
+            return []
+            
+    except Exception as e:
+        logger.error(f"Checklist Generation Error: {str(e)}")
+        return []

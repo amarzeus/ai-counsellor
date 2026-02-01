@@ -9,8 +9,12 @@ GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
-REPLIT_DEV_DOMAIN = os.environ.get("REPLIT_DEV_DOMAIN", "")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
+REPLIT_DEV_DOMAIN = os.environ.get("REPLIT_DEV_DOMAIN", "")
+
+# Allow HTTP for local development (FIX for InsecureTransportError)
+if not REPLIT_DEV_DOMAIN and ("localhost" in FRONTEND_URL or "127.0.0.1" in FRONTEND_URL or not FRONTEND_URL):
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 if REPLIT_DEV_DOMAIN:
     DEV_REDIRECT_URL = f"https://{REPLIT_DEV_DOMAIN}/api/auth/google/callback"
@@ -146,7 +150,13 @@ async def google_callback(request: Request, code: str = None, error: str = None)
         
         token = create_access_token(data={"sub": user.id})
         
-        frontend_base = FRONTEND_URL or f"https://{REPLIT_DEV_DOMAIN}"
+        frontend_base = FRONTEND_URL
+        if not frontend_base and not REPLIT_DEV_DOMAIN:
+            # Fallback for local development
+            frontend_base = "http://localhost:3000"
+        elif not frontend_base:
+            frontend_base = f"https://{REPLIT_DEV_DOMAIN}"
+            
         redirect_url = f"{frontend_base}/auth/callback?token={token}"
         
         return RedirectResponse(url=redirect_url)

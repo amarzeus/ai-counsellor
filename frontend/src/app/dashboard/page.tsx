@@ -14,6 +14,7 @@ import StageIndicator from "@/components/StageIndicator";
 import UniversityDrawer from "@/components/UniversityDrawer";
 import { dashboardApi, shortlistApi, taskApi, Dashboard, Shortlist, Task } from "@/lib/api";
 import { useStore } from "@/lib/store";
+import { TimelineView } from "@/components/timeline-view";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -212,11 +213,11 @@ export default function DashboardPage() {
         </div>
 
         {/* Main Grid */}
-        <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0">
+        <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0 overflow-y-auto">
           {/* Left Column */}
           <div className="lg:col-span-8 flex flex-col gap-3">
             {/* Row 1: Stats + Profile Strength */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
                 <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-800">
                   <div className="text-center px-2">
@@ -277,6 +278,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
+            {/* Smart Deadline Timeline */}
+            <div className="mb-1">
+              <TimelineView />
+            </div>
+
             {/* Lock Reminder */}
             {showLockReminder && (
               <div className="flex items-center gap-3 px-4 py-2.5 bg-amber-50/60 dark:bg-amber-900/10 border border-amber-200/60 dark:border-amber-800/40 rounded-xl">
@@ -295,7 +301,7 @@ export default function DashboardPage() {
             )}
 
             {/* Row 2: Quick Actions + Profile Summary */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
                 <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-3">Quick Actions</h3>
                 <div className="space-y-1">
@@ -361,7 +367,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Row 3: Tasks OR Guidance */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 flex-1 min-h-0">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 lg:flex-1 lg:min-h-0">
               {tasks.length > 0 ? (
                 <>
                   <div className="flex items-center justify-between mb-3">
@@ -420,7 +426,7 @@ export default function DashboardPage() {
             <StageIndicator currentStage={dashboard?.current_stage || "ONBOARDING"} />
 
             {/* Universities Card - Now the primary block */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 flex-1 min-h-0 flex flex-col">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 lg:flex-1 lg:min-h-0 flex flex-col">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Your Universities</h3>
                 <Link href="/universities" className="text-[11px] text-blue-600 dark:text-blue-400 font-medium hover:underline">View All</Link>
