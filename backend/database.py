@@ -11,6 +11,9 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 # Debug: Print loaded DATABASE_URL
 print(f"[DEBUG] Loaded DATABASE_URL: {DATABASE_URL}")
 
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 # AGGRESSIVE FALLBACK: If we are running locally (no REPLIT_DEV_DOMAIN) and no legacy 
 # DATABASE_URL is set, we default to SQLite. We only force SQLite if 
 # DATABASE_URL is not already pointing to a real postgres instance.

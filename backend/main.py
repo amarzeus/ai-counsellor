@@ -241,11 +241,18 @@ def run_migrations():
             ("ALTER TABLE universities ADD COLUMN verified_at TIMESTAMP", "universities.verified_at"),
             ("ALTER TABLE universities ADD COLUMN data_source VARCHAR(255)", "universities.data_source"),
             ("ALTER TABLE universities ADD COLUMN programs JSON", "universities.programs"),
-            # ENSURE NULLABILITY: Some legacy columns might have NOT NULL constraints in old DB states
-            ("ALTER TABLE universities ALTER COLUMN tuition_per_year DROP NOT NULL", "relax tuition_per_year"),
-            ("ALTER TABLE universities ALTER COLUMN min_gpa DROP NOT NULL", "relax min_gpa"),
-            ("ALTER TABLE universities ALTER COLUMN acceptance_rate DROP NOT NULL", "relax acceptance_rate"),
+            # User Model Updates
+            ("ALTER TABLE users ADD COLUMN current_stage VARCHAR(50) DEFAULT 'ONBOARDING'", "users.current_stage"),
+            ("ALTER TABLE users ADD COLUMN onboarding_completed BOOLEAN DEFAULT FALSE", "users.onboarding_completed"),
         ]
+
+        if dialect == "postgresql":
+            # ENSURE NULLABILITY: Some legacy columns might have NOT NULL constraints in old DB states
+            migrations.extend([
+                ("ALTER TABLE universities ALTER COLUMN tuition_per_year DROP NOT NULL", "relax tuition_per_year"),
+                ("ALTER TABLE universities ALTER COLUMN min_gpa DROP NOT NULL", "relax min_gpa"),
+                ("ALTER TABLE universities ALTER COLUMN acceptance_rate DROP NOT NULL", "relax acceptance_rate"),
+            ])
         
         for sql, name in migrations:
             try:
@@ -475,7 +482,9 @@ def delete_account(
 
 @app.post("/api/auth/forgot-password")
 def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()
+    # Standardize email to lowercase for lookup
+    search_email = request.email.lower().strip()
+    user = db.query(User).filter(User.email.ilike(search_email)).first()
     if not user:
         # Don't reveal user existence, but for debug/demo we might want to log it
         print(f"Forgot PW: Email {request.email} not found")
