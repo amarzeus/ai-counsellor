@@ -206,7 +206,7 @@ export default function CounsellorPage() {
       setMessages((prev) => [...prev.slice(0, -1), tempUserMsg, assistantMessage]);
 
       if (response.data.actions_taken && response.data.actions_taken.length > 0) {
-         
+
         response.data.actions_taken.forEach((action: any) => {
           if (action.type === "shortlist_university") {
             toast.success("University added to your shortlist!");
@@ -215,7 +215,7 @@ export default function CounsellorPage() {
           }
         });
       }
-       
+
     } catch (error: any) {
       toast.error("Failed to send message");
       setMessages((prev) => prev.slice(0, -1));
@@ -312,7 +312,7 @@ export default function CounsellorPage() {
         />
 
         {/* CHAT AREA */}
-        <main className="flex-1 flex flex-col h-full relative w-full">
+        <main className="flex-1 flex flex-col h-full relative w-full overflow-x-hidden">
           <div className="flex-shrink-0 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 py-2 transition-colors">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -526,7 +526,7 @@ export default function CounsellorPage() {
             </div>
           </div>
 
-          <div className="flex-shrink-0 px-4 py-6 bg-slate-50 dark:bg-[#0B1120] transition-colors">
+          <div className="flex-shrink-0 px-2 sm:px-4 py-4 sm:py-6 bg-slate-50 dark:bg-[#0B1120] transition-colors">
             <div className="max-w-4xl mx-auto w-full">
               <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50">
                 <VoiceInput onInput={handleVoiceInput} disabled={loading} />
@@ -537,7 +537,7 @@ export default function CounsellorPage() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me anything..."
-                  className="flex-1 px-2 py-2 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 text-sm font-medium"
+                  className="flex-1 min-w-0 px-2 py-2 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 text-sm font-medium"
                   disabled={loading}
                 />
 
