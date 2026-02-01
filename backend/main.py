@@ -241,6 +241,10 @@ def run_migrations():
             ("ALTER TABLE universities ADD COLUMN verified_at TIMESTAMP", "universities.verified_at"),
             ("ALTER TABLE universities ADD COLUMN data_source VARCHAR(255)", "universities.data_source"),
             ("ALTER TABLE universities ADD COLUMN programs JSON", "universities.programs"),
+            # ENSURE NULLABILITY: Some legacy columns might have NOT NULL constraints in old DB states
+            ("ALTER TABLE universities ALTER COLUMN tuition_per_year DROP NOT NULL", "relax tuition_per_year"),
+            ("ALTER TABLE universities ALTER COLUMN min_gpa DROP NOT NULL", "relax min_gpa"),
+            ("ALTER TABLE universities ALTER COLUMN acceptance_rate DROP NOT NULL", "relax acceptance_rate"),
         ]
         
         for sql, name in migrations:
