@@ -122,31 +122,44 @@ export default function LandingPage() {
           </motion.div>
         </motion.div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-800 p-10 mb-16 transition-colors duration-300">
-          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">How It Works</h2>
-          <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-            {[
-              { step: 1, title: "Complete Profile", desc: "Share your academic background, goals & budget" },
-              { step: 2, title: "Discover Universities", desc: "Get AI recommendations matched to your profile" },
-              { step: 3, title: "Lock Your Choices", desc: "Commit to universities you want to apply to" },
-              { step: 4, title: "Prepare Applications", desc: "Follow guided tasks for each university" },
-            ].map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
-                className="flex-1 text-center"
-              >
-                <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-lg shadow-lg shadow-blue-600/20 relative">
-                  {item.step}
-                  <div className="absolute inset-0 bg-blue-400 rounded-full blur opacity-20" />
-                </div>
-                <h4 className="font-bold text-lg mb-2 dark:text-white">{item.title}</h4>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{item.desc}</p>
-              </motion.div>
-            ))}
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-800 p-10 mb-16 transition-colors duration-300 relative overflow-hidden">
+          {/* Section Background Decor */}
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-gray-50/50 to-white/0 dark:from-slate-800/20 dark:to-slate-900/0 pointer-events-none" />
+
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 dark:text-white relative z-10">How It Works</h2>
+
+          <div className="relative z-10">
+            {/* Desktop Connector Line */}
+            <div className="hidden md:block absolute top-[24px] left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-blue-100 via-purple-100 to-blue-100 dark:from-blue-900/40 dark:via-purple-900/40 dark:to-blue-900/40" />
+
+            <div className="grid md:grid-cols-4 gap-8">
+              {[
+                { step: 1, title: "Complete Profile", desc: "Share your academic background & goals." },
+                { step: 2, title: "Discover Universities", desc: "Get AI-curated Dream, Target & Safe schools." },
+                { step: 3, title: "Lock Your Choices", desc: "Select and commit to your top universities." },
+                { step: 4, title: "Prepare Applications", desc: "Follow guided tasks to hit every deadline." },
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative flex flex-col items-center text-center group"
+                >
+                  {/* Step Indicator */}
+                  <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 border-4 border-blue-50 dark:border-blue-900/30 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-blue-500/10 group-hover:scale-110 group-hover:border-blue-100 dark:group-hover:border-blue-500/50 transition-all duration-300">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-br from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 font-extrabold text-lg">{item.step}</span>
+                    {/* Active Halo */}
+                    <div className="absolute inset-0 rounded-full border border-blue-100 dark:border-blue-500/20 scale-125 group-hover:scale-150 transition-transform duration-500 opacity-0 group-hover:opacity-100" />
+                  </div>
+
+                  {/* Content */}
+                  <h4 className="font-bold text-lg mb-2 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{item.title}</h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-[200px]">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </main>
