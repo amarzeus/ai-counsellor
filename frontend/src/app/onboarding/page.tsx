@@ -39,6 +39,7 @@ export default function OnboardingPage() {
     degree_major: "",
     graduation_year: new Date().getFullYear(),
     gpa: 3.0,
+    gpa_scale: 4, // Default to 4.0 scale
     intended_degree: "",
     field_of_study: "",
     target_intake_year: new Date().getFullYear() + 1,
@@ -74,9 +75,15 @@ export default function OnboardingPage() {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return formData.current_education_level && formData.degree_major;
+        return formData.current_education_level &&
+          formData.degree_major &&
+          isValidYear(formData.graduation_year) &&
+          isValidGPA(formData.gpa);
       case 2:
-        return formData.intended_degree && formData.field_of_study && formData.preferred_countries.length > 0;
+        return formData.intended_degree &&
+          formData.field_of_study &&
+          formData.preferred_countries.length > 0 &&
+          isValidIntakeYear(formData.target_intake_year);
       case 3:
         return formData.budget_per_year && formData.funding_plan;
       case 4:
@@ -89,7 +96,13 @@ export default function OnboardingPage() {
   const handleComplete = async () => {
     setLoading(true);
     try {
-      await profileApi.update(formData);
+      // Normalize GPA to 4.0 scale if 10.0 scale is selected
+      const payload = { ...formData };
+      if (formData.gpa_scale === 10) {
+        payload.gpa = parseFloat(((formData.gpa / 10) * 4).toFixed(2));
+      }
+
+      await profileApi.update(payload);
       const response = await profileApi.completeOnboarding();
 
       const userStr = localStorage.getItem("user");
@@ -111,17 +124,22 @@ export default function OnboardingPage() {
     }
   };
 
-  const clampYear = (value: number) => {
+  const isValidYear = (year: number) => {
     const currentYear = new Date().getFullYear();
-    if (value < 1900) return 1900;
-    if (value > currentYear + 10) return currentYear + 10;
-    return value;
+    return year >= 1900 && year <= currentYear;
   };
 
-  const clampGPA = (value: number) => {
-    if (value < 0) return 0;
-    if (value > 4.0) return 4.0;
-    return parseFloat(value.toFixed(2));
+  const isValidIntakeYear = (year: number) => {
+    const currentYear = new Date().getFullYear();
+    // Intake should be current year or future (up to 10 years)
+    return year >= currentYear && year <= currentYear + 10;
+  };
+
+  const isValidGPA = (gpa: number) => {
+    if (formData.gpa_scale === 10) {
+      return gpa >= 0 && gpa <= 10.0;
+    }
+    return gpa >= 0 && gpa <= 4.0;
   };
 
   return (
@@ -220,24 +238,51 @@ export default function OnboardingPage() {
                       max="2100"
                       value={formData.graduation_year}
                       onChange={(e) => updateField("graduation_year", parseInt(e.target.value))}
-                      onBlur={(e) => updateField("graduation_year", clampYear(parseInt(e.target.value)))}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all ${!isValidYear(formData.graduation_year)
+                        ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
+                        : "border-gray-300 focus:border-blue-500"
+                        }`}
                     />
+                    {!isValidYear(formData.graduation_year) && (
+                      <p className="text-xs text-red-500 mt-1">Please enter a valid year (1900-{new Date().getFullYear()})</p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      GPA (out of 4.0)
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">GPA Scale</label>
+                      <div className="flex bg-gray-100 rounded-lg p-1">
+                        {[4, 10].map((scale) => (
+                          <button
+                            key={scale}
+                            onClick={() => updateField("gpa_scale", scale)}
+                            className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${formData.gpa_scale === scale
+                                ? "bg-white text-blue-600 shadow-sm"
+                                : "text-gray-500 hover:text-gray-700"
+                              }`}
+                          >
+                            {scale}.0
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <label className="block text-xs text-gray-500 mb-2">
+                      Enter your GPA out of {formData.gpa_scale}.0
                     </label>
                     <input
                       type="number"
                       step="0.1"
                       min="0"
-                      max="4"
+                      max={formData.gpa_scale}
                       value={formData.gpa}
                       onChange={(e) => updateField("gpa", parseFloat(e.target.value))}
-                      onBlur={(e) => updateField("gpa", clampGPA(parseFloat(e.target.value)))}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all ${!isValidGPA(formData.gpa)
+                        ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
+                        : "border-gray-300 focus:border-blue-500"
+                        }`}
                     />
+                    {!isValidGPA(formData.gpa) && (
+                      <p className="text-xs text-red-500 mt-1">GPA must be between 0.0 and {formData.gpa_scale}.0</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -314,13 +359,20 @@ export default function OnboardingPage() {
                   </label>
                   <input
                     type="number"
-                    min="2024"
-                    max="2035"
+                    min={new Date().getFullYear()}
+                    max={new Date().getFullYear() + 10}
                     value={formData.target_intake_year}
                     onChange={(e) => updateField("target_intake_year", parseInt(e.target.value))}
-                    onBlur={(e) => updateField("target_intake_year", clampYear(parseInt(e.target.value)))}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all ${!isValidIntakeYear(formData.target_intake_year)
+                      ? "border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-200"
+                      : "border-gray-300 focus:border-blue-500"
+                      }`}
                   />
+                  {!isValidIntakeYear(formData.target_intake_year) && (
+                    <p className="text-xs text-red-500 mt-1">
+                      Intake year must be {new Date().getFullYear()} or later
+                    </p>
+                  )}
                 </div>
               </div>
             )}

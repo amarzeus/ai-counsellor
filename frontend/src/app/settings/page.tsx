@@ -19,6 +19,7 @@ import {
 import toast from "react-hot-toast";
 import { userApi, authApi } from "@/lib/api";
 import { useStore } from "@/lib/store";
+import DeleteAccountModal from "@/components/DeleteAccountModal";
 
 type TabType = "general" | "security" | "preferences";
 
@@ -27,6 +28,7 @@ export default function SettingsPage() {
     const { user, setUser } = useStore();
     const [activeTab, setActiveTab] = useState<TabType>("general");
     const [saving, setSaving] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     // Form States
     const [name, setName] = useState("");
@@ -82,17 +84,20 @@ export default function SettingsPage() {
         }
     };
 
-    const handleDeleteAccount = async () => {
-        if (window.confirm("Are you sure you want to delete your account? This action is permanent.")) {
-            try {
-                await userApi.deleteAccount();
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-                router.push("/login");
-                toast.success("Account deleted");
-            } catch (error: any) {
-                toast.error("Failed to delete account");
-            }
+    const handleDeleteClick = () => {
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            await userApi.deleteAccount();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            router.push("/login");
+            toast.success("Account deleted");
+        } catch (error: any) {
+            toast.error("Failed to delete account");
+            throw error;
         }
     };
 
@@ -256,7 +261,7 @@ export default function SettingsPage() {
 
                                         <button
                                             type="button"
-                                            onClick={handleDeleteAccount}
+                                            onClick={handleDeleteClick}
                                             className="text-xs font-bold text-red-500 hover:text-red-600 flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
                                         >
                                             <Trash2 className="w-3.5 h-3.5" />
@@ -293,6 +298,12 @@ export default function SettingsPage() {
                     </div>
                 </div>
             </main>
+
+            <DeleteAccountModal
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleConfirmDelete}
+            />
         </div>
     );
 }
