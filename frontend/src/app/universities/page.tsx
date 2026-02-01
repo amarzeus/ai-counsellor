@@ -353,7 +353,7 @@ export default function UniversitiesPage() {
         {activeTab === "all" && (
           <div className="mb-6 flex flex-wrap gap-4">
             {/* Country Filter */}
-            <div className="relative w-full sm:w-64">
+            <div className="relative w-full sm:w-44">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                 <MapPin className="w-4 h-4" />
               </div>
@@ -375,7 +375,7 @@ export default function UniversitiesPage() {
             </div>
 
             {/* Category Filter */}
-            <div className="relative w-full sm:w-64">
+            <div className="relative w-full sm:w-44">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                 <Sparkles className="w-4 h-4" />
               </div>
