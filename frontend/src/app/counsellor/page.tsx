@@ -328,7 +328,7 @@ export default function CounsellorPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-5rem)] bg-gray-50 dark:bg-[#0B1120] flex flex-col overflow-hidden transition-colors duration-300">
+    <div className="h-[calc(100vh-5rem)] sm:h-[calc(100vh-5rem)] md:h-[calc(100dvh-5rem)] lg:h-[calc(100dvh-5rem)] min-h-[calc(100dvh-5rem)] bg-gray-50 dark:bg-[#0B1120] flex flex-col overflow-hidden transition-colors duration-300">
 
       <div className="flex flex-1 overflow-hidden w-full">
         {/* SIDEBAR */}
