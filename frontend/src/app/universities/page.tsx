@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Building2, Lock, Unlock, X,
-  Star, Target, Shield
+  Star, Target, Shield, MapPin, Sparkles, ChevronDown
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,6 +23,7 @@ export default function UniversitiesPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"all" | "shortlist">("all");
   const [countryFilter, setCountryFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [lockModalOpen, setLockModalOpen] = useState(false);
   const [selectedForLock, setSelectedForLock] = useState<Shortlist | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -260,9 +261,13 @@ export default function UniversitiesPage() {
   };
 
   const countries = [...new Set(universities.map((u) => u.country))];
-  const filteredUniversities = countryFilter
-    ? universities.filter((u) => u.country === countryFilter)
-    : universities;
+  const categories = ["DREAM", "TARGET", "SAFE"];
+
+  const filteredUniversities = universities.filter((u) => {
+    const matchesCountry = countryFilter ? u.country === countryFilter : true;
+    const matchesCategory = categoryFilter ? u.category === categoryFilter : true;
+    return matchesCountry && matchesCategory;
+  });
 
   if (loading) {
     return (
@@ -346,12 +351,16 @@ export default function UniversitiesPage() {
         </div>
 
         {activeTab === "all" && (
-          <div className="mb-6">
-            <div className="relative max-w-xs">
+          <div className="mb-6 flex flex-wrap gap-4">
+            {/* Country Filter */}
+            <div className="relative w-full sm:w-64">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <MapPin className="w-4 h-4" />
+              </div>
               <select
                 value={countryFilter}
                 onChange={(e) => setCountryFilter(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 shadow-sm text-sm appearance-none cursor-pointer hover:border-blue-500/30 transition-colors"
+                className="w-full pl-10 pr-10 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 shadow-sm text-sm appearance-none cursor-pointer hover:border-blue-500/30 transition-colors font-medium"
               >
                 <option value="">All Countries</option>
                 {countries.map((country) => (
@@ -360,8 +369,30 @@ export default function UniversitiesPage() {
                   </option>
                 ))}
               </select>
-              <div className="absolute right-4 top-3.5 pointer-events-none text-slate-400">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <ChevronDown className="w-4 h-4" />
+              </div>
+            </div>
+
+            {/* Category Filter */}
+            <div className="relative w-full sm:w-64">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="w-full pl-10 pr-10 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 shadow-sm text-sm appearance-none cursor-pointer hover:border-blue-500/30 transition-colors font-medium"
+              >
+                <option value="">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat.charAt(0) + cat.slice(1).toLowerCase()} Universities
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <ChevronDown className="w-4 h-4" />
               </div>
             </div>
           </div>
