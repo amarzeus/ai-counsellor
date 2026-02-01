@@ -234,10 +234,14 @@ def run_migrations():
         
         for sql, name in migrations:
             try:
-                conn.execute(text(sql))
-                conn.commit()
+                # Use a fresh transaction for each migration step
+                with conn.begin():
+                    conn.execute(text(sql))
                 print(f"Migration applied: {name}")
             except Exception as e:
+                # IMPORTANT: If a migration fails (e.g. column already exists), 
+                # Postgres aborts the transaction. The 'with conn.begin()' 
+                # block handles the rollback automatically.
                 error_str = str(e).lower()
                 # Handle already exists errors gracefully across dialects
                 if any(msg in error_str for msg in ["already exists", "duplicate", "already a column"]):
