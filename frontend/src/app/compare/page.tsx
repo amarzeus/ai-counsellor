@@ -30,30 +30,30 @@ export default function ComparePage() {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120]">
-            <div className="max-w-7xl mx-auto px-6 py-12">
-                <Link href="/universities" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white mb-8">
+            <div className="max-w-7xl mx-auto px-6 py-6">
+                <Link href="/universities" className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white mb-6 text-sm font-medium">
                     <ArrowLeft className="w-4 h-4" />
                     Back to Universities
                 </Link>
 
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Compare Universities</h1>
-                <p className="text-slate-500 dark:text-slate-400 mb-8">Side-by-side comparison of your selected options.</p>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Compare Universities</h1>
+                <p className="text-slate-500 dark:text-slate-400 mb-6 text-sm">Side-by-side comparison of your selected options.</p>
 
                 <div className="overflow-x-auto">
                     <table className="w-full bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
                         <thead>
                             <tr className="border-b border-slate-200 dark:border-slate-800">
-                                <th className="p-6 text-left w-48 bg-slate-50 dark:bg-slate-800/50 rounded-tl-2xl">
-                                    <span className="text-xs font-bold uppercase tracking-wide text-slate-400">Feature</span>
+                                <th className="p-3 text-left w-32 bg-slate-50 dark:bg-slate-800/50 rounded-tl-xl align-bottom">
+                                    <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Feature</span>
                                 </th>
                                 {comparisonList.map((uni) => (
-                                    <th key={uni.id} className="p-6 text-left min-w-[240px]">
-                                        <div className="flex items-start justify-between gap-4">
+                                    <th key={uni.id} className="p-3 text-left min-w-[160px] w-1/3 align-bottom">
+                                        <div className="flex items-start justify-between gap-2">
                                             <div>
-                                                <div className="text-lg font-bold text-slate-900 dark:text-white mb-1">{uni.name}</div>
+                                                <div className="text-sm font-bold text-slate-900 dark:text-white mb-0.5 leading-tight">{uni.name}</div>
                                                 <div className="flex items-center gap-2">
                                                     {uni.category && (
-                                                        <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold uppercase">
+                                                        <span className="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[9px] font-bold uppercase tracking-wider">
                                                             {uni.category}
                                                         </span>
                                                     )}
@@ -61,7 +61,7 @@ export default function ComparePage() {
                                             </div>
                                             <button
                                                 onClick={() => removeFromComparison(uni.id)}
-                                                className="text-slate-400 hover:text-red-500"
+                                                className="text-slate-400 hover:text-red-500 transition-colors p-1"
                                             >
                                                 <Minus className="w-4 h-4" />
                                             </button>
@@ -72,8 +72,8 @@ export default function ComparePage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                             {features.map((feature) => (
-                                <tr key={feature.label}>
-                                    <td className="p-6 font-medium text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-800/30">
+                                <tr key={feature.label} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                                    <td className="p-3 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50/30 dark:bg-slate-800/10 border-r border-slate-100 dark:border-slate-800/50">
                                         {feature.label}
                                     </td>
                                     {comparisonList.map((uni) => {
@@ -88,7 +88,7 @@ export default function ComparePage() {
                                         }
 
                                         return (
-                                            <td key={uni.id} className="p-6 text-slate-900 dark:text-white font-medium">
+                                            <td key={uni.id} className="p-3 text-sm text-slate-900 dark:text-white font-medium align-middle">
                                                 {val || "—"}
                                             </td>
                                         );
@@ -96,11 +96,11 @@ export default function ComparePage() {
                                 </tr>
                             ))}
                             <tr>
-                                <td className="p-6 font-medium text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-800/30">
+                                <td className="p-3 font-semibold text-xs text-slate-500 dark:text-slate-400 bg-slate-50/30 dark:bg-slate-800/10 border-r border-slate-100 dark:border-slate-800/50 align-top">
                                     Fit Analysis
                                 </td>
                                 {comparisonList.map((uni) => (
-                                    <td key={uni.id} className="p-6 align-top">
+                                    <td key={uni.id} className="p-3 align-top">
                                         {uni.fit_reason && (
                                             <div className="mb-3 flex gap-2 text-sm text-green-700 dark:text-green-400">
                                                 <Check className="w-4 h-4 shrink-0 mt-0.5" />
