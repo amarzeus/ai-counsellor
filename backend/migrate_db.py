@@ -9,7 +9,7 @@ from sqlalchemy import text
 # Add current dir to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from database import engine
+from database import engine  # noqa: E402
 
 def run_migrations():
     db_url = str(engine.url)
