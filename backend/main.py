@@ -320,8 +320,14 @@ def signup(user_data: UserCreate, db: Session = Depends(get_db)):
         current_stage=UserStage.ONBOARDING
     )
     db.add(user)
-    db.commit()
-    db.refresh(user)
+    try:
+        db.flush()  # Generate ID
+        db.refresh(user) # Refresh while transaction is active
+        db.commit() # Commit transaction
+    except Exception as e:
+        db.rollback()
+        print(f"Signup Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
     
     profile = UserProfile(user_id=user.id)
     db.add(profile)

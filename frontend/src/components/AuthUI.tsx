@@ -424,14 +424,15 @@ export function AuthUI({ signInContent = {}, signUpContent = {}, defaultView = "
     // Let's rely on initial state for now.
 
     // Check if user is already logged in
+    // Check if user is already logged in
+    const router = useRouter(); // Ensure router hook is used in this component scope if not already
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            // Optional: Validate token validity via API?
-            // For now, simple presence check to redirect "back" attempts
-            window.location.href = "/dashboard";
+            router.push("/dashboard");
         }
-    }, [defaultView]);
+    }, [router, defaultView]);
 
     const finalSignInContent = {
         image: { ...defaultSignInContent.image, ...signInContent.image },
