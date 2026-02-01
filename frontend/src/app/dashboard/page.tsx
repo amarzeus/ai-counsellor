@@ -116,10 +116,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="h-[calc(100vh-64px)] bg-slate-50 dark:bg-[#0B1120] overflow-hidden">
-        <main className="max-w-7xl mx-auto px-6 py-3 h-full flex flex-col">
+      <div className="min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-[#0B1120]">
+        <main className="max-w-7xl mx-auto px-6 py-6 flex flex-col">
           {/* Header Skeleton */}
-          <div className="flex items-baseline justify-between mb-3">
+          <div className="flex items-baseline justify-between mb-6">
             <div className="space-y-2">
               <Skeleton className="h-8 w-48" />
               <Skeleton className="h-4 w-64" />
@@ -127,7 +127,7 @@ export default function DashboardPage() {
             <Skeleton className="hidden md:block h-4 w-96" />
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0">
+          <div className="grid lg:grid-cols-12 gap-6">
             {/* Left Column Skeleton */}
             <div className="lg:col-span-8 flex flex-col gap-3">
               <div className="grid grid-cols-2 gap-3">
@@ -187,10 +187,10 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] bg-slate-50 dark:bg-[#0B1120] overflow-hidden">
-      <main className="max-w-7xl mx-auto px-6 py-3 h-full flex flex-col">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-[#0B1120]">
+      <main className="max-w-7xl mx-auto px-6 py-6 flex flex-col">
         {/* Header Row */}
-        <div className="flex items-baseline justify-between mb-3">
+        <div className="flex items-baseline justify-between mb-6">
           <div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-white">
               Welcome back, {dashboard?.user.full_name?.split(" ")[0]}
@@ -213,7 +213,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Main Grid */}
-        <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0 overflow-y-auto">
+        <div className="grid lg:grid-cols-12 gap-6">
           {/* Left Column */}
           <div className="lg:col-span-8 flex flex-col gap-3">
             {/* Row 1: Stats + Profile Strength */}
@@ -373,58 +373,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Row 3: Tasks OR Guidance */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 lg:flex-1 lg:min-h-0">
-              {tasks.length > 0 ? (
-                <>
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Tasks Overview</h3>
-                    <Link href="/tasks" className="text-[11px] text-blue-600 dark:text-blue-400 font-medium hover:underline">View All</Link>
-                  </div>
-                  <div className="space-y-1.5">
-                    {pendingTasks.slice(0, 3).map((task) => (
-                      <div key={task.id} className="flex items-center gap-2 p-2 bg-slate-50/80 dark:bg-slate-800/30 rounded-lg">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0"></span>
-                        <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 truncate">{task.title}</span>
-                        <span className="text-[10px] text-slate-400 uppercase">Pending</span>
-                      </div>
-                    ))}
-                    {completedTasks.slice(0, 2).map((task) => (
-                      <div key={task.id} className="flex items-center gap-2 p-2 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-lg">
-                        <CheckCircle className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
-                        <span className="text-sm text-slate-500 dark:text-slate-400 flex-1 truncate line-through">{task.title}</span>
-                        <span className="text-[10px] text-emerald-600 uppercase">Done</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : guidance ? (
-                <div className="flex flex-col h-full">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">
-                      <Lightbulb className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-1">{guidance.title}</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{guidance.description}</p>
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <button
-                      onClick={() => router.push(guidance.href)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-xs font-semibold hover:bg-slate-800 dark:hover:bg-white transition-colors"
-                    >
-                      {guidance.action}
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-sm text-slate-400">All caught up! Check your tasks.</p>
-                </div>
-              )}
-            </div>
+
           </div>
 
           {/* Right Column */}
@@ -489,6 +438,59 @@ export default function DashboardPage() {
                     Get Recommendations
                     <ArrowRight className="w-3 h-3" />
                   </button>
+                </div>
+              )}
+            </div>
+
+            {/* Row 3: Tasks OR Guidance */}
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 lg:flex-1 lg:min-h-0">
+              {tasks.length > 0 ? (
+                <>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Tasks Overview</h3>
+                    <Link href="/tasks" className="text-[11px] text-blue-600 dark:text-blue-400 font-medium hover:underline">View All</Link>
+                  </div>
+                  <div className="space-y-1.5">
+                    {pendingTasks.slice(0, 3).map((task) => (
+                      <div key={task.id} className="flex items-center gap-2 p-2 bg-slate-50/80 dark:bg-slate-800/30 rounded-lg">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0"></span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 truncate">{task.title}</span>
+                        <span className="text-[10px] text-slate-400 uppercase">Pending</span>
+                      </div>
+                    ))}
+                    {completedTasks.slice(0, 2).map((task) => (
+                      <div key={task.id} className="flex items-center gap-2 p-2 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-lg">
+                        <CheckCircle className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                        <span className="text-sm text-slate-500 dark:text-slate-400 flex-1 truncate line-through">{task.title}</span>
+                        <span className="text-[10px] text-emerald-600 uppercase">Done</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : guidance ? (
+                <div className="flex flex-col h-full">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">
+                      <Lightbulb className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-1">{guidance.title}</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{guidance.description}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <button
+                      onClick={() => router.push(guidance.href)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg text-xs font-semibold hover:bg-slate-800 dark:hover:bg-white transition-colors"
+                    >
+                      {guidance.action}
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-sm text-slate-400">All caught up! Check your tasks.</p>
                 </div>
               )}
             </div>
