@@ -64,7 +64,8 @@ export const useStore = create<AppState>((set) => ({
       dashboard: null,
       shortlist: [],
       tasks: [],
-      chatMessages: []
+      chatMessages: [],
+      comparisonList: []
     });
   },
 }));

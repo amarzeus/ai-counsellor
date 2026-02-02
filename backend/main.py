@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from typing import List, Optional
-from fastapi import FastAPI, Depends, HTTPException, Response
+from fastapi import FastAPI, Depends, HTTPException, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text, String
@@ -414,10 +414,30 @@ def signup(user_data: UserCreate, db: Session = Depends(get_db)):
     )
 
 @app.post("/api/auth/login", response_model=TokenResponse)
-def login(credentials: UserLogin, db: Session = Depends(get_db)):
+def login(credentials: UserLogin, request: Request, db: Session = Depends(get_db)):
+    # Import rate limiter
+    from rate_limiter import check_login_rate_limit, record_failed_login, reset_login_limiter, get_client_ip
+    
+    # Get client IP for rate limiting
+    client_ip = get_client_ip(request)
+    
+    # Check rate limit
+    is_allowed, info = check_login_rate_limit(client_ip)
+    if not is_allowed:
+        raise HTTPException(
+            status_code=429,
+            detail=info,
+            headers={"Retry-After": str(info.get("retry_after", 60))}
+        )
+    
     user = db.query(User).filter(User.email == credentials.email).first()
     if not user or not verify_password(credentials.password, user.password_hash):
+        # Record failed attempt
+        record_failed_login(client_ip)
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    # Reset rate limiter on successful login
+    reset_login_limiter(client_ip)
     
     token = create_access_token(data={"sub": user.id})
     return TokenResponse(

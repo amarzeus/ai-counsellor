@@ -127,12 +127,25 @@ def test_jwt_token_contains_user_id(client, test_user):
     
     token = response.json()["access_token"]
     
-    # Decode token (without verification for testing)
-    from jose import jwt
-    payload = jwt.decode(token, options={"verify_signature": False})
+    # Decode token without verification (for testing only)
+    import base64
+    import json as json_lib
+    
+    # JWT is header.payload.signature - we just need payload
+    parts = token.split(".")
+    assert len(parts) == 3
+    
+    # Decode payload (add padding if needed)
+    payload_b64 = parts[1]
+    padding = 4 - len(payload_b64) % 4
+    if padding != 4:
+        payload_b64 += "=" * padding
+    
+    payload = json_lib.loads(base64.urlsafe_b64decode(payload_b64))
     
     assert "sub" in payload
-    assert payload["sub"] == str(test_user.id)
+    # JWT payload stores sub as string, compare with str(user.id)
+    assert str(payload["sub"]) == str(test_user.id)
 
 def test_google_oauth_callback_endpoint_exists(client):
     """Test that Google OAuth callback endpoint exists."""

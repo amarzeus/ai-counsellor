@@ -121,9 +121,10 @@ def test_discovery_user_can_shortlist(client, auth_headers, test_universities):
     """Integration test: DISCOVERY users can shortlist universities."""
     university_id = test_universities[0].id
     
+    # POST /api/shortlist with JSON body containing university_id
     response = client.post(
-        f"/api/shortlist/{university_id}",
-        json={"category": "DREAM"},
+        "/api/shortlist",
+        json={"university_id": university_id, "category": "DREAM"},
         headers=auth_headers
     )
     

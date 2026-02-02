@@ -2,6 +2,7 @@
 Pytest configuration and shared fixtures for backend tests.
 """
 import pytest
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
@@ -11,20 +12,28 @@ from models import User, UserProfile, University, UserStage, ShortlistedUniversi
 from main import app
 from auth import get_password_hash
 
-# Use in-memory SQLite for tests
-SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+# Use file-based SQLite for tests (ensures tables persist across connections)
+TEST_DB_PATH = "/tmp/test_ai_counsellor.db"
 
 @pytest.fixture(scope="function")
 def db_engine():
     """Create a fresh database engine for each test."""
+    # Remove old test database
+    if os.path.exists(TEST_DB_PATH):
+        os.remove(TEST_DB_PATH)
+    
     engine = create_engine(
-        SQLALCHEMY_DATABASE_URL,
+        f"sqlite:///{TEST_DB_PATH}",
         connect_args={"check_same_thread": False}
     )
     Base.metadata.create_all(bind=engine)
     yield engine
     Base.metadata.drop_all(bind=engine)
     engine.dispose()
+    
+    # Cleanup
+    if os.path.exists(TEST_DB_PATH):
+        os.remove(TEST_DB_PATH)
 
 @pytest.fixture(scope="function")
 def db_session(db_engine):
@@ -35,15 +44,18 @@ def db_session(db_engine):
     session.close()
 
 @pytest.fixture(scope="function")
-def client(db_session):
+def client(db_engine, db_session):
     """Create a test client with database override."""
     from database import get_db
     
+    TestingSessionLocal = sessionmaker(bind=db_engine)
+    
     def override_get_db():
+        db = TestingSessionLocal()
         try:
-            yield db_session
+            yield db
         finally:
-            pass
+            db.close()
     
     app.dependency_overrides[get_db] = override_get_db
     test_client = TestClient(app)
