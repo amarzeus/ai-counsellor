@@ -719,3 +719,29 @@ Polish this email now.
     except Exception as e:
         logger.error(f"Cold Email Polishing Error: {str(e)}")
         return None
+
+async def transcribe_audio(audio_data: bytes, mime_type: str = "audio/wav") -> str:
+    """Transcribe audio using Gemini Multimodal capabilities."""
+    
+    if not key_manager.has_keys():
+        raise Exception("Gemini API keys not configured")
+
+    client, key_index = key_manager.create_client()
+    
+    # Simple prompt for transcription
+    prompt = "Transcribe this audio file exactly as spoken. Do not add any commentary."
+    
+    try:
+        response = client.models.generate_content(
+            model=key_manager.get_model_name(),
+            contents=[prompt, types.Part.from_bytes(data=audio_data, mime_type=mime_type)],
+            config=types.GenerateContentConfig(
+                response_mime_type="text/plain"
+            )
+        )
+        return response.text.strip() if response.text else ""
+            
+    except Exception as e:
+        logger.error(f"Audio Transcription Error: {str(e)}")
+        raise e
+
