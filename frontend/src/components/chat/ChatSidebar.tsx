@@ -49,7 +49,7 @@ export default function ChatSidebar({ currentSessionId, onSessionSelect, onNewCh
             const response = await sessionApi.getAll();
             setSessions(response.data);
         } catch (error) {
-            console.error("Failed to load sessions");
+            console.error("Failed to load sessions", error);
         } finally {
             setLoading(false);
         }

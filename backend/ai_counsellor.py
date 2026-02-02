@@ -223,7 +223,7 @@ def build_context(user_data: dict, profile: dict, universities: list, shortliste
             else:
                 programs_str += f"\n  - {p.get('name')} ({p.get('degree_level')}): ${p.get('tuition_per_year_usd', 0):,}/yr, Min GPA: {p.get('min_gpa', 'N/A')}, {tags}"
         
-        context += f"- [ID: {uni['id']}] {uni['name']} ({uni['country']}, {uni.get('city', 'Unknown')})\n"
+        context += f"- [ID: {uni.get('id', 'N/A')}] {uni.get('name', 'Unknown University')} ({uni.get('country', 'Unknown')}, {uni.get('city', 'Unknown')})\n"
         context += f"  Rank: #{uni.get('qs_ranking', 'NR')} (QS), Status: {'Public' if uni.get('is_public') else 'Private'}\n"
         context += f"  Category: {cat} | Acceptance: {acc} | Cost: {cost}\n"
         context += f"  Programs:{programs_str}\n"
@@ -728,8 +728,24 @@ async def transcribe_audio(audio_data: bytes, mime_type: str = "audio/wav") -> s
 
     client, key_index = key_manager.create_client()
     
-    # Simple prompt for transcription
-    prompt = "Transcribe this audio file exactly as spoken. Do not add any commentary."
+    import re
+    
+    # Robust prompt for VERBATIM transcription with DOMAIN CONTEXT
+    prompt = """
+    Transcribe the spoken words in this audio file EXACTLY as they are spoken.
+    
+    CRITICAL CONTEXT:
+    - Domain: Study Abroad Counselling.
+    - Common Terms: GRE, TOEFL, IELTS, PTE, GPA, CGPA, Scholarship, Visa, Tuition, Master's, Bachelor's, STEM, OPT, CPT.
+    - Locations: Germany, USA, Canada, UK, Australia, Ireland.
+
+    INSTRUCTIONS:
+    - Output VERBATIM text.
+    - Use the Context above to correct phonetic mishearings of technical terms (e.g., "toffle" -> "TOEFL").
+    - If speech is faint, use context to fill gaps.
+    - Only return empty string if there is absolutely no human speech.
+    - Do NOT include timestamps or speaker labels.
+    """
     
     try:
         response = client.models.generate_content(
@@ -739,7 +755,21 @@ async def transcribe_audio(audio_data: bytes, mime_type: str = "audio/wav") -> s
                 response_mime_type="text/plain"
             )
         )
-        return response.text.strip() if response.text else ""
+        text = response.text.strip() if response.text else ""
+        
+        # Check for Silence marker
+        if text.upper() == "SILENCE":
+            return ""
+
+        # Post-processing: Only remove extremely obvious non-speech markers like [Silence] if strictly bracketed
+        # But be careful not to remove "[University Name]" if user said it.
+        # Let's keep the text mostly raw to improve accuracy.
+        clean_text = text.replace("[Silence]", "").replace("[Music]", "").strip()
+        
+        if not clean_text or clean_text in [".", "?", "!", ",", ""]:
+            return ""
+            
+        return clean_text
             
     except Exception as e:
         logger.error(f"Audio Transcription Error: {str(e)}")

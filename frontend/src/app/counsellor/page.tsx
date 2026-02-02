@@ -155,16 +155,30 @@ export default function CounsellorPage() {
   // };
 
   const fetchHistory = async (sessionId: number) => {
+    console.log("Loading session:", sessionId);
     setLoading(true);
     try {
       const response = await chatApi.getHistory(sessionId);
+      console.log("Session data:", response.data);
       setMessages(response.data);
     } catch (error) {
-      console.error("Failed to load chat history");
+      console.error("Failed to load chat history", error);
+      toast.error("Could not load chat history");
     } finally {
       setLoading(false);
     }
   };
+
+  const speakResponse = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+    }
+  };
+
 
   const shouldSpeakRef = useRef(false);
 
@@ -395,7 +409,7 @@ export default function CounsellorPage() {
           </AnimatePresence>
 
           <div
-            className="flex-1 overflow-y-auto px-4 py-4 space-y-6 bg-gray-50 dark:bg-[#0B1120]"
+            className="flex-1 overflow-y-auto px-4 py-4 space-y-6 bg-gray-50 dark:bg-[#0B1120] no-scrollbar"
             ref={scrollContainerRef}
             onScroll={handleScroll}
           >
@@ -627,6 +641,15 @@ export default function CounsellorPage() {
           <VoiceConversationModal
             isOpen={isVoiceModalOpen}
             onClose={() => setIsVoiceModalOpen(false)}
+            sessionId={currentSessionId}
+            onMessageSent={(newSessionId) => {
+              if (newSessionId && newSessionId !== currentSessionId) {
+                setCurrentSessionId(newSessionId);
+              } else if (currentSessionId) {
+                // If session ID didn't change (or was already cohesive), refresh history
+                fetchHistory(currentSessionId);
+              }
+            }}
           />
         )}
       </AnimatePresence>

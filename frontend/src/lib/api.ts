@@ -216,7 +216,7 @@ export const chatApi = {
   send: (content: string, sessionId?: number) =>
     api.post<ChatMessage>('/api/chat', { content, session_id: sessionId }),
   sendVoice: (formData: FormData, language: string = 'en') =>
-    api.post<{ user_text: string; ai_response: any; audio_base64: string | null }>(`/api/voice/chat?language=${language}`, formData, {
+    api.post<{ user_text: string; ai_response: any; audio_base64: string | null; session_id?: number }>(`/api/voice/chat?language=${language}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
   transcribeVoice: (formData: FormData) =>

@@ -1285,7 +1285,7 @@ def get_chat_history(
     # Simple on-demand for now as universities table is small
     
     for msg in messages:
-        if msg.suggested_universities:
+        if msg.suggested_universities and isinstance(msg.suggested_universities, list):
             # We need to modify the dict in place or create a copy
             # Since SQLA models return immutable-ish JSON, better to modify before returning response model
             # But here we are returning list of model_validates.
