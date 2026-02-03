@@ -219,22 +219,22 @@ export default function DashboardPage() {
             {/* Row 1: Stats + Profile Strength */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-col justify-center h-full">
-                <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-800">
-                  <div className="text-center px-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800">
+                  <div className="text-center px-4 py-4 sm:py-0">
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <Building2 className="w-4 h-4 text-blue-500 opacity-70" />
                       <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Shortlisted</span>
                     </div>
                     <p className="text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.shortlisted_count || 0}</p>
                   </div>
-                  <div className="text-center px-4">
+                  <div className="text-center px-4 py-4 sm:py-0">
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <Lock className="w-4 h-4 text-purple-500 opacity-70" />
                       <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Locked</span>
                     </div>
                     <p className="text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.locked_count || 0}</p>
                   </div>
-                  <div className="text-center px-4">
+                  <div className="text-center px-4 py-4 sm:py-0">
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <Clock className="w-4 h-4 text-orange-500 opacity-70" />
                       <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pending</span>

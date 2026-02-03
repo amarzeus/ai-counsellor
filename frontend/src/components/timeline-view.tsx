@@ -85,16 +85,16 @@ export function TimelineView() {
 
                             {/* Content Card */}
                             <div className="flex-1 bg-gray-50 dark:bg-slate-800/50 rounded-lg p-4 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all border border-transparent hover:border-gray-100 dark:hover:border-slate-700">
-                                <div className="flex justify-between items-start">
+                                <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0">
                                     <div>
-                                        <h3 className="font-semibold text-gray-900 dark:text-white">{item.university_name}</h3>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white leading-tight">{item.university_name}</h3>
                                         <p className="text-sm text-gray-600 dark:text-slate-400 mb-1">{item.program_name}</p>
                                         <div className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-slate-500">
                                             <span>Deadline: {item.deadline_display}</span>
                                         </div>
                                     </div>
 
-                                    <div className="text-right">
+                                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto border-t sm:border-0 border-slate-200 dark:border-slate-700 pt-2 sm:pt-0 mt-2 sm:mt-0">
                                         <span className={`block text-2xl font-bold font-mono tracking-tight
                         ${item.status === "URGENT" ? "text-red-600 dark:text-red-400" :
                                                 item.status === "WARNING" ? "text-yellow-600 dark:text-yellow-400" :

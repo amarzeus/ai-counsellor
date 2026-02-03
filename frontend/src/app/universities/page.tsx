@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
-  Building2, Lock, Unlock, X,
+  Building2, Lock, Unlock, X, Search,
   Star, Target, Shield, MapPin, Sparkles, ChevronDown
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -391,12 +392,13 @@ export default function UniversitiesPage() {
             {/* Category Filter */}
             <div className="relative w-full sm:w-auto sm:min-w-[11rem]">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                <Sparkles className="w-4 h-4" />
+                {!user ? <Lock className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
               </div>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 shadow-sm text-sm appearance-none cursor-pointer hover:border-blue-500/30 transition-colors font-medium"
+                disabled={!user}
+                className={`w-full pl-10 pr-10 py-2.5 border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 shadow-sm text-sm appearance-none hover:border-blue-500/30 transition-colors font-medium ${!user ? 'cursor-not-allowed opacity-75 text-slate-400' : 'cursor-pointer'}`}
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
@@ -405,6 +407,14 @@ export default function UniversitiesPage() {
                   </option>
                 ))}
               </select>
+
+              {!user && (
+                <div
+                  className="absolute inset-0 z-10 cursor-not-allowed"
+                  onClick={() => toast.error("Log in to filter by admission chances")}
+                />
+              )}
+
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                 <ChevronDown className="w-4 h-4" />
               </div>
