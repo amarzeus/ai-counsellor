@@ -380,7 +380,7 @@ export const FlickeringFooter = () => {
 
     return (
         <footer id="footer" className="w-full pb-0 bg-background border-t border-border/40">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between p-10 max-w-6xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between p-6 md:p-10 max-w-6xl mx-auto">
                 <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
                     <Link href="/" className="flex items-center gap-2 group">
                         {/* Logo updated to use Next.js Image with project asset */}
@@ -394,7 +394,7 @@ export const FlickeringFooter = () => {
                     </div>
                 </div>
                 <div className="pt-10 md:pt-0 md:w-1/2">
-                    <div className="flex flex-col items-start justify-start md:flex-row md:items-start md:justify-between gap-y-10 lg:pl-10">
+                    <div className="grid grid-cols-2 md:flex md:flex-row md:items-start md:justify-between gap-10 md:gap-y-10 lg:pl-10">
                         {siteConfig.footerLinks.map((column, columnIndex) => (
                             <ul key={columnIndex} className="flex flex-col gap-y-3">
                                 <li className="mb-2 text-sm font-semibold text-foreground">
