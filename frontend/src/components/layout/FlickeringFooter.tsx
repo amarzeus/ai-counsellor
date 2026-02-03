@@ -358,14 +358,14 @@ export const siteConfig = {
             links: [
                 { id: 5, title: "Counsellor", url: "/counsellor" },
                 { id: 6, title: "Universities", url: "/universities" },
-                { id: 7, title: "Pricing", url: "#" },
+                { id: 7, title: "Pricing", url: "/pricing" },
             ],
         },
         {
             title: "Resources",
             links: [
-                { id: 9, title: "Blog", url: "#" },
-                { id: 10, title: "Guide", url: "#" },
+                { id: 9, title: "Blog", url: "/blog" },
+                { id: 10, title: "Guide", url: "/guide" },
                 { id: 11, title: "FAQ", url: "/faq" },
             ],
         },
@@ -394,21 +394,18 @@ export const FlickeringFooter = () => {
                     </div>
                 </div>
                 <div className="pt-8 md:pt-0 md:w-1/2">
-                    <div className="grid grid-cols-3 md:flex md:flex-row md:items-start md:justify-between gap-4 md:gap-y-10 lg:pl-10">
+                    <div className="grid grid-cols-3 gap-2 md:flex md:flex-row md:items-start md:justify-between md:gap-y-10 lg:pl-10">
                         {siteConfig.footerLinks.map((column, columnIndex) => (
-                            <ul key={columnIndex} className="flex flex-col gap-y-3">
-                                <li className="mb-2 text-sm font-semibold text-foreground">
+                            <ul key={columnIndex} className="flex flex-col gap-y-2">
+                                <li className="mb-2 text-xs font-bold uppercase tracking-wider text-foreground">
                                     {column.title}
                                 </li>
                                 {column.links.map((link) => (
                                     <li
                                         key={link.id}
-                                        className="group inline-flex cursor-pointer items-center justify-start gap-1 text-[14px] text-muted-foreground hover:text-foreground transition-colors"
+                                        className="group inline-flex cursor-pointer items-start justify-start gap-1 text-[11px] sm:text-sm text-muted-foreground hover:text-foreground transition-colors"
                                     >
-                                        <Link href={link.url}>{link.title}</Link>
-                                        <div className="flex size-3 items-center justify-center opacity-0 -translate-x-2 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100">
-                                            <ChevronRightIcon className="size-3" />
-                                        </div>
+                                        <Link href={link.url} className="leading-tight">{link.title}</Link>
                                     </li>
                                 ))}
                             </ul>

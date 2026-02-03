@@ -64,6 +64,14 @@ export function Header() {
 		}] : []),
 	] : [
 		{
+			label: 'Universities',
+			href: '/universities',
+		},
+		{
+			label: 'Pricing',
+			href: '/pricing',
+		},
+		{
 			label: 'About Us',
 			href: '/about',
 		},
@@ -71,7 +79,6 @@ export function Header() {
 			label: 'How it Works',
 			href: '/how-it-works',
 		},
-
 	];
 
 	return (

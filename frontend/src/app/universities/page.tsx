@@ -31,6 +31,10 @@ export default function UniversitiesPage() {
 
   const { comparisonList, addToComparison, removeFromComparison } = useStore();
   const toggleComparison = (uni: University) => {
+    if (!user) {
+      toast.error("Please login to compare universities");
+      return;
+    }
     if (comparisonList.find(u => u.id === uni.id)) {
       removeFromComparison(uni.id);
     } else {
@@ -43,35 +47,45 @@ export default function UniversitiesPage() {
   };
 
   useEffect(() => {
+    // Public Access: We verify user if token exists, but don't redirect if not.
     const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-
     const userStr = localStorage.getItem("user");
-    if (userStr) {
+
+    if (token && userStr) {
       const storedUser = JSON.parse(userStr);
       setUser(storedUser);
-
+      // Optional: Check if onboarding is needed, but maybe allow browsing even if incomplete?
+      // For now, consistent with other pages: if logged in but incomplete, redirect.
       if (!storedUser.onboarding_completed) {
         router.push("/onboarding");
         return;
       }
     }
 
+    // Always fetch data - the API now handles public access
     fetchData();
   }, [router, setUser]);
 
   const fetchData = async () => {
     try {
-      const [uniRes, shortlistRes] = await Promise.all([
-        universityApi.getAll(),
-        shortlistApi.getAll(),
-      ]);
-      setUniversities(uniRes.data);
-      setShortlist(shortlistRes.data);
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        // Authenticated: Fetch both universities and shortlist
+        const [uniRes, shortlistRes] = await Promise.all([
+          universityApi.getAll(),
+          shortlistApi.getAll(),
+        ]);
+        setUniversities(uniRes.data);
+        setShortlist(shortlistRes.data);
+      } else {
+        // Guest: Only fetch universities
+        const uniRes = await universityApi.getAll();
+        setUniversities(uniRes.data);
+        setShortlist([]);
+      }
     } catch (error) {
+      console.error(error);
       toast.error("Failed to load universities");
     } finally {
       setLoading(false);

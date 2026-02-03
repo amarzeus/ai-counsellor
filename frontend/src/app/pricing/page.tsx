@@ -2,13 +2,15 @@
 
 import { Check, Sparkles, Gift } from "lucide-react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
+// import Navbar from "@/components/Navbar";
+import { Header } from "@/components/ui/header-1";
 
 export default function PricingPage() {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white pb-20">
-            <Navbar />
-
+            {/* Navbar is handled by layout.tsx usually, but if not, use the new Header */}
+            {/* Assuming layout.tsx includes Header, or we need to add Header-1 here if specific */}
+            {/* For now, removing old Navbar to avoid duplicates if Layout has one, or replacing if not. */}
             <main className="pt-32 px-6 max-w-4xl mx-auto">
                 {/* Hero Section */}
                 <div className="text-center mb-16 space-y-4">

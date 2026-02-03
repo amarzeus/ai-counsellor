@@ -22,7 +22,7 @@ from schemas import (
 )
 from real_universities_data import UNIVERSITIES_DATA
 from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus, SavedEmail
-from auth import get_password_hash, verify_password, create_access_token, get_current_user
+from auth import get_password_hash, verify_password, create_access_token, get_current_user, get_current_user_optional
 # from universities_data import UNIVERSITIES # Replaced by real_universities_data
 from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university, analyze_sop, generate_application_checklist, generate_cold_email_content, polish_cold_email_content
 from report_generator import StrategyReportGenerator
@@ -674,11 +674,11 @@ def get_universities(
     max_tuition: Optional[int] = None,
     degree_level: Optional[str] = None,
     field: Optional[str] = None,
-    current_user: User = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_current_user_optional),
     db: Session = Depends(get_db)
 ):
-    # GUARD: Stage 1 users cannot access Discovery data
-    require_stage_minimum(current_user, UserStage.DISCOVERY, "browse universities")
+    # Guard removed to allow public access
+    # require_stage_minimum(current_user, UserStage.DISCOVERY, "browse universities")
     
     query = db.query(University)
     
@@ -704,12 +704,23 @@ def get_universities(
     
     universities = query.all()
     
-    profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
-    profile_dict = profile.__dict__ if profile else {}
+    profile_dict = {}
+    if current_user:
+        profile = db.query(UserProfile).filter(UserProfile.user_id == current_user.id).first()
+        profile_dict = profile.__dict__ if profile else {}
     
     result = []
     for uni in universities:
-        cat, fit, risk, acc, cost = categorize_university(uni.__dict__, profile_dict)
+        if current_user and profile_dict:
+            cat, fit, risk, acc, cost = categorize_university(uni.__dict__, profile_dict)
+        else:
+            # Default values for guests
+            cat = "TARGET" # Default so UI doesn't break
+            fit = "Log in to see your fit"
+            risk = "Log in to see detailed risks"
+            cost = "Log in for cost analysis"
+            acc = "UNKNOWN"
+
         uni_resp = UniversityResponse(
             id=uni.id,
             name=uni.name,
