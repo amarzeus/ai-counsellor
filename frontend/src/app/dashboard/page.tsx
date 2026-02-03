@@ -188,14 +188,14 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-[#0B1120]">
-      <main className="max-w-7xl mx-auto px-6 py-6 flex flex-col">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col">
         {/* Header Row */}
-        <div className="flex items-baseline justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 mb-4 sm:mb-6">
           <div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
               Welcome back, {dashboard?.user.full_name?.split(" ")[0]}
             </h1>
-            <p className="text-xs text-slate-400 dark:text-slate-500">
+            <p className="text-xs text-slate-400 dark:text-slate-500 line-clamp-1">
               {dashboard?.next_action || "Ready to continue your journey?"}
             </p>
           </div>
@@ -213,40 +213,42 @@ export default function DashboardPage() {
         </div>
 
         {/* Main Grid */}
-        <div className="grid lg:grid-cols-12 gap-6">
+        <div className="grid lg:grid-cols-12 gap-4 sm:gap-6">
           {/* Left Column */}
-          <div className="lg:col-span-8 flex flex-col gap-3">
+          <div className="lg:col-span-8 flex flex-col gap-3 order-1">
             {/* Row 1: Stats + Profile Strength */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 flex flex-col justify-center h-full">
-                <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800">
-                  <div className="text-center px-4 py-4 sm:py-0">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Building2 className="w-4 h-4 text-blue-500 opacity-70" />
-                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Shortlisted</span>
+            <div className="grid grid-cols-1 gap-3">
+              {/* Stats Card - Horizontal on mobile */}
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 sm:p-6 shadow-sm border border-slate-200/80 dark:border-slate-800">
+                <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-800">
+                  <div className="text-center px-2 sm:px-4">
+                    <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                      <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 opacity-70" />
+                      <span className="text-[9px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Short</span>
                     </div>
-                    <p className="text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.shortlisted_count || 0}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.shortlisted_count || 0}</p>
                   </div>
-                  <div className="text-center px-4 py-4 sm:py-0">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Lock className="w-4 h-4 text-purple-500 opacity-70" />
-                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Locked</span>
+                  <div className="text-center px-2 sm:px-4">
+                    <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                      <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500 opacity-70" />
+                      <span className="text-[9px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Lock</span>
                     </div>
-                    <p className="text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.locked_count || 0}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.locked_count || 0}</p>
                   </div>
-                  <div className="text-center px-4 py-4 sm:py-0">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Clock className="w-4 h-4 text-orange-500 opacity-70" />
-                      <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pending</span>
+                  <div className="text-center px-2 sm:px-4">
+                    <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                      <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-500 opacity-70" />
+                      <span className="text-[9px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tasks</span>
                     </div>
-                    <p className="text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.pending_tasks || 0}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.pending_tasks || 0}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
+              {/* Profile Strength Card */}
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
                 <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-2">Profile Strength</h3>
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${dashboard?.profile_strength?.academics === "Strong"
                     ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
                     : dashboard?.profile_strength?.academics === "Weak"
@@ -301,35 +303,35 @@ export default function DashboardPage() {
             )}
 
             {/* Row 2: Quick Actions + Profile Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
-                <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-3">Quick Actions</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
+                <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-2 sm:mb-3">Quick Actions</h3>
                 <div className="space-y-1">
-                  <Link href="/counsellor" className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <div className="flex items-center gap-2.5">
-                      <MessageCircle className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Chat with AI Counsellor</span>
+                  <Link href="/counsellor" className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                    <div className="flex items-center gap-2">
+                      <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
+                      <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200">AI Counsellor</span>
                     </div>
                     <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition-colors" />
                   </Link>
-                  <Link href="/universities" className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <div className="flex items-center gap-2.5">
-                      <Building2 className="w-4 h-4 text-slate-400 group-hover:text-purple-500 transition-colors" />
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Browse Universities</span>
+                  <Link href="/universities" className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-purple-500 transition-colors" />
+                      <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200">Universities</span>
                     </div>
                     <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition-colors" />
                   </Link>
-                  <Link href="/tasks" className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <div className="flex items-center gap-2.5">
-                      <ListTodo className="w-4 h-4 text-slate-400 group-hover:text-green-500 transition-colors" />
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">View Tasks</span>
+                  <Link href="/tasks" className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                    <div className="flex items-center gap-2">
+                      <ListTodo className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-green-500 transition-colors" />
+                      <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200">Tasks</span>
                     </div>
                     <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition-colors" />
                   </Link>
-                  <Link href="/tools/cold-email" className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <div className="flex items-center gap-2.5">
-                      <Mail className="w-4 h-4 text-slate-400 group-hover:text-pink-500 transition-colors" />
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Email Architect</span>
+                  <Link href="/tools/cold-email" className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-pink-500 transition-colors" />
+                      <span className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200">Email Architect</span>
                     </div>
                     <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition-colors" />
                   </Link>
@@ -337,16 +339,16 @@ export default function DashboardPage() {
               </div>
 
               {/* Profile Summary */}
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Profile Summary</h3>
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Profile</h3>
                   <Link href="/profile" className="inline-flex items-center gap-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-medium">
                     <Pencil className="w-3 h-3" />
                     Edit
                   </Link>
                 </div>
                 {dashboard?.profile && (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     <div className="space-y-0.5">
                       <p className="text-[10px] text-slate-400 uppercase tracking-wide">Degree / Field</p>
                       <p className="text-sm font-medium text-slate-900 dark:text-white">{dashboard.profile.intended_degree}</p>
@@ -377,28 +379,28 @@ export default function DashboardPage() {
           </div>
 
           {/* Right Column */}
-          <div className="lg:col-span-4 flex flex-col gap-3">
+          <div className="lg:col-span-4 flex flex-col gap-3 order-2">
             {/* Journey - Now compact horizontal */}
             <StageIndicator currentStage={dashboard?.current_stage || "ONBOARDING"} />
 
             {/* Universities Card - Now the primary block */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 lg:flex-1 lg:min-h-0 flex flex-col">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Your Universities</h3>
-                <Link href="/universities" className="text-[11px] text-blue-600 dark:text-blue-400 font-medium hover:underline">View All</Link>
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 lg:flex-1 lg:min-h-0 flex flex-col">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Universities</h3>
+                <Link href="/universities" className="text-[11px] text-blue-600 dark:text-blue-400 font-medium hover:underline">All</Link>
               </div>
 
               {shortlist.length > 0 ? (
-                <div className="space-y-2 flex-1">
+                <div className="space-y-1.5 sm:space-y-2 flex-1">
                   {shortlist.slice(0, 4).map((item) => (
                     <button
                       key={item.id}
                       onClick={() => openDrawer(item)}
-                      className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group text-left border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+                      className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group text-left border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                     >
-                      <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${categoryColors[item.category]}`} />
+                      <div className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0 ${categoryColors[item.category]}`} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <p className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {item.university.name}
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
