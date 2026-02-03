@@ -80,10 +80,11 @@ export function Header() {
 				'bg-transparent border-gray-200 dark:border-gray-800 backdrop-blur-md shadow-sm':
 					scrolled,
 			})}
+
 		>
-			<nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6">
+			<nav className="mx-auto flex h-14 md:h-20 w-full max-w-7xl items-center justify-between px-6">
 				<div className="flex items-center">
-					<Link href={user ? "/dashboard" : "/"} className="flex items-center hover:scale-[1.02] transition-transform duration-300">
+					<Link href={user ? "/dashboard" : "/"} className="flex items-center hover:scale-105 transition-transform duration-300">
 						<Image
 							src="/logo.png?v=6"
 							alt="AI Counsellor"
@@ -221,7 +222,7 @@ function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
 			id="mobile-menu"
 			className={cn(
 				'bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg',
-				'fixed top-14 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden',
+				'fixed top-14 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden md:hidden',
 			)}
 		>
 			<div
