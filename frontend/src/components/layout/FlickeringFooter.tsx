@@ -394,7 +394,7 @@ export const FlickeringFooter = () => {
                     </div>
                 </div>
                 <div className="pt-8 md:pt-0 md:w-1/2">
-                    <div className="grid grid-cols-2 md:flex md:flex-row md:items-start md:justify-between gap-6 md:gap-y-10 lg:pl-10">
+                    <div className="grid grid-cols-3 md:flex md:flex-row md:items-start md:justify-between gap-4 md:gap-y-10 lg:pl-10">
                         {siteConfig.footerLinks.map((column, columnIndex) => (
                             <ul key={columnIndex} className="flex flex-col gap-y-3">
                                 <li className="mb-2 text-sm font-semibold text-foreground">
