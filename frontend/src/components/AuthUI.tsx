@@ -356,14 +356,16 @@ function AuthFormContainer({ isSignIn, onToggle }: { isSignIn: boolean; onToggle
             <div className="flex flex-col items-center gap-4 mb-1">
 
 
-                <Image
-                    src="/logo.png?v=6"
-                    alt="AI Counsellor"
-                    width={200}
-                    height={67}
-                    className="h-16 w-auto drop-shadow-sm" // Increased size and added subtle shadow
-                    unoptimized
-                />
+                <Link href="/" className="transition-transform duration-300 hover:scale-105">
+                    <Image
+                        src="/logo.png?v=6"
+                        alt="AI Counsellor"
+                        width={200}
+                        height={67}
+                        className="h-16 w-auto drop-shadow-sm"
+                        unoptimized
+                    />
+                </Link>
             </div>
             {isSignIn ? <SignInForm /> : <SignUpForm />}
             <div className="text-center text-sm">

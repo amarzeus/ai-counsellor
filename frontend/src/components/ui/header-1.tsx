@@ -77,7 +77,7 @@ export function Header() {
 	return (
 		<header
 			className={cn('sticky top-0 z-50 w-full border-b border-transparent transition-all duration-300', {
-				'bg-white/70 dark:bg-slate-900/70 border-gray-200 dark:border-gray-800 backdrop-blur-md shadow-sm':
+				'bg-transparent border-gray-200 dark:border-gray-800 backdrop-blur-md shadow-sm':
 					scrolled,
 			})}
 		>
@@ -88,8 +88,8 @@ export function Header() {
 							src="/logo.png?v=6"
 							alt="AI Counsellor"
 							width={260}
-							height={86}
-							className="h-[5.8rem] w-auto object-contain"
+							height={63}
+							className="h-16 w-auto object-contain"
 							unoptimized
 						/>
 					</Link>
