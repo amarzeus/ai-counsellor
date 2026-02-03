@@ -1,7 +1,6 @@
 """
 Profile management tests - CRUD operations and validation.
 """
-import pytest
 
 def test_get_profile(client, auth_headers, test_profile):
     """Test retrieving user profile."""

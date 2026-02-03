@@ -1,12 +1,9 @@
 """
 Rate limiter tests.
 """
-import pytest
-import time
 from rate_limiter import (
     RateLimiter,
     check_login_rate_limit,
-    check_signup_rate_limit,
     record_failed_login,
     reset_login_limiter
 )

@@ -1,7 +1,6 @@
 """
 University recommendation and categorization tests.
 """
-import pytest
 from ai_counsellor import categorize_university, analyze_profile_strength
 
 def test_categorize_dream_university_high_gpa():

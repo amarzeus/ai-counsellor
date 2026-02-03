@@ -1,7 +1,6 @@
 """
 Task management tests - creation, updates, and filtering.
 """
-import pytest
 from models import TaskStatus
 
 def test_create_task(db_session, test_user):
@@ -56,7 +55,7 @@ def test_tasks_generated_on_university_lock(client, auth_headers, test_universit
     from models import User
     
     # Get user and update to DISCOVERY stage
-    user = db_session.query(User).filter_by(email="test@example.com").first()
+    db_session.query(User).filter_by(email="test@example.com").first()
     
     # Lock university
     response = client.post(

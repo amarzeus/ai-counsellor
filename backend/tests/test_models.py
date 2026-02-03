@@ -29,11 +29,11 @@ def test_cascade_delete_user(db_session, test_user, test_profile, test_task):
     db_session.commit()
     
     # Profile should be deleted (if cascade is set)
-    profile = db_session.query(UserProfile).filter_by(user_id=user_id).first()
+    db_session.query(UserProfile).filter_by(user_id=user_id).first()
     # Depending on cascade settings, this might be None
     
     # Tasks should be deleted (if cascade is set)
-    tasks = db_session.query(Task).filter_by(user_id=user_id).all()
+    db_session.query(Task).filter_by(user_id=user_id).all()
     # Depending on cascade settings, this might be empty
 
 def test_unique_email_constraint(db_session):

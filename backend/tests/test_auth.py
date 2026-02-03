@@ -1,8 +1,6 @@
 """
 Authentication tests - signup, login, JWT validation.
 """
-import pytest
-from fastapi import HTTPException
 
 def test_signup_success(client):
     """Test successful user registration."""
