@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from datetime import datetime
 from enum import Enum
@@ -286,11 +286,25 @@ class ChatMessageResponse(BaseModel):
     session_id: int
     role: str
     content: str
-    actions_taken: Optional[dict] = None  # {executed: [...], blocked: [...], final_stage: str}
+    actions_taken: Optional[List[dict]] = None  # [{type: string, params: dict}, ...]
     suggested_universities: Optional[List[dict]] = None
     suggested_next_questions: Optional[List[str]] = None
     created_at: datetime
     
+    @field_validator('actions_taken', mode='before')
+    @classmethod
+    def parse_actions_taken(cls, v):
+        if isinstance(v, dict):
+            return [v]
+        return v
+
+    @field_validator('suggested_universities', mode='before')
+    @classmethod
+    def parse_suggested_universities(cls, v):
+        if isinstance(v, dict):
+            return [v]
+        return v
+
     class Config:
         from_attributes = True
 

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Mic, MicOff } from "lucide-react";
+import { useEffect } from "react";
+import { Mic, MicOff, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useStore } from "@/lib/store";
+import { useAudioRecorder } from "@/hooks/useAudioRecorder";
+import { chatApi } from "@/lib/api";
 
 interface VoiceInputProps {
     onInput: (text: string) => void;
@@ -11,85 +12,58 @@ interface VoiceInputProps {
 }
 
 export function VoiceInput({ onInput, disabled }: VoiceInputProps) {
-    const { user } = useStore();
-    const [isListening, setIsListening] = useState(false);
-     
-    const recognitionRef = useRef<any>(null);
+    const { isRecording, startRecording, stopRecording, audioBlob, clearAudio } = useAudioRecorder();
 
-    const toggleVoiceInput = () => {
-        // Premium Gating - DISABLED: Payment system deactivated
-        // if (user?.subscription_plan !== "PREMIUM") {
-        //     toast.error("Voice Mode is a Premium Feature. Upgrade to unlock.", {
-        //         icon: "💎",
-        //         duration: 4000
-        //     });
-        //     return;
-        // }
+    // Auto-transcribe when recording stops
+    useEffect(() => {
+        const transcribe = async () => {
+            if (audioBlob) {
+                const toastId = toast.loading("Dictating...");
+                try {
+                    const formData = new FormData();
+                    // Determine extension from blob type (e.g. audio/webm -> webm)
+                    const ext = audioBlob.type.split('/')[1] || 'webm';
+                    // Note: Backend handles conversion if needed, but correct ext helps
+                    const filename = `dictation.${ext.includes('wav') ? 'wav' : 'webm'}`;
+                    formData.append("file", audioBlob, filename);
 
-        if (isListening) {
-            stopListening();
-            return;
+                    const res = await chatApi.transcribeVoice(formData);
+
+                    toast.success("Dictation complete!", { id: toastId });
+                    onInput(res.data.text);
+                } catch (err) {
+                    console.error(err);
+                    toast.error("Failed to transcribe.", { id: toastId });
+                } finally {
+                    clearAudio();
+                }
+            }
+        };
+
+        if (audioBlob) {
+            transcribe();
         }
+    }, [audioBlob, onInput, clearAudio]);
 
-        startListening();
-    };
-
-    const startListening = () => {
-        if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
-            toast.error("Voice input is not supported in this browser.");
-            return;
+    const toggleRecording = () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+            toast("Listening for dictation...", { icon: "🎙️" });
         }
-
-        // @ts-expect-error: SpeechRecognition is not part of standard TS lib
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognitionRef.current = new SpeechRecognition();
-
-        recognitionRef.current.continuous = false;
-        recognitionRef.current.interimResults = false;
-        recognitionRef.current.lang = "en-US";
-
-        recognitionRef.current.onstart = () => {
-            setIsListening(true);
-            toast.success("Listening...", { icon: "🎙️" });
-        };
-
-         
-        recognitionRef.current.onresult = (event: any) => {
-            const transcript = event.results[0][0].transcript;
-            onInput(transcript);
-            setIsListening(false);
-        };
-
-         
-        recognitionRef.current.onerror = (event: any) => {
-            setIsListening(false);
-            // toast.error("Could not capture voice.");
-        };
-
-        recognitionRef.current.onend = () => {
-            setIsListening(false);
-        };
-
-        recognitionRef.current.start();
-    };
-
-    const stopListening = () => {
-        if (recognitionRef.current) {
-            recognitionRef.current.stop();
-        }
-        setIsListening(false);
     };
 
     return (
         <button
-            onClick={toggleVoiceInput}
+            onClick={toggleRecording}
             disabled={disabled}
-            className={`p-3 rounded-xl transition-all ${isListening
-                ? "bg-red-50 text-red-600 animate-pulse"
+            className={`p-3 rounded-xl transition-all ${isRecording
+                ? "bg-red-50 text-red-600 animate-pulse border border-red-200"
                 : "text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-600"}`}
-            title="Voice Input"
+            title={isRecording ? "Stop Dictation" : "Dictate"}
         >
-            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+            {isRecording ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
         </button>
     );
 }

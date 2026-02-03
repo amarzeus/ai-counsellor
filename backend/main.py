@@ -28,6 +28,7 @@ from ai_counsellor import get_counsellor_response, analyze_profile_strength, cat
 from report_generator import StrategyReportGenerator
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
+from routers.voice import router as voice_router
 # import subscriptions  # DISABLED: Payment system deactivated
 
 Base.metadata.create_all(bind=engine)
@@ -52,6 +53,7 @@ app.add_middleware(
 )
 
 app.include_router(google_router)
+app.include_router(voice_router)
 # app.include_router(subscriptions.router)  # DISABLED: Payment system deactivated
 
 @app.get("/")
@@ -1314,7 +1316,7 @@ def get_chat_history(
     # Simple on-demand for now as universities table is small
     
     for msg in messages:
-        if msg.suggested_universities:
+        if msg.suggested_universities and isinstance(msg.suggested_universities, list):
             # We need to modify the dict in place or create a copy
             # Since SQLA models return immutable-ish JSON, better to modify before returning response model
             # But here we are returning list of model_validates.

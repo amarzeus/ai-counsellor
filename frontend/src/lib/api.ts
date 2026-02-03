@@ -215,6 +215,14 @@ export const chatApi = {
   getHistory: (sessionId: number) => api.get<ChatMessage[]>(`/api/chat/history/${sessionId}`),
   send: (content: string, sessionId?: number) =>
     api.post<ChatMessage>('/api/chat', { content, session_id: sessionId }),
+  sendVoice: (formData: FormData, language: string = 'en') =>
+    api.post<{ user_text: string; ai_response: any; audio_base64: string | null; session_id?: number }>(`/api/voice/chat?language=${language}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  transcribeVoice: (formData: FormData) =>
+    api.post<{ text: string }>('/api/voice/transcribe', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
 };
 
 

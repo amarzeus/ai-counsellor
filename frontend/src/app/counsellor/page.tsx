@@ -14,6 +14,7 @@ import ChatSidebar from "@/components/chat/ChatSidebar";
 import { AIMessageRenderer } from "@/components/chat/AIMessageRenderer";
 import { UniversityCard } from "@/components/chat/UniversityCard";
 import { VoiceInput } from "@/components/chat/VoiceInput";
+import { VoiceConversationModal } from "@/components/chat/VoiceConversationModal";
 
 // Extended ChatMessage interface to support suggested universities
 interface EnrichedChatMessage extends Omit<ChatMessage, 'session_id'> {
@@ -79,6 +80,7 @@ export default function CounsellorPage() {
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
 
   // Intelligent Scroll Handler
   const handleScroll = () => {
@@ -153,16 +155,30 @@ export default function CounsellorPage() {
   // };
 
   const fetchHistory = async (sessionId: number) => {
+    console.log("Loading session:", sessionId);
     setLoading(true);
     try {
       const response = await chatApi.getHistory(sessionId);
+      console.log("Session data:", response.data);
       setMessages(response.data);
     } catch (error) {
-      console.error("Failed to load chat history");
+      console.error("Failed to load chat history", error);
+      toast.error("Could not load chat history");
     } finally {
       setLoading(false);
     }
   };
+
+  const speakResponse = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+    }
+  };
+
 
   const shouldSpeakRef = useRef(false);
 
@@ -235,6 +251,17 @@ export default function CounsellorPage() {
     } catch (e) { }
   };
 
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
+
+  const handleDictationInput = (text: string) => {
+    // Just fill the input, don't auto-send
+    setInput(prev => prev + (prev ? " " : "") + text);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -242,47 +269,55 @@ export default function CounsellorPage() {
     }
   };
 
-  // TTS Helper
-  const stopSpeaking = () => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
+  // Handle Server-Side Voice Response
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleVoiceResponse = (data: { user_text: string; ai_response: any; audio_base64: string | null }) => {
+    // 1. Add User Message
+    const tempUserMsg: EnrichedChatMessage = {
+      id: Date.now(),
+      role: "user",
+      content: data.user_text,
+      created_at: new Date().toISOString(),
+    };
+
+    // 2. Add AI Message
+    const assistantMessage = data.ai_response;
+
+    // If we just started a new session, the backend response should now contain the session_id
+    if (!currentSessionId && assistantMessage.session_id) {
+      setCurrentSessionId(assistantMessage.session_id);
+    }
+
+    setMessages((prev) => [...prev, tempUserMsg, assistantMessage]);
+    setTimeout(() => scrollToBottom("smooth"), 50);
+
+    // 3. Play Audio
+    if (data.audio_base64) {
+      stopSpeaking(); // Stop any existing audio
+      const audio = new Audio(`data:audio/mp3;base64,${data.audio_base64}`);
+      audioRef.current = audio;
+
+      audio.onplay = () => setIsSpeaking(true);
+      audio.onended = () => setIsSpeaking(false);
+      audio.onerror = () => setIsSpeaking(false);
+
+      audio.play().catch(e => console.error("Audio play failed", e));
     }
   };
 
-  const speakResponse = (text: string) => {
-    if (!("speechSynthesis" in window)) return;
-
-    // Stop any current speech
-    window.speechSynthesis.cancel();
-
-    // Create new utterance
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.volume = 1;
-    utterance.rate = 1.1; // Slightly faster for better flow
-    utterance.pitch = 1;
-
-    // Event handlers
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
+  // Override stopSpeaking to handle Audio element
+  const stopSpeaking = () => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setIsSpeaking(false);
   };
 
-  // Stop speaking when user navigates away or unmounts
-  useEffect(() => {
-    return () => {
-      stopSpeaking();
-    };
-  }, []);
-
-  const handleVoiceInput = (text: string) => {
-    setInput(text);
-    // Auto-send and enable TTS for response
-    shouldSpeakRef.current = true;
-    handleSend(text);
-  };
 
   const handleQuickShortlist = async (uniId: number, category: string, isShortlisted: boolean | undefined) => {
     try {
@@ -374,7 +409,7 @@ export default function CounsellorPage() {
           </AnimatePresence>
 
           <div
-            className="flex-1 overflow-y-auto px-4 py-4 space-y-6 bg-gray-50 dark:bg-[#0B1120]"
+            className="flex-1 overflow-y-auto px-4 py-4 space-y-6 bg-gray-50 dark:bg-[#0B1120] no-scrollbar"
             ref={scrollContainerRef}
             onScroll={handleScroll}
           >
@@ -564,7 +599,7 @@ export default function CounsellorPage() {
           <div className="flex-shrink-0 px-2 sm:px-4 pb-2 pt-2 sm:pb-4 sm:pt-4 bg-slate-50 dark:bg-[#0B1120] transition-colors">
             <div className="max-w-4xl mx-auto w-full">
               <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50">
-                <VoiceInput onInput={handleVoiceInput} disabled={loading} />
+                <VoiceInput onInput={handleDictationInput} disabled={loading} />
 
                 <input
                   type="text"
@@ -575,6 +610,14 @@ export default function CounsellorPage() {
                   className="flex-1 min-w-0 px-2 py-2 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 text-sm font-medium"
                   disabled={loading}
                 />
+
+                <button
+                  onClick={() => setIsVoiceModalOpen(true)}
+                  className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors hidden sm:block"
+                  title="Start Voice Conversation"
+                >
+                  <Volume2 className="w-5 h-5" />
+                </button>
 
                 <button
                   onClick={() => handleSend()}
@@ -592,6 +635,24 @@ export default function CounsellorPage() {
         </main>
       </div>
 
+      {/* Voice Conversation Modal */}
+      <AnimatePresence>
+        {isVoiceModalOpen && (
+          <VoiceConversationModal
+            isOpen={isVoiceModalOpen}
+            onClose={() => setIsVoiceModalOpen(false)}
+            sessionId={currentSessionId}
+            onMessageSent={(newSessionId) => {
+              if (newSessionId && newSessionId !== currentSessionId) {
+                setCurrentSessionId(newSessionId);
+              } else if (currentSessionId) {
+                // If session ID didn't change (or was already cohesive), refresh history
+                fetchHistory(currentSessionId);
+              }
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div >
   );
 }
