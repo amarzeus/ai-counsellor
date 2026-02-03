@@ -393,8 +393,8 @@ export const FlickeringFooter = () => {
                         {(pathname === "/login" || pathname === "/signup") && <Switch />}
                     </div>
                 </div>
-                <div className="pt-10 md:pt-0 md:w-1/2">
-                    <div className="grid grid-cols-2 md:flex md:flex-row md:items-start md:justify-between gap-10 md:gap-y-10 lg:pl-10">
+                <div className="pt-8 md:pt-0 md:w-1/2">
+                    <div className="grid grid-cols-2 md:flex md:flex-row md:items-start md:justify-between gap-6 md:gap-y-10 lg:pl-10">
                         {siteConfig.footerLinks.map((column, columnIndex) => (
                             <ul key={columnIndex} className="flex flex-col gap-y-3">
                                 <li className="mb-2 text-sm font-semibold text-foreground">
@@ -416,7 +416,7 @@ export const FlickeringFooter = () => {
                     </div>
                 </div>
             </div>
-            <div className="w-full h-48 md:h-64 relative mt-12 z-0 overflow-hidden">
+            <div className="w-full h-32 md:h-64 relative mt-8 z-0 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background z-10" />
                 <div className="absolute inset-x-0 bottom-0 top-0 mx-auto max-w-6xl">
                     <FlickeringGrid
