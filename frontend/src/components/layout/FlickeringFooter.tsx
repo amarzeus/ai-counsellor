@@ -58,7 +58,7 @@ export const Icons = {
         />
     ),
     soc2: ({ className }: { className?: string }) => (
-        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("h-10 w-auto hover:opacity-80 transition-opacity", className)}>
             <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#E5E7EB" fillOpacity="0.5" />
             <path d="M15 30C13 30 12 28 12 26C12 24 13 23 15 23C16 23 17 24 17 26L16 26C16 25 15.5 24 15 24C14 24 13 25 13 26C13 27 14 28 15 28C16 28 17 27 17 26" stroke="currentColor" strokeWidth="1.5" />
             <path d="M20 30C18 30 17 28 17 26C17 24 18 23 20 23C22 23 23 24 23 26C23 28 22 30 20 30ZM20 29C21 29 22 28 22 26C22 24 21 23 20 23C19 23 18 24 18 26C18 28 19 29 20 29Z" fill="currentColor" />
@@ -67,7 +67,7 @@ export const Icons = {
         </svg>
     ),
     soc2Dark: ({ className }: { className?: string }) => (
-        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("h-10 w-auto hover:opacity-80 transition-opacity", className)}>
             <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#333" fillOpacity="0.5" />
             <path d="M15 30C13 30 12 28 12 26C12 24 13 23 15 23C16 23 17 24 17 26L16 26C16 25 15.5 24 15 24C14 24 13 25 13 26C13 27 14 28 15 28C16 28 17 27 17 26" stroke="#E5E7EB" strokeWidth="1.5" />
             <path d="M20 30C18 30 17 28 17 26C17 24 18 23 20 23C22 23 23 24 23 26C23 28 22 30 20 30ZM20 29C21 29 22 28 22 26C22 24 21 23 20 23C19 23 18 24 18 26C18 28 19 29 20 29Z" fill="#E5E7EB" />
@@ -76,25 +76,25 @@ export const Icons = {
         </svg>
     ),
     hipaa: ({ className }: { className?: string }) => (
-        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("h-10 w-auto hover:opacity-80 transition-opacity", className)}>
             <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#E5E7EB" fillOpacity="0.5" />
             <text x="23" y="26" fontSize="8" fontWeight="bold" fill="currentColor" fontFamily="sans-serif" textAnchor="middle">HIPAA</text>
         </svg>
     ),
     hipaaDark: ({ className }: { className?: string }) => (
-        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("h-10 w-auto hover:opacity-80 transition-opacity", className)}>
             <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#333" fillOpacity="0.5" />
             <text x="23" y="26" fontSize="8" fontWeight="bold" fill="#E5E7EB" fontFamily="sans-serif" textAnchor="middle">HIPAA</text>
         </svg>
     ),
     gdpr: ({ className }: { className?: string }) => (
-        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("h-10 w-auto hover:opacity-80 transition-opacity", className)}>
             <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#E5E7EB" fillOpacity="0.5" />
             <text x="23" y="26" fontSize="8" fontWeight="bold" fill="currentColor" fontFamily="sans-serif" textAnchor="middle">GDPR</text>
         </svg>
     ),
     gdprDark: ({ className }: { className?: string }) => (
-        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("h-10 w-auto hover:opacity-80 transition-opacity", className)}>
             <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#333" fillOpacity="0.5" />
             <text x="23" y="26" fontSize="8" fontWeight="bold" fill="#E5E7EB" fontFamily="sans-serif" textAnchor="middle">GDPR</text>
         </svg>
@@ -389,16 +389,6 @@ export const FlickeringFooter = () => {
                     <p className="tracking-tight text-muted-foreground font-medium text-sm leading-relaxed">
                         {siteConfig.hero.description}
                     </p>
-                    <div className="flex items-center gap-4 dark:hidden">
-                        <Icons.soc2 />
-                        <Icons.hipaa />
-                        <Icons.gdpr />
-                    </div>
-                    <div className="dark:flex items-center gap-4 hidden">
-                        <Icons.soc2Dark />
-                        <Icons.hipaaDark />
-                        <Icons.gdprDark />
-                    </div>
                     <div className="mt-6 flex items-center">
                         {(pathname === "/login" || pathname === "/signup") && <Switch />}
                     </div>
