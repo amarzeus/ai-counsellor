@@ -187,8 +187,8 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-[#0B1120]">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 flex flex-col">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-[#0B1120] overflow-x-hidden">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-6 flex flex-col">
         {/* Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 mb-4 sm:mb-6">
           <div>
@@ -219,23 +219,23 @@ export default function DashboardPage() {
             {/* Row 1: Stats + Profile Strength */}
             <div className="grid grid-cols-1 gap-3">
               {/* Stats Card - Horizontal on mobile */}
-              <div className="bg-white dark:bg-slate-900 rounded-xl p-4 sm:p-6 shadow-sm border border-slate-200/80 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 rounded-xl p-3 sm:p-6 shadow-sm border border-slate-200/80 dark:border-slate-800">
                 <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-800">
-                  <div className="text-center px-2 sm:px-4">
+                  <div className="text-center px-1 sm:px-4">
                     <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
                       <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 opacity-70" />
                       <span className="text-[9px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Short</span>
                     </div>
                     <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.shortlisted_count || 0}</p>
                   </div>
-                  <div className="text-center px-2 sm:px-4">
+                  <div className="text-center px-1 sm:px-4">
                     <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
                       <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-500 opacity-70" />
                       <span className="text-[9px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Lock</span>
                     </div>
                     <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white leading-none">{dashboard?.locked_count || 0}</p>
                   </div>
-                  <div className="text-center px-2 sm:px-4">
+                  <div className="text-center px-1 sm:px-4">
                     <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
                       <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-500 opacity-70" />
                       <span className="text-[9px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tasks</span>
