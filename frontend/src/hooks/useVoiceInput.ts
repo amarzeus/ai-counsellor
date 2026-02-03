@@ -1,5 +1,43 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
+// Web Speech API type declarations (not included in standard TS lib)
+interface SpeechRecognitionType extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
 interface UseVoiceInputDisconnect {
   isListening: boolean;
   transcript: string;
@@ -13,7 +51,7 @@ export function useVoiceInput(): UseVoiceInputDisconnect {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionType | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -21,36 +59,37 @@ export function useVoiceInput(): UseVoiceInputDisconnect {
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
       if (SpeechRecognition) {
-        recognitionRef.current = new SpeechRecognition();
-        recognitionRef.current.continuous = true; // Keep listening even if the user pauses
-        recognitionRef.current.interimResults = true; // Show results as they are spoken
-        recognitionRef.current.lang = 'en-US';
+        const recognition = new SpeechRecognition() as SpeechRecognitionType;
+        recognitionRef.current = recognition;
+        recognition.continuous = true; // Keep listening even if the user pauses
+        recognition.interimResults = true; // Show results as they are spoken
+        recognition.lang = 'en-US';
 
-        recognitionRef.current.onstart = () => {
+        recognition.onstart = () => {
           setIsListening(true);
           setError(null);
         };
 
-        recognitionRef.current.onend = () => {
-             // Only auto-restart if we intended to keep listening? 
-             // For now, let's keep it simple: stop state update.
-             // If we implement 'continuous' chat mode later, we might handle auto-restart here.
+        recognition.onend = () => {
+          // Only auto-restart if we intended to keep listening? 
+          // For now, let's keep it simple: stop state update.
+          // If we implement 'continuous' chat mode later, we might handle auto-restart here.
           setIsListening(false);
         };
 
-        recognitionRef.current.onerror = (event: any) => {
+        recognition.onerror = (event: any) => {
           console.error('Speech recognition error', event.error);
           if (event.error === 'not-allowed') {
-              setError('Microphone permission denied.');
+            setError('Microphone permission denied.');
           } else if (event.error === 'no-speech') {
-              // Ignore no-speech errors usually, just means silence
+            // Ignore no-speech errors usually, just means silence
           } else {
-               setError(`Voice error: ${event.error}`);
+            setError(`Voice error: ${event.error}`);
           }
           setIsListening(false);
         };
 
-        recognitionRef.current.onresult = (event: any) => {
+        recognition.onresult = (event: any) => {
           let finalTranscript = '';
           let interimTranscript = '';
 
@@ -61,7 +100,7 @@ export function useVoiceInput(): UseVoiceInputDisconnect {
               interimTranscript += event.results[i][0].transcript;
             }
           }
-          
+
           // We want to append final results to what we already have, 
           // but for this simple hook, replacing state with current accumulation is safer 
           // if we handle the accumulation logic carefully.
@@ -69,16 +108,16 @@ export function useVoiceInput(): UseVoiceInputDisconnect {
           // Let's rely on the event returning the full session text if continuous is true?
           // Wait, standard behavior for 'continuous=true' is: results list grows.
           // Let's just concatenate all final results in the list.
-          
+
           let currentSessionText = '';
-           for (let i = 0; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    currentSessionText += event.results[i][0].transcript;
-                }
-           }
-           // Add interim at the end
-           const fullText = currentSessionText + interimTranscript;
-           setTranscript(fullText);
+          for (let i = 0; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              currentSessionText += event.results[i][0].transcript;
+            }
+          }
+          // Add interim at the end
+          const fullText = currentSessionText + interimTranscript;
+          setTranscript(fullText);
         };
       } else {
         setError('Browser does not support voice input.');
@@ -95,7 +134,7 @@ export function useVoiceInput(): UseVoiceInputDisconnect {
         console.error("Failed to start speech recognition", e);
       }
     } else if (!recognitionRef.current) {
-         setError('Browser does not support voice input.');
+      setError('Browser does not support voice input.');
     }
   }, [isListening]);
 
@@ -106,7 +145,7 @@ export function useVoiceInput(): UseVoiceInputDisconnect {
   }, [isListening]);
 
   const resetTranscript = useCallback(() => {
-      setTranscript('');
+    setTranscript('');
   }, []);
 
   return {
