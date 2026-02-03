@@ -4,6 +4,9 @@ import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { ClassValue, clsx } from "clsx";
 import * as Color from "color-bits";
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import Switch from "@/components/Switch";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -44,34 +47,19 @@ export const colorWithOpacity = (color: string, opacity: number): string => {
 // --- Icons ---
 
 export const Icons = {
-    // Using a GraduationCap-like icon or simple text as Logo fallback if needed, 
-    // but we can use the project's existing branding if available. 
-    // For now, using a simple placeholder generic to the "AI" theme or keeping the one from the snippet if it fits.
-    // The snippet had a specific logo, let's replace it with a generic AI Counsellor one or keep it simple.
     logo: ({ className }: { className?: string }) => (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={cn("size-6", className)}
-        >
-            <path d="M22 10v6M2 10v6" />
-            <path d="M20 2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
-            <path d="m15 22-2-6h-2l-2 6" />
-            <path d="m8 22 2-6h4l2 6" />
-        </svg>
+        <Image
+            src="/logo.png?v=6"
+            alt="AI Counsellor"
+            width={120}
+            height={48}
+            className={cn("h-12 w-auto", className)}
+            unoptimized
+        />
     ),
-    // Minimalist trust badges from the original snippet - keeping them as "Trust Signals"
-    // If they are too specific (SOC2, etc), we might want to swap valid ones later.
-    // For this tasks purpose, visual parity with the requested premium component is key.
     soc2: ({ className }: { className?: string }) => (
-        // ... (Keeping original SVGs for visual fidelity as requested)
-        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-70 hover:opacity-100 transition-opacity", className)}>
-            <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#E5E7EB" fillOpacity="0.2" />
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+            <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#E5E7EB" fillOpacity="0.5" />
             <path d="M15 30C13 30 12 28 12 26C12 24 13 23 15 23C16 23 17 24 17 26L16 26C16 25 15.5 24 15 24C14 24 13 25 13 26C13 27 14 28 15 28C16 28 17 27 17 26" stroke="currentColor" strokeWidth="1.5" />
             <path d="M20 30C18 30 17 28 17 26C17 24 18 23 20 23C22 23 23 24 23 26C23 28 22 30 20 30ZM20 29C21 29 22 28 22 26C22 24 21 23 20 23C19 23 18 24 18 26C18 28 19 29 20 29Z" fill="currentColor" />
             <path d="M25 30C24 30 23 29 23 26C23 24 24 23 25 23C26 23 27 24 27 26L26 26C26 25 25.5 24 25 24C24 24 23 25 23 26C23 27 24 28 25 28C26 28 27 27 27 26" stroke="currentColor" strokeWidth="1.5" />
@@ -79,19 +67,38 @@ export const Icons = {
         </svg>
     ),
     soc2Dark: ({ className }: { className?: string }) => (
-        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-70 hover:opacity-100 transition-opacity", className)}>
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
             <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#333" fillOpacity="0.5" />
-            <path d="M15 30C13 30 12 28 12 26C12 24 13 23 15 23C16 23 17 24 17 26L16 26C16 25 15.5 24 15 24C14 24 13 25 13 26C13 27 14 28 15 28C16 28 17 27 17 26" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M20 30C18 30 17 28 17 26C17 24 18 23 20 23C22 23 23 24 23 26C23 28 22 30 20 30ZM20 29C21 29 22 28 22 26C22 24 21 23 20 23C19 23 18 24 18 26C18 28 19 29 20 29Z" fill="currentColor" />
-            <path d="M25 30C24 30 23 29 23 26C23 24 24 23 25 23C26 23 27 24 27 26L26 26C26 25 25.5 24 25 24C24 24 23 25 23 26C23 27 24 28 25 28C26 28 27 27 27 26" stroke="currentColor" strokeWidth="1.5" />
-            <text x="30" y="29" fontSize="8" fill="currentColor" fontFamily="sans-serif">2</text>
+            <path d="M15 30C13 30 12 28 12 26C12 24 13 23 15 23C16 23 17 24 17 26L16 26C16 25 15.5 24 15 24C14 24 13 25 13 26C13 27 14 28 15 28C16 28 17 27 17 26" stroke="#E5E7EB" strokeWidth="1.5" />
+            <path d="M20 30C18 30 17 28 17 26C17 24 18 23 20 23C22 23 23 24 23 26C23 28 22 30 20 30ZM20 29C21 29 22 28 22 26C22 24 21 23 20 23C19 23 18 24 18 26C18 28 19 29 20 29Z" fill="#E5E7EB" />
+            <path d="M25 30C24 30 23 29 23 26C23 24 24 23 25 23C26 23 27 24 27 26L26 26C26 25 25.5 24 25 24C24 24 23 25 23 26C23 27 24 28 25 28C26 28 27 27 27 26" stroke="#E5E7EB" strokeWidth="1.5" />
+            <text x="30" y="29" fontSize="8" fill="#E5E7EB" fontFamily="sans-serif">2</text>
         </svg>
     ),
-    // Simplified placeholders for other icons to save space but keep layout
-    hipaa: ({ className }: { className?: string }) => <div className={cn("size-8 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold opacity-70", className)}>HIPAA</div>,
-    hipaaDark: ({ className }: { className?: string }) => <div className={cn("size-8 rounded-full bg-muted/20 flex items-center justify-center text-[8px] font-bold opacity-70", className)}>HIPAA</div>,
-    gdpr: ({ className }: { className?: string }) => <div className={cn("size-8 rounded-full bg-muted flex items-center justify-center text-[8px] font-bold opacity-70", className)}>GDPR</div>,
-    gdprDark: ({ className }: { className?: string }) => <div className={cn("size-8 rounded-full bg-muted/20 flex items-center justify-center text-[8px] font-bold opacity-70", className)}>GDPR</div>,
+    hipaa: ({ className }: { className?: string }) => (
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+            <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#E5E7EB" fillOpacity="0.5" />
+            <text x="23" y="26" fontSize="8" fontWeight="bold" fill="currentColor" fontFamily="sans-serif" textAnchor="middle">HIPAA</text>
+        </svg>
+    ),
+    hipaaDark: ({ className }: { className?: string }) => (
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+            <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#333" fillOpacity="0.5" />
+            <text x="23" y="26" fontSize="8" fontWeight="bold" fill="#E5E7EB" fontFamily="sans-serif" textAnchor="middle">HIPAA</text>
+        </svg>
+    ),
+    gdpr: ({ className }: { className?: string }) => (
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+            <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#E5E7EB" fillOpacity="0.5" />
+            <text x="23" y="26" fontSize="8" fontWeight="bold" fill="currentColor" fontFamily="sans-serif" textAnchor="middle">GDPR</text>
+        </svg>
+    ),
+    gdprDark: ({ className }: { className?: string }) => (
+        <svg width="46" height="45" viewBox="0 0 46 45" fill="none" xmlns="http://www.w3.org/2000/svg" className={cn("size-8 opacity-80 hover:opacity-100 transition-opacity", className)}>
+            <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="#333" fillOpacity="0.5" />
+            <text x="23" y="26" fontSize="8" fontWeight="bold" fill="#E5E7EB" fontFamily="sans-serif" textAnchor="middle">GDPR</text>
+        </svg>
+    ),
 };
 
 // --- Flickering Grid Component ---
@@ -156,7 +163,6 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
                 maskCtx.save();
                 maskCtx.scale(dpr, dpr);
                 maskCtx.fillStyle = "white";
-                // Using Inter or system fonts as fallback
                 maskCtx.font = `${fontWeight} ${fontSize}px "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
                 maskCtx.textAlign = "center";
                 maskCtx.textBaseline = "middle";
@@ -370,27 +376,31 @@ export const siteConfig = {
 
 export const FlickeringFooter = () => {
     const tablet = useMediaQuery("(max-width: 1024px)");
+    const pathname = usePathname();
 
     return (
         <footer id="footer" className="w-full pb-0 bg-background border-t border-border/40">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between p-10 max-w-6xl mx-auto">
                 <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
                     <Link href="/" className="flex items-center gap-2 group">
-                        <Icons.logo className="text-primary group-hover:text-primary/80 transition-colors" />
-                        <p className="text-xl font-semibold text-foreground tracking-tight">AI Counsellor</p>
+                        {/* Logo updated to use Next.js Image with project asset */}
+                        <Icons.logo />
                     </Link>
                     <p className="tracking-tight text-muted-foreground font-medium text-sm leading-relaxed">
                         {siteConfig.hero.description}
                     </p>
-                    <div className="flex items-center gap-2 dark:hidden">
+                    <div className="flex items-center gap-4 dark:hidden">
                         <Icons.soc2 />
                         <Icons.hipaa />
                         <Icons.gdpr />
                     </div>
-                    <div className="dark:flex items-center gap-2 hidden">
+                    <div className="dark:flex items-center gap-4 hidden">
                         <Icons.soc2Dark />
                         <Icons.hipaaDark />
                         <Icons.gdprDark />
+                    </div>
+                    <div className="mt-6 flex items-center">
+                        {(pathname === "/login" || pathname === "/signup") && <Switch />}
                     </div>
                 </div>
                 <div className="pt-10 md:pt-0 md:w-1/2">
