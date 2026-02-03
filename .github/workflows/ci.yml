@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: AI Counsellor CI/CD
 
 on:
   push:
