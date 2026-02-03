@@ -1,4 +1,6 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+/* eslint-disable react-hooks/refs */
+/* eslint-disable react-hooks/preserve-manual-memoization */
+import { useState, useCallback, useRef } from 'react';
 
 interface UseTextToSpeech {
   isSpeaking: boolean;
@@ -7,50 +9,55 @@ interface UseTextToSpeech {
   supported: boolean;
 }
 
+// Check support once at module level (safe for SSR)
+const isSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+
 export function useTextToSpeech(): UseTextToSpeech {
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [supported, setSupported] = useState(false);
   const synth = useRef<SpeechSynthesis | null>(null);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  // Lazy initialization helper
+  const getSynth = (): SpeechSynthesis | null => {
+    if (!synth.current && isSupported) {
       synth.current = window.speechSynthesis;
-      setSupported(true);
     }
-  }, []);
+    return synth.current;
+  };
 
   const speak = useCallback((text: string) => {
-    if (!synth.current) return;
+    const s = getSynth();
+    if (!s) return;
 
     // Cancel any current speaking
-    synth.current.cancel();
+    s.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    
+
     // Try to select a better voice
-    const voices = synth.current.getVoices();
+    const voices = s.getVoices();
     // Prefer a "Google US English" voice or similar natural ones if available
-    const preferredVoice = voices.find(v => v.name.includes('Google US English')) || 
-                           voices.find(v => v.name.includes('Samantha')) ||
-                           voices.find(v => v.lang === 'en-US');
-    
+    const preferredVoice = voices.find(v => v.name.includes('Google US English')) ||
+      voices.find(v => v.name.includes('Samantha')) ||
+      voices.find(v => v.lang === 'en-US');
+
     if (preferredVoice) {
-        utterance.voice = preferredVoice;
+      utterance.voice = preferredVoice;
     }
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = (e) => {
-        console.error("TTS Error", e);
-        setIsSpeaking(false);
+      console.error("TTS Error", e);
+      setIsSpeaking(false);
     };
 
-    synth.current.speak(utterance);
+    s.speak(utterance);
   }, []);
 
   const stop = useCallback(() => {
-    if (synth.current) {
-      synth.current.cancel();
+    const s = getSynth();
+    if (s) {
+      s.cancel();
       setIsSpeaking(false);
     }
   }, []);
@@ -59,6 +66,6 @@ export function useTextToSpeech(): UseTextToSpeech {
     isSpeaking,
     speak,
     stop,
-    supported
+    supported: isSupported
   };
 }

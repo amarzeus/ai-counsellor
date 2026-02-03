@@ -119,9 +119,8 @@ export function useVoiceInput(): UseVoiceInputDisconnect {
           const fullText = currentSessionText + interimTranscript;
           setTranscript(fullText);
         };
-      } else {
-        setError('Browser does not support voice input.');
       }
+      // Note: Don't call setError here - will be set lazily in startListening if not supported
     }
   }, []);
 

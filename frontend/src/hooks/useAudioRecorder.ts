@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/preserve-manual-memoization */
 import { useState, useRef, useCallback, useEffect } from 'react';
 
 export interface AudioRecorderState {
@@ -14,6 +15,8 @@ interface AudioRecorderOptions {
 }
 
 export function useAudioRecorder({ silenceThreshold = 10, silenceDuration = 1500, maxDuration = 10000 }: AudioRecorderOptions = {}) {
+    'use no memo'; // Opt out of React Compiler strict memoization due to complex ref patterns
+
     const [state, setState] = useState<AudioRecorderState>({
         isRecording: false,
         recordingTime: 0,

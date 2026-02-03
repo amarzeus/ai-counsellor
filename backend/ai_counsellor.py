@@ -728,8 +728,6 @@ async def transcribe_audio(audio_data: bytes, mime_type: str = "audio/wav") -> s
 
     client, key_index = key_manager.create_client()
     
-    import re
-    
     # Robust prompt for VERBATIM transcription with DOMAIN CONTEXT
     prompt = """
     Transcribe the spoken words in this audio file EXACTLY as they are spoken.

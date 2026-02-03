@@ -69,12 +69,12 @@ export function ParticleGlobe({ state }: ParticleGlobeProps) {
                 const pz = currentRadius * Math.cos(p.phi);
 
                 // Rotate Y
-                let x1 = px * Math.cos(angleY) - pz * Math.sin(angleY);
-                let z1 = pz * Math.cos(angleY) + px * Math.sin(angleY);
+                const x1 = px * Math.cos(angleY) - pz * Math.sin(angleY);
+                const z1 = pz * Math.cos(angleY) + px * Math.sin(angleY);
 
                 // Rotate X
-                let y2 = py * Math.cos(angleX) - z1 * Math.sin(angleX);
-                let z2 = z1 * Math.cos(angleX) + py * Math.sin(angleX);
+                const y2 = py * Math.cos(angleX) - z1 * Math.sin(angleX);
+                const z2 = z1 * Math.cos(angleX) + py * Math.sin(angleX);
 
                 // Project
                 const scale = 300 / (300 + z2);

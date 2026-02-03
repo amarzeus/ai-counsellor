@@ -1,12 +1,10 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, UploadFile, File, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 import edge_tts
 import uuid
 import os
 import base64
-import asyncio
 from datetime import datetime
 
 from database import get_db

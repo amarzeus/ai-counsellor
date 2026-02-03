@@ -1,8 +1,6 @@
 
 from database import get_db
 from models import ChatMessage, ChatSession, User
-from sqlalchemy.orm import Session
-import json
 
 db = next(get_db())
 

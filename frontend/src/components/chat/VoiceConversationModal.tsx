@@ -213,9 +213,7 @@ export function VoiceConversationModal({ isOpen, onClose, sessionId, onMessageSe
         }
     };
 
-    if (!isOpen) return null;
-
-    // Playback Logic
+    // Playback Logic - must be BEFORE any early returns
     useEffect(() => {
         if (status === "SPEAKING" && audioRef.current) {
             audioRef.current.play().catch(e => {
@@ -227,7 +225,7 @@ export function VoiceConversationModal({ isOpen, onClose, sessionId, onMessageSe
         }
     }, [status]);
 
-    // ...
+    if (!isOpen) return null;
 
     return (
         <AnimatePresence>
