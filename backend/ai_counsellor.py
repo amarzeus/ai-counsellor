@@ -405,7 +405,145 @@ Goal: Ensure this response is unique from any previous output.
                 "actions": [],
                 "suggested_universities": []
             }
+
+
+VOICE_OUTPUT_STYLE = """
+## VOICE MODE OUTPUT STYLE (CRITICAL)
+This is a VOICE conversation. Apply these rules to your response:
+1. Keep responses SHORT - 1-3 sentences max for voice
+2. Sound natural when spoken aloud - avoid bullet points, lists, or formatted text
+3. Use conversational language - contractions, acknowledgments like "I see", "Got it"
+4. Acknowledge what the user said before responding
+5. Ask follow-up questions to keep the conversation flowing
+6. Do NOT use markdown formatting, asterisks, or bullet points
+7. Do NOT start with greetings if this is a continuation
+
+## EXAMPLES OF GOOD VOICE RESPONSES
+- "That's a great goal! With your GPA, I'd say schools like NYU or USC would be solid targets. Want me to tell you more about either?"
+- "I hear you. Funding is a big concern for most students. Have you looked into assistantships?"
+- "For Computer Science in the US, you're looking at around 40 to 60 thousand dollars per year. But there are ways to bring that down."
+"""
+
+
+async def get_voice_counsellor_response(
+    message: str,
+    user_data: dict,
+    profile: dict,
+    universities: list,
+    shortlisted: list,
+    tasks: list,
+    history: list = [],
+    language: str = "en"
+) -> dict:
+    """Get conversational AI response optimized for voice - uses full context with voice output style."""
     
+    if not key_manager.has_keys():
+        return {
+            "message": "I'm not set up yet. Please configure the AI service.",
+            "actions": [],
+            "suggested_universities": []
+        }
+    
+    # Build full context using existing function (maintains stage gating and data policy)
+    full_context = build_context(user_data, profile or {}, universities, shortlisted, tasks)
+    
+    # Current stage for enforcement
+    current_stage = user_data.get('current_stage', 'ONBOARDING')
+    
+    # Language instruction
+    lang_instruction = ""
+    if language != "en":
+        lang_names = {"hi": "Hindi", "es": "Spanish", "fr": "French", "de": "German", "ja": "Japanese"}
+        lang_instruction = f"\n[LANGUAGE: Respond in {lang_names.get(language, language)}]"
+    
+    # Conversation continuity
+    continuation_note = ""
+    if len(history) > 0:
+        continuation_note = "\n[CONVERSATION CONTINUATION - Do NOT greet or say hello. Answer directly.]"
+    
+    # Recent context from history
+    recent_context = ""
+    if history:
+        recent_msgs = history[-4:]
+        recent_context = "\nRecent conversation:\n"
+        for h in recent_msgs:
+            role = "User" if h.get('role') == 'user' else "Assistant"
+            content = h.get('content', '')[:150]
+            recent_context += f"{role}: {content}\n"
+    
+    # Build prompt with FULL system prompt + voice output style overlay
+    full_prompt = f"""{SYSTEM_PROMPT}
+
+{VOICE_OUTPUT_STYLE}
+{lang_instruction}
+{continuation_note}
+
+{full_context}
+{recent_context}
+
+## User Message (VOICE)
+"{message}"
+
+CRITICAL REMINDERS:
+- Current Stage: {current_stage} - RESPECT STAGE BOUNDARIES
+- Only recommend universities from the Available Universities list above
+- Keep voice response SHORT (1-3 sentences) and natural for speaking
+- No markdown, no bullet points, no asterisks
+
+Respond with valid JSON only.
+"""
+
+    client, key_index = key_manager.create_client()
+    
+    try:
+        response = client.models.generate_content(
+            model=key_manager.get_model_name(),
+            contents=full_prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+        
+        response_text = response.text or "{}"
+        try:
+            result = json.loads(response_text)
+        except json.JSONDecodeError:
+            result = {
+                "message": response_text[:200] if response_text else "I didn't quite catch that. Could you say that again?",
+                "actions": [],
+                "suggested_universities": []
+            }
+        
+        # Ensure required fields
+        if "message" not in result:
+            result["message"] = "I'm here to help. What would you like to know?"
+        if "actions" not in result:
+            result["actions"] = []
+        if "suggested_universities" not in result:
+            result["suggested_universities"] = []
+        if "suggested_next_questions" not in result:
+            result["suggested_next_questions"] = []
+        
+        # Stage-based action filtering (server-side enforcement)
+        allowed_actions = {
+            "ONBOARDING": [],
+            "DISCOVERY": ["shortlist_university"],
+            "LOCKED": ["shortlist_university", "lock_university", "unlock_university"],
+            "APPLICATION": ["shortlist_university", "lock_university", "unlock_university", "create_task"]
+        }
+        stage_allowed = allowed_actions.get(current_stage, [])
+        result["actions"] = [a for a in result.get("actions", []) if a.get("type") in stage_allowed]
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Voice AI Error: {str(e)}")
+        return {
+            "message": "I'm having a bit of trouble right now. Can you try again?",
+            "actions": [],
+            "suggested_universities": []
+        }
+
 
 SOP_SYSTEM_PROMPT = """You are an expert Admissions Committee Officer at a top-tier university.
 Your task is to review a Statement of Purpose (SOP) and provide structured, critical, and constructive feedback.
@@ -721,29 +859,34 @@ Polish this email now.
         return None
 
 async def transcribe_audio(audio_data: bytes, mime_type: str = "audio/wav") -> str:
-    """Transcribe audio using Gemini Multimodal capabilities."""
+    """Transcribe audio using Gemini Multimodal with enhanced accuracy."""
     
     if not key_manager.has_keys():
         raise Exception("Gemini API keys not configured")
 
     client, key_index = key_manager.create_client()
     
-    # Robust prompt for VERBATIM transcription with DOMAIN CONTEXT
-    prompt = """
-    Transcribe the spoken words in this audio file EXACTLY as they are spoken.
-    
-    CRITICAL CONTEXT:
-    - Domain: Study Abroad Counselling.
-    - Common Terms: GRE, TOEFL, IELTS, PTE, GPA, CGPA, Scholarship, Visa, Tuition, Master's, Bachelor's, STEM, OPT, CPT.
-    - Locations: Germany, USA, Canada, UK, Australia, Ireland.
+    prompt = """You are a precise speech-to-text transcription system for a study abroad counselling app.
 
-    INSTRUCTIONS:
-    - Output VERBATIM text.
-    - Use the Context above to correct phonetic mishearings of technical terms (e.g., "toffle" -> "TOEFL").
-    - If speech is faint, use context to fill gaps.
-    - Only return empty string if there is absolutely no human speech.
-    - Do NOT include timestamps or speaker labels.
-    """
+TASK: Transcribe the spoken words in this audio EXACTLY.
+
+DOMAIN VOCABULARY (use for phonetic correction):
+- Tests: GRE, TOEFL, IELTS, PTE, GMAT, SAT
+- Academic: GPA, CGPA, transcript, recommendation letter, SOP, LOR
+- Degrees: Masters, Bachelors, PhD, MBA, MS, MA
+- Visa: F1, J1, student visa, I-20, SEVIS
+- Financial: scholarship, assistantship, funding, tuition, stipend
+- Programs: STEM, OPT, CPT, RA, TA
+- Countries: USA, UK, Canada, Germany, Australia, Ireland, Netherlands
+- Universities: MIT, Stanford, Harvard, CMU, Berkeley, NYU, USC, UCLA
+
+RULES:
+1. Output ONLY the transcribed text - no labels, timestamps, or formatting
+2. Correct phonetic mishearings using domain vocabulary (e.g., "toffle" -> "TOEFL", "gree" -> "GRE")
+3. Preserve natural speech patterns including filler words if clear
+4. If audio is unclear but speech is present, transcribe what you can confidently hear
+5. Return empty string ONLY if there is no human speech at all
+6. Do NOT add any explanations or meta-commentary"""
     
     try:
         response = client.models.generate_content(
@@ -755,16 +898,21 @@ async def transcribe_audio(audio_data: bytes, mime_type: str = "audio/wav") -> s
         )
         text = response.text.strip() if response.text else ""
         
-        # Check for Silence marker
-        if text.upper() == "SILENCE":
+        # Handle various silence/empty markers
+        silence_markers = ["SILENCE", "[SILENCE]", "(SILENCE)", "NO SPEECH", "[NO SPEECH]", 
+                          "(NO SPEECH DETECTED)", "[INAUDIBLE]", "(INAUDIBLE)"]
+        if text.upper() in silence_markers or text.upper().startswith("[SILENCE"):
             return ""
 
-        # Post-processing: Only remove extremely obvious non-speech markers like [Silence] if strictly bracketed
-        # But be careful not to remove "[University Name]" if user said it.
-        # Let's keep the text mostly raw to improve accuracy.
-        clean_text = text.replace("[Silence]", "").replace("[Music]", "").strip()
+        # Clean up common transcription artifacts
+        clean_text = text
+        for marker in ["[Silence]", "[Music]", "[Background noise]", "[Inaudible]", 
+                       "(silence)", "(music)", "(background noise)", "(inaudible)"]:
+            clean_text = clean_text.replace(marker, "")
+        clean_text = clean_text.strip()
         
-        if not clean_text or clean_text in [".", "?", "!", ",", ""]:
+        # Validate we have actual content
+        if not clean_text or clean_text in [".", "?", "!", ",", "...", ""]:
             return ""
             
         return clean_text

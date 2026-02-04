@@ -10,13 +10,22 @@ from datetime import datetime
 from database import get_db
 from models import User, ShortlistedUniversity, Task, ChatMessage, ChatSession
 from auth import get_current_user
-from ai_counsellor import transcribe_audio, get_counsellor_response
+from ai_counsellor import transcribe_audio, get_voice_counsellor_response
 from real_universities_data import UNIVERSITIES_DATA
 
 router = APIRouter(prefix="/api/voice", tags=["Voice"])
 
 TEMP_AUDIO_DIR = "temp_audio"
 os.makedirs(TEMP_AUDIO_DIR, exist_ok=True)
+
+VOICE_TTS_SETTINGS = {
+    "en": {"voice": "en-US-AriaNeural", "rate": "+5%", "pitch": "+0Hz"},
+    "hi": {"voice": "hi-IN-SwaraNeural", "rate": "+0%", "pitch": "+0Hz"},
+    "es": {"voice": "es-ES-ElviraNeural", "rate": "+0%", "pitch": "+0Hz"},
+    "fr": {"voice": "fr-FR-DeniseNeural", "rate": "+0%", "pitch": "+0Hz"},
+    "de": {"voice": "de-DE-KatjaNeural", "rate": "+0%", "pitch": "+0Hz"},
+    "ja": {"voice": "ja-JP-NanamiNeural", "rate": "+0%", "pitch": "+0Hz"}
+}
 
 @router.post("/transcribe")
 async def transcribe_only(
@@ -33,15 +42,6 @@ async def transcribe_only(
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": f"Transcription Error: {str(e)}"})
 
-# Language Mapping for Edge TTS
-VOICE_MAPPING = {
-    "en": "en-US-ChristopherNeural",
-    "hi": "hi-IN-MadhurNeural",
-    "es": "es-ES-AlvaroNeural",
-    "fr": "fr-FR-HenriNeural",
-    "de": "de-DE-ConradNeural",
-    "ja": "ja-JP-KeitaNeural"
-}
 
 @router.post("/chat")
 async def voice_chat(
@@ -101,37 +101,23 @@ async def voice_chat(
         # --- FETCH HISTORY ---
         history = []
         if session_id:
-            # Get last 10 messages for context
             db_messages = db.query(ChatMessage).filter(
                 ChatMessage.session_id == session_id
-            ).order_by(ChatMessage.created_at.desc()).limit(10).all()
+            ).order_by(ChatMessage.created_at.desc()).limit(8).all()
             
-            # Reverse to chronological order and format
             for msg in reversed(db_messages):
                 history.append({"role": msg.role, "content": msg.content})
         
-        # Inject Language Instruction if not English
-        context_prefix = ""
-        if language != "en":
-            lang_names = {"hi": "Hindi", "es": "Spanish", "fr": "French", "de": "German", "ja": "Japanese"}
-            lang_name = lang_names.get(language, language)
-            context_prefix = f"[SYSTEM: User is speaking {lang_name}. Reply in {lang_name}.] "
-        
-        # Force concise responses for Voice Mode
-        context_prefix += "[SYSTEM: VOICE MODE ACTIVE. Keep response CONVERSATIONAL, SHORT (max 2-3 sentences), and spoken-style. No markdown lists.] "
-
-        # HARD FIX FOR REPETITION
-        if len(history) > 0:
-             context_prefix += " [SYSTEM: CONVERSATION CONTINUATION. We are already talking. Do NOT say 'Hello', 'Welcome back' or greet the user. Answer the query directly.]"
-        
-        ai_response = await get_counsellor_response(
-            message=context_prefix + user_text,
+        # Use dedicated voice counsellor response
+        ai_response = await get_voice_counsellor_response(
+            message=user_text,
             user_data=current_user.__dict__,
             profile=profile,
             universities=UNIVERSITIES_DATA,
             shortlisted=shortlisted,
             tasks=tasks,
-            history=history
+            history=history,
+            language=language
         )
         
     response_text = ai_response.get("message", "I didn't catch that.")
@@ -245,17 +231,20 @@ async def voice_chat(
         print(f"Action Execution Error: {e}")
         db.rollback()
 
-    # 4. Text to Speech (Edge TTS)
+    # 4. Text to Speech (Edge TTS with natural voice settings)
     try:
-        # Select voice based on language
-        voice = VOICE_MAPPING.get(language, "en-US-ChristopherNeural")
+        settings = VOICE_TTS_SETTINGS.get(language, VOICE_TTS_SETTINGS["en"])
         
-        communicate = edge_tts.Communicate(response_text, voice)
+        communicate = edge_tts.Communicate(
+            response_text, 
+            settings["voice"],
+            rate=settings["rate"],
+            pitch=settings["pitch"]
+        )
         
         output_file = f"{TEMP_AUDIO_DIR}/{uuid.uuid4()}.mp3"
         await communicate.save(output_file)
         
-        # Read back as base64
         with open(output_file, "rb") as f:
             audio_bytes = f.read()
             
