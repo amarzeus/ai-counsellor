@@ -87,8 +87,14 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 .stage-badge {

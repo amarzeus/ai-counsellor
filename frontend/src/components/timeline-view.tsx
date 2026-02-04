@@ -48,11 +48,11 @@ export function TimelineView() {
     }
 
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6">
-            <div className="flex items-center gap-2 mb-6">
-                <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Application Timeline</h2>
-                <span className="text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-3 sm:p-6 overflow-hidden">
+            <div className="flex items-center gap-2 mb-4 sm:mb-6 flex-wrap">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Application Timeline</h2>
+                <span className="text-[10px] sm:text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
                     Fall 2025
                 </span>
             </div>
@@ -68,41 +68,41 @@ export function TimelineView() {
                     >
                         {/* Connector Line */}
                         {index !== items.length - 1 && (
-                            <div className="absolute left-6 top-10 bottom-0 w-0.5 bg-gray-100 dark:bg-slate-800 group-hover:bg-gray-200 dark:group-hover:bg-slate-700 transition-colors" />
+                            <div className="absolute left-4 sm:left-6 top-8 sm:top-10 bottom-0 w-0.5 bg-gray-100 dark:bg-slate-800 group-hover:bg-gray-200 dark:group-hover:bg-slate-700 transition-colors" />
                         )}
 
-                        <div className="flex items-start gap-4">
+                        <div className="flex items-start gap-2 sm:gap-4">
                             {/* Status Icon */}
                             <div className={`
-                relative z-10 w-12 h-12 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-900 shadow-sm
+                relative z-10 w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 sm:border-4 border-white dark:border-slate-900 shadow-sm flex-shrink-0
                 transition-colors duration-300
                 ${item.status === "URGENT" ? "bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400" :
                                     item.status === "WARNING" ? "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400" :
                                         "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400"}
               `}>
-                                <Clock className="w-5 h-5" />
+                                <Clock className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
                             </div>
 
                             {/* Content Card */}
-                            <div className="flex-1 bg-gray-50 dark:bg-slate-800/50 rounded-lg p-4 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all border border-transparent hover:border-gray-100 dark:hover:border-slate-700">
-                                <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-0">
-                                    <div>
-                                        <h3 className="font-semibold text-gray-900 dark:text-white leading-tight">{item.university_name}</h3>
-                                        <p className="text-sm text-gray-600 dark:text-slate-400 mb-1">{item.program_name}</p>
-                                        <div className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-slate-500">
+                            <div className="flex-1 min-w-0 bg-gray-50 dark:bg-slate-800/50 rounded-lg p-2.5 sm:p-4 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all border border-transparent hover:border-gray-100 dark:hover:border-slate-700">
+                                <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0">
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white leading-tight truncate">{item.university_name}</h3>
+                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-400 mb-1 truncate">{item.program_name}</p>
+                                        <div className="flex items-center gap-2 text-[10px] sm:text-xs font-medium text-gray-500 dark:text-slate-500">
                                             <span>Deadline: {item.deadline_display}</span>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto border-t sm:border-0 border-slate-200 dark:border-slate-700 pt-2 sm:pt-0 mt-2 sm:mt-0">
-                                        <span className={`block text-2xl font-bold font-mono tracking-tight
+                                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto border-t sm:border-0 border-slate-200 dark:border-slate-700 pt-2 sm:pt-0 mt-1 sm:mt-0">
+                                        <span className={`block text-xl sm:text-2xl font-bold font-mono tracking-tight
                         ${item.status === "URGENT" ? "text-red-600 dark:text-red-400" :
                                                 item.status === "WARNING" ? "text-yellow-600 dark:text-yellow-400" :
                                                     "text-green-600 dark:text-green-400"}
                     `}>
                                             {item.days_left}
                                         </span>
-                                        <span className="text-xs text-gray-500 dark:text-slate-500 uppercase tracking-wider font-semibold">Days Left</span>
+                                        <span className="text-[10px] sm:text-xs text-gray-500 dark:text-slate-500 uppercase tracking-wider font-semibold">Days Left</span>
                                     </div>
                                 </div>
 
