@@ -50,7 +50,8 @@ class GeminiKeyManager:
                 else:
                     logger.warning("GeminiKeyManager: No API keys configured! Set GEMINI_API_KEYS or GEMINI_API_KEY")
         
-        self.model_name = "gemini-flash-latest"
+        # Use gemini-2.0-flash for multimodal (audio/image) support
+        self.model_name = "gemini-2.0-flash"
         
         # Log initialization summary
         print(f"[STARTUP] GeminiKeyManager initialized with {len(self.keys)} keys")
