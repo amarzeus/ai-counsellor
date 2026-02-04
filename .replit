@@ -27,13 +27,13 @@ args = "Frontend"
 name = "Backend API"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd backend && python main.py"
 waitForPort = 8000
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [[workflows.workflow]]
 name = "Frontend"
@@ -44,7 +44,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd frontend && npx next dev --port 5000"
+args = "cd frontend && npx next dev --port 5000 --hostname 0.0.0.0"
 waitForPort = 5000
 
 [[ports]]
