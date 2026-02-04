@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/refs */
-/* eslint-disable react-hooks/preserve-manual-memoization */
 import { useState, useCallback, useRef } from 'react';
 
 interface UseTextToSpeech {
