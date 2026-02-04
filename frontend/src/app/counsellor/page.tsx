@@ -613,7 +613,7 @@ export default function CounsellorPage() {
 
                 <button
                   onClick={() => setIsVoiceModalOpen(true)}
-                  className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors hidden sm:block"
+                  className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors"
                   title="Start Voice Conversation"
                 >
                   <Volume2 className="w-5 h-5" />
