@@ -1,44 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
-// Web Speech API type declarations (not included in standard TS lib)
-interface SpeechRecognitionType extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  onstart: (() => void) | null;
-  onend: (() => void) | null;
-  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  start(): void;
-  stop(): void;
-  abort(): void;
-}
-
-interface SpeechRecognitionErrorEvent extends Event {
-  error: string;
-}
-
-interface SpeechRecognitionEvent extends Event {
-  resultIndex: number;
-  results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognitionResultList {
-  length: number;
-  [index: number]: SpeechRecognitionResult;
-}
-
-interface SpeechRecognitionResult {
-  isFinal: boolean;
-  [index: number]: SpeechRecognitionAlternative;
-}
-
-interface SpeechRecognitionAlternative {
-  transcript: string;
-  confidence: number;
-}
-
-interface UseVoiceInputDisconnect {
+interface UseVoiceInputReturn {
   isListening: boolean;
   transcript: string;
   error: string | null;
@@ -47,11 +9,11 @@ interface UseVoiceInputDisconnect {
   resetTranscript: () => void;
 }
 
-export function useVoiceInput(): UseVoiceInputDisconnect {
+export function useVoiceInput(): UseVoiceInputReturn {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const recognitionRef = useRef<SpeechRecognitionType | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -59,7 +21,7 @@ export function useVoiceInput(): UseVoiceInputDisconnect {
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
       if (SpeechRecognition) {
-        const recognition = new SpeechRecognition() as SpeechRecognitionType;
+        const recognition = new SpeechRecognition();
         recognitionRef.current = recognition;
         recognition.continuous = true; // Keep listening even if the user pauses
         recognition.interimResults = true; // Show results as they are spoken
