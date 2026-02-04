@@ -56,6 +56,14 @@ jobs:
         working-directory: ./backend
         run: python -m py_compile main.py models.py schemas.py auth.py database.py ai_counsellor.py
 
+      - name: Test health endpoint
+        working-directory: ./backend
+        run: |
+          uvicorn main:app --host 0.0.0.0 --port 8000 &
+          sleep 5
+          curl -f http://localhost:8000/health || exit 1
+          pkill -f uvicorn
+
   # Frontend Tests & Build
   frontend:
     name: Frontend CI
@@ -87,7 +95,7 @@ jobs:
       - name: Build
         working-directory: ./frontend
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_API_URL: https://ai-counsellor-backend.onrender.com
         run: npm run build
 
   # Docker Build Test

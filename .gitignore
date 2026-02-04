@@ -27,7 +27,6 @@ out/
 .agent/
 .cursorrules
 
-
 # Environment
 .env
 .env.local

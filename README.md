@@ -268,6 +268,70 @@ User: "Lock University of Toronto for my application"
 3. Add `DATABASE_URL`, `SESSION_SECRET`, `GEMINI_API_KEY`
 4. Deploy
 
+### Deployment Troubleshooting
+
+#### Vercel Frontend Issues
+
+**Build Fails:**
+- Ensure `NEXT_PUBLIC_API_URL` is set in Vercel environment variables
+- Check that `vercel.json` exists in the `frontend` directory
+- Verify Node version matches (20.11.0)
+
+**API Calls Fail:**
+- Verify `NEXT_PUBLIC_API_URL` points to your Render backend URL
+- Check CORS settings in backend allow your Vercel domain
+- Test backend health endpoint: `https://your-backend.onrender.com/health`
+
+#### Render Backend Issues
+
+**Build Fails:**
+- Ensure Python version is 3.11.0 in `render.yaml`
+- Check all dependencies in `requirements.txt` are compatible
+- Verify `buildCommand` uses `python3.11 -m pip`
+
+**Database Connection Errors:**
+- Verify `DATABASE_URL` is properly set from Render PostgreSQL
+- Check database is in the same region as the web service
+- Ensure PostgreSQL service is running
+
+**Health Check Fails:**
+- Verify `/health` endpoint returns 200 status
+- Check logs for startup errors: `uvicorn main:app`
+- Ensure all required environment variables are set
+
+#### Required Environment Variables
+
+**Vercel (Frontend):**
+```bash
+NEXT_PUBLIC_API_URL=https://your-backend.onrender.com
+```
+
+**Render (Backend):**
+```bash
+DATABASE_URL=postgresql://user:pass@host:5432/db  # Auto-set by Render
+SESSION_SECRET=your-secret-key-here               # Auto-generated
+GEMINI_API_KEY=your-gemini-api-key                # Manual
+FRONTEND_URL=https://your-app.vercel.app          # Manual
+BACKEND_URL=https://your-backend.onrender.com     # Manual
+SMTP_USER=your-email@gmail.com                    # Manual (optional)
+SMTP_PASSWORD=your-app-password                   # Manual (optional)
+MAIL_FROM=noreply@yourdomain.com                  # Manual (optional)
+```
+
+#### Common Errors
+
+**"Module not found" in CI:**
+- Run `pip install -r backend/requirements.txt` locally
+- Ensure `ruff` is in `requirements.txt` or CI install step
+
+**Frontend build timeout:**
+- Reduce build complexity or upgrade Vercel plan
+- Check for infinite loops in components
+
+**CORS errors:**
+- Add your Vercel domain to backend CORS allowed origins
+- Verify API URL doesn't have trailing slashes
+
 ---
 
 ## CI/CD Pipeline
