@@ -1,7 +1,7 @@
 const https = require('https');
 
 // Use Render's environment variable if available, or a custom one, or a placeholder
-const RENDER_URL = process.env.RENDER_EXTERNAL_URL || 'https://ai-counsellor-backend.onrender.com';
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL || 'https://ai-counsellor-backend-wjlf.onrender.com';
 
 function keepAlive() {
     if (RENDER_URL === 'https://your-app-name.onrender.com') {
