@@ -160,10 +160,10 @@ export default function DashboardPage() {
   const getGuidanceContent = () => {
     if (shortlist.length === 0) {
       return {
-        title: "What happens next?",
-        description: "Chat with your AI Counsellor to get personalized university recommendations based on your profile.",
+        title: "Start Exploring",
+        description: "Browse universities to find the best fit for your profile.",
         action: "Start Exploring",
-        href: "/counsellor"
+        href: "/universities"
       };
     }
     if (lockedUniversities.length === 0) {
@@ -305,13 +305,7 @@ export default function DashboardPage() {
               <div className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800">
                 <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-3">Quick Actions</h3>
                 <div className="space-y-1">
-                  <Link href="/counsellor" className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <div className="flex items-center gap-2.5">
-                      <MessageCircle className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Chat with AI Counsellor</span>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 transition-colors" />
-                  </Link>
+
                   <Link href="/universities" className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                     <div className="flex items-center gap-2.5">
                       <Building2 className="w-4 h-4 text-slate-400 group-hover:text-purple-500 transition-colors" />
@@ -432,10 +426,10 @@ export default function DashboardPage() {
                   <Building2 className="w-8 h-8 text-slate-300 dark:text-slate-600 mb-2" />
                   <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">No universities yet</p>
                   <button
-                    onClick={() => router.push('/counsellor')}
+                    onClick={() => router.push('/universities')}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"
                   >
-                    Get Recommendations
+                    Browse Universities
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>

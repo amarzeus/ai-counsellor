@@ -49,10 +49,7 @@ export function Header() {
 			label: 'Universities',
 			href: '/universities',
 		},
-		{
-			label: 'AI Counsellor',
-			href: '/counsellor',
-		},
+
 		{
 			label: 'Tasks',
 			href: '/tasks',

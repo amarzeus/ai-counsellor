@@ -24,11 +24,11 @@ from real_universities_data import UNIVERSITIES_DATA
 from models import User, UserProfile, University, Program, ShortlistedUniversity, Task, ChatMessage, ChatSession, UserStage, TaskStatus, SavedEmail
 from auth import get_password_hash, verify_password, create_access_token, get_current_user
 # from universities_data import UNIVERSITIES # Replaced by real_universities_data
-from ai_counsellor import get_counsellor_response, analyze_profile_strength, categorize_university, analyze_sop, generate_application_checklist, generate_cold_email_content, polish_cold_email_content
+from ai_counsellor import analyze_profile_strength, categorize_university, analyze_sop, generate_application_checklist, generate_cold_email_content, polish_cold_email_content
 from report_generator import StrategyReportGenerator
 from demo_data import DEMO_PROFILES, DEMO_CREDENTIALS
 from google_oauth import google_router
-from routers.voice import router as voice_router
+# from routers.voice import router as voice_router
 # import subscriptions  # DISABLED: Payment system deactivated
 
 Base.metadata.create_all(bind=engine)
@@ -53,7 +53,7 @@ app.add_middleware(
 )
 
 app.include_router(google_router)
-app.include_router(voice_router)
+# app.include_router(voice_router)
 # app.include_router(subscriptions.router)  # DISABLED: Payment system deactivated
 
 @app.get("/")
@@ -69,7 +69,7 @@ def root():
             "docs": "/docs",
             "auth": "/api/auth/login",
             "universities": "/api/universities",
-            "counsellor": "/api/counsellor/chat"
+
         },
         "demo_accounts": {
             "weak_profile": "weak@demo.com",
