@@ -1,0 +1,23 @@
+name: Render Keep-Alive
+
+on:
+  schedule:
+    # Run every 14 minutes
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Health Endpoint
+        run: |
+          echo "Pinging backend health endpoint..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://ai-counsellor-backend-wjlf.onrender.com/health)
+          echo "Status Code: $response"
+          if [ "$response" -eq 200 ]; then
+            echo "✅ Ping successful"
+          else
+            echo "⚠️ Ping returned status $response"
+            # Don't fail the build, key is just to generate traffic
+          fi
