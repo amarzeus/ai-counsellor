@@ -43,7 +43,7 @@ AI Counsellor enforces a **4-stage journey** that forces clarity:
 
 ```
 ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│  ONBOARDING  │───▶│  DISCOVERY   │───▶│    LOCKED    │───▶│ APPLICATION  │
+│  ONBOARDING  │──▶│  DISCOVERY   │──▶│    LOCKED    │──▶│ APPLICATION  │
 │              │    │              │    │              │    │              │
 │ Build your   │    │ AI recommends│    │ Commit to    │    │ Get tasks &  │
 │ profile      │    │ with risk    │    │ your choices │    │ guidance     │
