@@ -43,7 +43,7 @@ services:
     plan: free
     rootDirectory: frontend
     buildCommand: npm ci && NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL npm run build
-    startCommand: npm start
+    startCommand: node ../scripts/keep_alive.js & npm start
     envVars:
       - key: NEXT_PUBLIC_API_URL
         fromService:
